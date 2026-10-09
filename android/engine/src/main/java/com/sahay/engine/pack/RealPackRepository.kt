@@ -18,6 +18,7 @@ import com.sahay.core.contracts.RadioStation
 import com.sahay.core.contracts.Region
 import com.sahay.core.contracts.RiskZone
 import com.sahay.core.contracts.ShelterStatus
+import com.sahay.engine.routing.RoadGraphBuilder
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
@@ -364,6 +365,15 @@ class RealPackRepository internal constructor(
 
     /** Road graph edges of the active pack; empty when there is no pack. */
     internal suspend fun graphEdges(): List<GraphEdge> = withPack(emptyList()) { it.graphEdges() }
+
+    /** The active pack once startup restore has finished (unlike [activePack], which is null until then). */
+    internal suspend fun awaitActivePack(): PackInfo? {
+        restoreJob.join()
+        return activeState.value
+    }
+
+    /** Road network of the active pack as an unbuilt primitive-array builder; null when there is no pack. */
+    internal suspend fun readRoadGraph(): RoadGraphBuilder? = withPack(null) { it.readRoadGraph() }
 
     /**
      * Style URL for the map view. It is the same URL the offline region was downloaded with, so MapLibre
