@@ -1,0 +1,11 @@
+{
+  "en": "This region averages {avgRain} mm of rain per year, with {heavyDays} days of heavy rainfall recorded over {years} years of data.",
+  "de": "Diese Region erhält im Durchschnitt {avgRain} mm Regen pro Jahr, mit {heavyDays} Tagen starken Regens in {years} Jahren.",
+  "fr": "Cette région reçoit en moyenne {avgRain} mm de pluie par an, avec {heavyDays} jours de fortes pluies sur {years} ans de données.",
+  "es": "Esta región promedia {avgRain} mm de lluvia al año, con {heavyDays} días de lluvias intensas registradas en {years} años de datos.",
+  "ru": "В этом регионе выпадает в среднем {avgRain} мм дождя в год, при этом за {years} лет данных зафиксировано {heavyDays} дней сильного дождя.",
+  "ja": "この地域の年間平均降水量は{avgRain}mmで、{years}年間のデータでは{heavyDays}日の大雨が記録されています。",
+  "ko": "이 지역의 연평균 강수량은 {avgRain}mm이며, {years}년 데이터에서 폭우가 {heavyDays}일 기록되었습니다.",
+  "zh": "该地区年均降雨量为{avgRain}毫米，在{years}年数据中记录了{heavyDays}天强降雨。",
+  "ar": "يبلغ متوسط ​​هطول الأمطار في هذه المنطقة {avgRain} ملم سنوياً، مع تسجيل {heavyDays} يوماً من الأمطار الغزيرة على مدى {years} عاماً."
+}

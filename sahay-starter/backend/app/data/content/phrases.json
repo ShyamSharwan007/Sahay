@@ -1,0 +1,291 @@
+[
+  {
+    "id": "tourist_need_help",
+    "category": "emergency",
+    "icon": "pan_tool",
+    "text": {
+      "en": "I am a tourist. I don't speak Tamil. Please help me.",
+      "de": "Ich bin ein Tourist. Ich spreche kein Tamil. Bitte helfen Sie mir.",
+      "fr": "Je suis un touriste. Je ne parle pas tamoul. Aidez-moi s'il vous plaît.",
+      "es": "Soy turista. No hablo tamil. Por favor, ayúdeme.",
+      "ru": "Я турист. Я не говорю по-тамильски. Пожалуйста, помогите мне.",
+      "ja": "私は観光客です。タミル語が話せません。助けてください。",
+      "ko": "저는 관광객입니다. 타밀어를 못합니다. 도와주세요.",
+      "zh": "我是游客。我不会说泰米尔语。请帮助我。",
+      "ar": "أنا سائح. لا أتحدث التاميلية. من فضلك ساعدني.",
+      "ta": "நான் ஒரு சுற்றுலாப் பயணி. எனக்கு தமிழ் தெரியாது. தயவுசெய்து என்னை உதவுங்கள்."
+    }
+  },
+  {
+    "id": "take_me_to_shelter",
+    "category": "emergency",
+    "icon": "home",
+    "text": {
+      "en": "Please take me to the nearest shelter.",
+      "de": "Bitte bringen Sie mich zur nächsten Unterkunft.",
+      "fr": "Veuillez m'emmener à l'abri le plus proche.",
+      "es": "Por favor lléveme al refugio más cercano.",
+      "ru": "Пожалуйста, отведите меня в ближайшее убежище.",
+      "ja": "最寄りの避難所に連れて行ってください。",
+      "ko": "가장 가까운 대피소로 데려다 주세요.",
+      "zh": "请带我去最近的避难所。",
+      "ar": "من فضلك خذني إلى أقرب ملجأ.",
+      "ta": "தயவுசெய்து என்னை அருகிலுள்ள தஞ்சமனைக்கு அழைத்துச் செல்லுங்கள்."
+    }
+  },
+  {
+    "id": "where_is_shelter",
+    "category": "directions",
+    "icon": "location_on",
+    "text": {
+      "en": "Where is the nearest shelter?",
+      "de": "Wo ist die nächste Unterkunft?",
+      "fr": "Où est l'abri le plus proche?",
+      "es": "¿Dónde está el refugio más cercano?",
+      "ru": "Где ближайшее убежище?",
+      "ja": "最寄りの避難所はどこですか？",
+      "ko": "가장 가까운 대피소는 어디입니까?",
+      "zh": "最近的避难所在哪里？",
+      "ar": "أين أقرب ملجأ؟",
+      "ta": "அருகிலுள்ள தஞ்சமனை எங்கே உள்ளது?"
+    }
+  },
+  {
+    "id": "where_is_hospital",
+    "category": "medical",
+    "icon": "local_hospital",
+    "text": {
+      "en": "Where is the nearest hospital?",
+      "de": "Wo ist das nächste Krankenhaus?",
+      "fr": "Où est l'hôpital le plus proche?",
+      "es": "¿Dónde está el hospital más cercano?",
+      "ru": "Где ближайшая больница?",
+      "ja": "最寄りの病院はどこですか？",
+      "ko": "가장 가까운 병원은 어디입니까?",
+      "zh": "最近的医院在哪里？",
+      "ar": "أين أقرب مستشفى؟",
+      "ta": "அருகிலுள்ள மருத்துவமனை எங்கே உள்ளது?"
+    }
+  },
+  {
+    "id": "call_police",
+    "category": "emergency",
+    "icon": "local_police",
+    "text": {
+      "en": "Please call the police. Emergency number: 112.",
+      "de": "Bitte rufen Sie die Polizei. Notrufnummer: 112.",
+      "fr": "Appelez la police s'il vous plaît. Numéro d'urgence: 112.",
+      "es": "Por favor llame a la policía. Número de emergencia: 112.",
+      "ru": "Пожалуйста, вызовите полицию. Номер экстренной службы: 112.",
+      "ja": "警察を呼んでください。緊急番号：112。",
+      "ko": "경찰을 불러주세요. 긴급 번호: 112.",
+      "zh": "请叫警察。紧急电话：112。",
+      "ar": "من فضلك اتصل بالشرطة. رقم الطوارئ: 112.",
+      "ta": "தயவுசெய்து போலீஸை அழையுங்கள். அவசர எண்: 112."
+    }
+  },
+  {
+    "id": "call_ambulance",
+    "category": "medical",
+    "icon": "emergency",
+    "text": {
+      "en": "Please call an ambulance. Emergency number: 108.",
+      "de": "Bitte rufen Sie einen Krankenwagen. Notrufnummer: 108.",
+      "fr": "Appelez une ambulance s'il vous plaît. Numéro d'urgence: 108.",
+      "es": "Por favor llame a una ambulancia. Número de emergencia: 108.",
+      "ru": "Пожалуйста, вызовите скорую помощь. Номер экстренной службы: 108.",
+      "ja": "救急車を呼んでください。緊急番号：108。",
+      "ko": "구급차를 불러주세요. 긴급 번호: 108.",
+      "zh": "请叫救护车。紧急电话：108。",
+      "ar": "من فضلك اتصل بسيارة إسعاف. رقم الطوارئ: 108.",
+      "ta": "தயவுசெய்து ஆம்புலன்ஸ் அழையுங்கள். அவசர எண்: 108."
+    }
+  },
+  {
+    "id": "i_am_injured",
+    "category": "medical",
+    "icon": "personal_injury",
+    "text": {
+      "en": "I am injured and need medical help.",
+      "de": "Ich bin verletzt und brauche medizinische Hilfe.",
+      "fr": "Je suis blessé et j'ai besoin d'aide médicale.",
+      "es": "Estoy lesionado y necesito ayuda médica.",
+      "ru": "Я ранен и мне нужна медицинская помощь.",
+      "ja": "怪我をしており、医療が必要です。",
+      "ko": "저는 부상을 당했고 의료 도움이 필요합니다.",
+      "zh": "我受伤了，需要医疗帮助。",
+      "ar": "أنا مصاب وأحتاج إلى مساعدة طبية.",
+      "ta": "நான் காயப்பட்டிருக்கிறேன், மருத்துவ உதவி தேவை."
+    }
+  },
+  {
+    "id": "i_have_allergy",
+    "category": "medical",
+    "icon": "medication",
+    "text": {
+      "en": "I have a severe allergy. Please be careful.",
+      "de": "Ich habe eine schwere Allergie. Bitte seien Sie vorsichtig.",
+      "fr": "J'ai une allergie grave. Soyez prudent s'il vous plaît.",
+      "es": "Tengo una alergia grave. Por favor sea cuidadoso.",
+      "ru": "У меня тяжёлая аллергия. Пожалуйста, будьте осторожны.",
+      "ja": "重篤なアレルギーがあります。注意してください。",
+      "ko": "저는 심한 알레르기가 있습니다. 주의해 주세요.",
+      "zh": "我有严重过敏。请小心。",
+      "ar": "لدي حساسية شديدة. من فضلك كن حذراً.",
+      "ta": "எனக்கு கடுமையான ஒவ்வாமை உள்ளது. தயவுசெய்து கவனமாக இருங்கள்."
+    }
+  },
+  {
+    "id": "i_need_water",
+    "category": "basic",
+    "icon": "water_drop",
+    "text": {
+      "en": "I need drinking water.",
+      "de": "Ich brauche Trinkwasser.",
+      "fr": "J'ai besoin d'eau potable.",
+      "es": "Necesito agua potable.",
+      "ru": "Мне нужна питьевая вода.",
+      "ja": "飲み水が必要です。",
+      "ko": "마실 물이 필요합니다.",
+      "zh": "我需要饮用水。",
+      "ar": "أحتاج إلى مياه الشرب.",
+      "ta": "எனக்கு குடிநீர் தேவை."
+    }
+  },
+  {
+    "id": "i_need_to_charge_phone",
+    "category": "basic",
+    "icon": "battery_charging_full",
+    "text": {
+      "en": "I need to charge my phone. Is there a power point?",
+      "de": "Ich muss mein Telefon aufladen. Gibt es eine Steckdose?",
+      "fr": "Je dois charger mon téléphone. Y a-t-il une prise de courant?",
+      "es": "Necesito cargar mi teléfono. ¿Hay un enchufe?",
+      "ru": "Мне нужно зарядить телефон. Есть ли розетка?",
+      "ja": "電話を充電する必要があります。コンセントはありますか？",
+      "ko": "휴대폰을 충전해야 합니다. 콘센트가 있나요?",
+      "zh": "我需要给手机充电。有插座吗？",
+      "ar": "أحتاج إلى شحن هاتفي. هل هناك مقبس كهرباء؟",
+      "ta": "என் மொபைல் சார்ஜ் செய்ய வேண்டும். மின்சாரம் இருக்கிறதா?"
+    }
+  },
+  {
+    "id": "is_this_road_safe",
+    "category": "directions",
+    "icon": "warning",
+    "text": {
+      "en": "Is this road safe to travel?",
+      "de": "Ist diese Straße sicher zu befahren?",
+      "fr": "Cette route est-elle sûre pour voyager?",
+      "es": "¿Es seguro viajar por esta carretera?",
+      "ru": "Эта дорога безопасна для проезда?",
+      "ja": "この道路は通行安全ですか？",
+      "ko": "이 도로는 통행이 안전합니까?",
+      "zh": "这条路安全吗？",
+      "ar": "هل هذا الطريق آمن للسفر؟",
+      "ta": "இந்த சாலை பயணத்திற்கு பாதுகாப்பானதா?"
+    }
+  },
+  {
+    "id": "where_is_high_ground",
+    "category": "directions",
+    "icon": "terrain",
+    "text": {
+      "en": "Where is the nearest high ground or hill?",
+      "de": "Wo ist das nächste Hochgelände oder der nächste Hügel?",
+      "fr": "Où est le terrain élevé ou la colline la plus proche?",
+      "es": "¿Dónde está el terreno alto o la colina más cercana?",
+      "ru": "Где ближайшая возвышенность или холм?",
+      "ja": "最寄りの高台や丘はどこですか？",
+      "ko": "가장 가까운 고지대나 언덕은 어디입니까?",
+      "zh": "最近的高地或山丘在哪里？",
+      "ar": "أين أقرب أرض مرتفعة أو تل؟",
+      "ta": "அருகிலுள்ள உயர்நிலம் அல்லது மலை எங்கே உள்ளது?"
+    }
+  },
+  {
+    "id": "my_hotel_is",
+    "category": "directions",
+    "icon": "hotel",
+    "text": {
+      "en": "My hotel is [name]. Can you help me get there?",
+      "de": "Mein Hotel ist [Name]. Können Sie mir helfen, dorthin zu gelangen?",
+      "fr": "Mon hôtel est [nom]. Pouvez-vous m'aider à y arriver?",
+      "es": "Mi hotel es [nombre]. ¿Puede ayudarme a llegar allí?",
+      "ru": "Мой отель — [название]. Вы можете помочь мне туда добраться?",
+      "ja": "私のホテルは[名前]です。そこに行くのを手伝ってもらえますか？",
+      "ko": "제 호텔은 [이름]입니다. 거기까지 가는 것을 도와주실 수 있나요?",
+      "zh": "我的酒店是[名称]。你能帮我去那里吗？",
+      "ar": "فندقي هو [الاسم]. هل يمكنك مساعدتي للوصول إليه؟",
+      "ta": "என் ஹோட்டல் [பெயர்]. அங்கு செல்ல உதவ முடியுமா?"
+    }
+  },
+  {
+    "id": "i_am_lost",
+    "category": "emergency",
+    "icon": "wrong_location",
+    "text": {
+      "en": "I am lost. Please help me.",
+      "de": "Ich habe mich verirrt. Bitte helfen Sie mir.",
+      "fr": "Je suis perdu. Aidez-moi s'il vous plaît.",
+      "es": "Estoy perdido. Por favor, ayúdeme.",
+      "ru": "Я заблудился. Пожалуйста, помогите мне.",
+      "ja": "迷子になりました。助けてください。",
+      "ko": "저는 길을 잃었습니다. 도와주세요.",
+      "zh": "我迷路了。请帮助我。",
+      "ar": "لقد ضللت الطريق. من فضلك ساعدني.",
+      "ta": "நான் தொலைந்துவிட்டேன். தயவுசெய்து உதவுங்கள்."
+    }
+  },
+  {
+    "id": "thank_you",
+    "category": "basic",
+    "icon": "favorite",
+    "text": {
+      "en": "Thank you very much!",
+      "de": "Vielen Dank!",
+      "fr": "Merci beaucoup!",
+      "es": "¡Muchas gracias!",
+      "ru": "Большое спасибо!",
+      "ja": "ありがとうございます！",
+      "ko": "대단히 감사합니다!",
+      "zh": "非常感谢！",
+      "ar": "شكراً جزيلاً!",
+      "ta": "மிக்க நன்றி!"
+    }
+  },
+  {
+    "id": "yes",
+    "category": "basic",
+    "icon": "check_circle",
+    "text": {
+      "en": "Yes",
+      "de": "Ja",
+      "fr": "Oui",
+      "es": "Sí",
+      "ru": "Да",
+      "ja": "はい",
+      "ko": "예",
+      "zh": "是",
+      "ar": "نعم",
+      "ta": "ஆம்"
+    }
+  },
+  {
+    "id": "no",
+    "category": "basic",
+    "icon": "cancel",
+    "text": {
+      "en": "No",
+      "de": "Nein",
+      "fr": "Non",
+      "es": "No",
+      "ru": "Нет",
+      "ja": "いいえ",
+      "ko": "아니요",
+      "zh": "否",
+      "ar": "لا",
+      "ta": "இல்லை"
+    }
+  }
+]
