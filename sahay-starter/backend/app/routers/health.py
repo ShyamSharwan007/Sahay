@@ -6,7 +6,9 @@ import json
 import time
 from pathlib import Path
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
+
+from app.limiter import limiter
 
 router = APIRouter()
 
@@ -16,12 +18,14 @@ _REGIONS: list[dict] = json.loads(_REGIONS_PATH.read_text())
 
 
 @router.get("/health")
-async def health():
+@limiter.limit("120/minute")
+async def health(request: Request):
     """Simple liveness probe — CONTRACTS §3: GET /health."""
     return {"ok": True, "time": int(time.time())}
 
 
 @router.get("/regions")
-async def regions():
+@limiter.limit("120/minute")
+async def regions(request: Request):
     """Return the list of supported regions — CONTRACTS §3: GET /regions."""
     return _REGIONS

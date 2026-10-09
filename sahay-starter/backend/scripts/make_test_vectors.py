@@ -47,11 +47,13 @@ def main():
         ts=ts,
         private_key=test_private,
     )
-    cases.append({
-        "wire": alert_wire,
-        "valid": True,
-        "note": "Valid alert – FLD_EVAC severity 3, simulation flag",
-    })
+    cases.append(
+        {
+            "wire": alert_wire,
+            "valid": True,
+            "note": "Valid alert – FLD_EVAC severity 3, simulation flag",
+        }
+    )
 
     shelter_wire = build_shelter(
         shelter_id="poi_123",
@@ -59,11 +61,13 @@ def main():
         ts=ts,
         private_key=test_private,
     )
-    cases.append({
-        "wire": shelter_wire,
-        "valid": True,
-        "note": "Valid shelter status – FULL",
-    })
+    cases.append(
+        {
+            "wire": shelter_wire,
+            "valid": True,
+            "note": "Valid shelter status – FULL",
+        }
+    )
 
     group_wire = build_group(
         lat=12.621,
@@ -73,48 +77,58 @@ def main():
         ts=ts,
         private_key=test_private,
     )
-    cases.append({
-        "wire": group_wire,
-        "valid": True,
-        "note": "Valid group – 7 people AT_SHELTER",
-    })
+    cases.append(
+        {
+            "wire": group_wire,
+            "valid": True,
+            "note": "Valid group – 7 people AT_SHELTER",
+        }
+    )
 
     # --- Invalid cases ---
 
     # 1. Tampered field (change severity from 3 to 2 in the alert wire)
     tampered = alert_wire.replace("*3*12.62080", "*2*12.62080")
-    cases.append({
-        "wire": tampered,
-        "valid": False,
-        "note": "Invalid – tampered severity field (3→2), signature mismatch",
-    })
+    cases.append(
+        {
+            "wire": tampered,
+            "valid": False,
+            "note": "Invalid – tampered severity field (3→2), signature mismatch",
+        }
+    )
 
     # 2. Bad signature (corrupt last chars of the signature)
     bad_sig = alert_wire[:-4] + "XXXX"
-    cases.append({
-        "wire": bad_sig,
-        "valid": False,
-        "note": "Invalid – corrupted signature bytes",
-    })
+    cases.append(
+        {
+            "wire": bad_sig,
+            "valid": False,
+            "note": "Invalid – corrupted signature bytes",
+        }
+    )
 
     # 3. Wrong prefix
     wrong_prefix = "SH2" + alert_wire[3:]
-    cases.append({
-        "wire": wrong_prefix,
-        "valid": False,
-        "note": "Invalid – wrong prefix SH2 instead of SH1",
-    })
+    cases.append(
+        {
+            "wire": wrong_prefix,
+            "valid": False,
+            "note": "Invalid – wrong prefix SH2 instead of SH1",
+        }
+    )
 
     # 4. Wrong field count (remove the flags field from alert)
     parts = alert_wire.split("*")
     # Remove element 7 (flags) to get wrong field count
     wrong_count_parts = parts[:7] + parts[8:]
     wrong_count = "*".join(wrong_count_parts)
-    cases.append({
-        "wire": wrong_count,
-        "valid": False,
-        "note": "Invalid – wrong field count for Alert (missing flags field)",
-    })
+    cases.append(
+        {
+            "wire": wrong_count,
+            "valid": False,
+            "note": "Invalid – wrong field count for Alert (missing flags field)",
+        }
+    )
 
     # 5. Over 160 characters — build manually (builders enforce the limit)
     long_id = "poi_" + "x" * 70
@@ -122,11 +136,13 @@ def main():
     sig = sign(payload.encode("utf-8"), test_private)
     long_wire = payload + sig
     assert len(long_wire) > MAX_WIRE_LEN, "Expected >160 chars for the over-length test case"
-    cases.append({
-        "wire": long_wire,
-        "valid": False,
-        "note": f"Invalid – wire length {len(long_wire)} exceeds 160 char limit",
-    })
+    cases.append(
+        {
+            "wire": long_wire,
+            "valid": False,
+            "note": f"Invalid – wire length {len(long_wire)} exceeds 160 char limit",
+        }
+    )
 
     output = {
         "publicKeyB64": test_public_b64,

@@ -26,11 +26,11 @@ PREFIX = "SH1"
 # Expected field counts (total parts when split by '*')
 FIELD_COUNTS: dict[str, int] = {
     "A": 10,  # SH1*A*id*code*sev*lat,lon*radius*flags*ts*sig
-    "S": 6,   # SH1*S*shelterId*status*ts*sig
-    "G": 7,   # SH1*G*lat,lon*size*status*ts*sig
-    "R": 7,   # SH1*R*typeCode*lat,lon*sev*ts*uid8
-    "P": 5,   # SH1*P*lat,lon*ts*uid8
-    "B": 5,   # SH1*B*lat,lon*ts*uid8
+    "S": 6,  # SH1*S*shelterId*status*ts*sig
+    "G": 7,  # SH1*G*lat,lon*size*status*ts*sig
+    "R": 7,  # SH1*R*typeCode*lat,lon*sev*ts*uid8
+    "P": 5,  # SH1*P*lat,lon*ts*uid8
+    "B": 5,  # SH1*B*lat,lon*ts*uid8
 }
 
 # Signed types need signature verification

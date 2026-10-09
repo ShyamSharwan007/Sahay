@@ -1,10 +1,3 @@
-"""Database schema – Postgres tables from CONTRACTS §10.
-
-Executed at startup via `init_db()`.  All statements use IF NOT EXISTS
-so they're safe to re-run on every boot.
-"""
-
-SCHEMA_SQL = """\
 -- devices
 CREATE TABLE IF NOT EXISTS devices (
     uid        TEXT PRIMARY KEY,
@@ -88,4 +81,3 @@ CREATE TABLE IF NOT EXISTS sms_log (
     created_at BIGINT,
     status     TEXT
 );
-"""

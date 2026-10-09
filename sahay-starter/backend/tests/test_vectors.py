@@ -28,12 +28,8 @@ def test_vectors_file_structure():
     assert len(data["cases"]) >= 6  # at least 3 valid + 3 invalid
 
 
-_VECTORS_PATH = (
-    Path(__file__).resolve().parent.parent.parent / "docs" / "wire_test_vectors.json"
-)
-_CASES = (
-    _load_vectors().get("cases", []) if _VECTORS_PATH.exists() else []
-)
+_VECTORS_PATH = Path(__file__).resolve().parent.parent.parent / "docs" / "wire_test_vectors.json"
+_CASES = _load_vectors().get("cases", []) if _VECTORS_PATH.exists() else []
 
 
 @pytest.mark.parametrize(

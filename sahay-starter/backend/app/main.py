@@ -16,10 +16,13 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
 
 from app.config import settings
 from app.db.session import init_db
-from app.routers import health
+from app.limiter import limiter
+from app.routers import admin, admin_ui, alerts, health, shelters
 
 logging.basicConfig(
     level=logging.INFO,
@@ -45,6 +48,9 @@ def create_app() -> FastAPI:
         version="0.1.0",
         lifespan=lifespan,
     )
+
+    application.state.limiter = limiter
+    application.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
     # --- CORS ---
     application.add_middleware(
@@ -84,6 +90,12 @@ def create_app() -> FastAPI:
 
     # --- Routers under /api/v1 ---
     application.include_router(health.router, prefix="/api/v1")
+    application.include_router(alerts.router, prefix="/api/v1")
+    application.include_router(shelters.router, prefix="/api/v1")
+    application.include_router(admin.router, prefix="/api/v1")
+
+    # UI router directly at root or /admin
+    application.include_router(admin_ui.router)
 
     return application
 
