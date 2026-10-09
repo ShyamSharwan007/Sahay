@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Language names are shown in their own language, never translated. -->
+    <string name="lang_en" translatable="false">English</string>
+    <string name="lang_de" translatable="false">Deutsch</string>
+    <string name="lang_fr" translatable="false">Français</string>
+    <string name="lang_es" translatable="false">Español</string>
+    <string name="lang_ru" translatable="false">Русский</string>
+    <string name="lang_ja" translatable="false">日本語</string>
+    <string name="lang_ko" translatable="false">한국어</string>
+    <string name="lang_zh" translatable="false">中文</string>
+    <string name="lang_ar" translatable="false">العربية</string>
+
+    <!-- Common -->
+    <string name="action_back">Back</string>
+    <string name="action_next">Next</string>
+    <string name="action_skip">Skip</string>
+    <string name="action_continue">Continue</string>
+    <string name="action_finish">Finish</string>
+    <string name="action_retry">Try again</string>
+    <string name="action_remove">Remove</string>
+    <string name="action_close">Close</string>
+    <string name="loading">Loading</string>
+
+    <!-- Language picker -->
+    <string name="language_title">Choose your language</string>
+    <string name="language_subtitle">Alerts and help will use this language.</string>
+    <string name="language_selected">Selected</string>
+
+    <!-- Welcome -->
+    <string name="welcome_get_started">Get started</string>
+    <string name="welcome_slide1_title">Works offline</string>
+    <string name="welcome_slide1_body">Maps, shelters and routes are saved on your phone. No signal needed.</string>
+    <string name="welcome_slide2_title">Alerts in your language</string>
+    <string name="welcome_slide2_body">Official warnings are translated into words you understand.</string>
+    <string name="welcome_slide3_title">Help is one tap away</string>
+    <string name="welcome_slide3_body">Send an SOS text to your contacts, even with no internet.</string>
+    <string name="welcome_page_indicator">Page %1$d of %2$d</string>
+
+    <!-- Sign in -->
+    <string name="signin_title">Sign in to Sahay</string>
+    <string name="signin_body">You need internet once to sign in. After that, Sahay works offline.</string>
+    <string name="signin_google">Continue with Google</string>
+    <string name="signin_guest">Continue as guest</string>
+    <string name="signin_error_no_internet_title">You need internet once to sign in</string>
+    <string name="signin_error_no_internet_body">Connect to Wi-Fi or mobile data, then try again.</string>
+    <string name="signin_error_no_account_title">No Google account found</string>
+    <string name="signin_error_no_account_body">Add a Google account in Settings, or continue as a guest.</string>
+    <string name="signin_error_failed_title">Couldn\'t sign you in</string>
+    <string name="signin_error_failed_body">Something went wrong. Try again, or continue as a guest.</string>
+
+    <!-- Wizard shell -->
+    <string name="wizard_step_of">Step %1$d of %2$d</string>
+    <string name="wizard_save_failed_title">Couldn\'t save your details</string>
+    <string name="wizard_save_failed_body">Check that you are signed in, then try again.</string>
+
+    <!-- Step 1: Essentials -->
+    <string name="essentials_title">About you</string>
+    <string name="essentials_body">Rescuers and locals see this on your help card.</string>
+    <string name="essentials_name">Your name</string>
+    <string name="essentials_name_error">Enter your name.</string>
+    <string name="essentials_nationality">Nationality</string>
+    <string name="essentials_nationality_empty">Choose your country</string>
+    <string name="essentials_nationality_search">Search countries</string>
+    <string name="essentials_nationality_none">No country matches your search.</string>
+    <string name="essentials_phone">Phone with country code (optional)</string>
+    <string name="essentials_phone_hint">+49 151 2345 6789</string>
+    <string name="essentials_phone_error">Start with + and the country code, for example +49.</string>
+
+    <!-- Step 2: Medical -->
+    <string name="medical_title">Medical details</string>
+    <string name="medical_body">Optional — helps rescuers.</string>
+    <string name="medical_blood_group">Blood group</string>
+    <string name="medical_blood_unknown">Don\'t know</string>
+    <string name="medical_allergies">Allergies</string>
+    <string name="medical_medications">Medications</string>
+    <string name="medical_conditions">Medical conditions</string>
+    <string name="medical_quick_add">Quick add</string>
+    <string name="medical_chip_penicillin">Penicillin</string>
+    <string name="medical_chip_nuts">Nuts</string>
+    <string name="medical_chip_asthma">Asthma</string>
+    <string name="medical_chip_diabetes">Diabetes</string>
+
+    <!-- Step 3: Contacts -->
+    <string name="contacts_title">Emergency contacts</string>
+    <string name="contacts_body">We text them if you send an SOS. Add 1 to 3 people.</string>
+    <string name="contacts_card_title">Contact %1$d</string>
+    <string name="contacts_name">Name</string>
+    <string name="contacts_name_error">Enter a name.</string>
+    <string name="contacts_phone">Phone with country code</string>
+    <string name="contacts_phone_error">Start with + and the country code, for example +49.</string>
+    <string name="contacts_relation">Relation</string>
+    <string name="contacts_relation_error">Choose a relation.</string>
+    <string name="contacts_add">Add another contact</string>
+    <string name="relation_parent">Parent</string>
+    <string name="relation_partner">Partner</string>
+    <string name="relation_sibling">Sibling</string>
+    <string name="relation_friend">Friend</string>
+    <string name="relation_other">Other</string>
+
+    <!-- Step 4: Where you stay -->
+    <string name="stay_title">Where you stay</string>
+    <string name="stay_body">Optional. Shown on your help card for locals.</string>
+    <string name="stay_hotel_name">Hotel or place name</string>
+    <string name="stay_hotel_address">Address</string>
+
+    <!-- Step 5: Privacy -->
+    <string name="privacy_title">Your privacy</string>
+    <string name="privacy_group_finder">Help me find nearby groups</string>
+    <string name="privacy_group_finder_body">Only groups of 5 or more people are shown. Nobody sees you personally.</string>
+    <string name="privacy_medical_note">Medical details stay on this phone. They\'re only sent in an SOS text you choose to send.</string>
+
+    <!-- Step 6: Permissions -->
+    <string name="permissions_title">Allow what Sahay needs</string>
+    <string name="permissions_body">You can change these later in Settings.</string>
+    <string name="permission_allow">Allow</string>
+    <string name="permission_granted">Allowed</string>
+    <string name="permission_location_title">Location</string>
+    <string name="permission_location_why">Finds the nearest shelter and shows where you are.</string>
+    <string name="permission_location_denied">Without it, routes to shelters won\'t start from where you are.</string>
+    <string name="permission_notifications_title">Notifications</string>
+    <string name="permission_notifications_why">Warns you when danger is close.</string>
+    <string name="permission_notifications_denied">Without it, you won\'t see alerts while the app is closed.</string>
+    <string name="permission_sms_title">Text messages</string>
+    <string name="permission_sms_why">Sends your SOS and reads official alerts with no internet.</string>
+    <string name="permission_sms_denied">Without it, SOS texts and offline alerts won\'t work.</string>
+    <string name="permission_open_settings">Open settings</string>
+
+    <!-- Placeholders -->
+
+    <!-- Main scaffold -->
+    <string name="main_title_home" translatable="false">Sahay</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_map">Map</string>
+    <string name="nav_alerts">Alerts</string>
+    <string name="nav_me">Me</string>
+    <plurals name="nav_alerts_unread">
+        <item quantity="one">Alerts, %1$d unread</item>
+        <item quantity="other">Alerts, %1$d unread</item>
+    </plurals>
+    <string name="conn_online">Online</string>
+    <string name="conn_sms_only">SMS only</string>
+    <string name="conn_offline">Offline</string>
+    <plurals name="conn_offline_phones">
+        <item quantity="one">Offline · %1$d phone nearby</item>
+        <item quantity="other">Offline · %1$d phones nearby</item>
+    </plurals>
+    <string name="works_title">What works right now</string>
+    <string name="works_saved_map">Your saved map and places</string>
+    <string name="works_alerts_online">Live alerts from the internet</string>
+    <string name="works_sms">Alerts and SOS by text message</string>
+    <string name="works_nearby">Alerts from phones nearby</string>
+    <string name="works_yes">Works</string>
+    <string name="works_no">Not available</string>
+    <string name="offline_banner_since">Offline — using saved data from %1$s</string>
+    <string name="offline_banner">Offline — using saved data</string>
+    <string name="soon_body">This screen is coming soon.</string>
+    <string name="soon_back">Go back</string>
+
+    <!-- Home -->
+    <string name="home_safe_title">You\'re safe</string>
+    <string name="home_safe_body">No active warnings for your area</string>
+    <string name="home_zone_title">You\'re in a flood-prone area</string>
+    <string name="home_zone_body">Know the way to your nearest shelter.</string>
+    <string name="home_warning_generic_body">Stay alert and follow local advice.</string>
+    <string name="home_simulation">Simulation</string>
+    <string name="home_weather">Today: %1$s mm rain · wind %2$s km/h · %3$s°C</string>
+    <string name="home_weather_none">No forecast for today</string>
+    <string name="home_no_pack_title">Download your trip pack</string>
+    <string name="home_no_pack_body">Get maps, shelters and advice that work without internet.</string>
+    <string name="home_no_pack_action">Download trip pack</string>
+    <string name="home_precautions">Precautions</string>
+    <string name="action_go_safety">Go to safety</string>
+    <string name="action_sos">SOS</string>
+    <string name="action_show_local">Show to a local</string>
+    <string name="action_report_hazard">Report a hazard</string>
+    <string name="action_find_people">Find people</string>
+    <string name="action_emergency_mode">Emergency Mode</string>
+
+    <!-- Trip setup -->
+    <string name="trip_region_title">Where are you going?</string>
+    <string name="trip_region_body">Choose the place you will visit.</string>
+    <string name="trip_regions_empty_title">No places yet</string>
+    <string name="trip_regions_empty_body">Places will appear here soon. Try again in a moment.</string>
+    <string name="trip_regions_error_title">Couldn\'t load places</string>
+    <string name="trip_regions_error_body">Check your connection and try again.</string>
+    <string name="trip_skip">Skip for now</string>
+    <string name="trip_dates_title">When will you be there?</string>
+    <string name="trip_dates_hint">Pick your first and last day. Up to 30 days.</string>
+    <string name="trip_dates_forecast_note">Forecast is available up to 16 days ahead.</string>
+    <string name="trip_dates_error_missing">Choose your first and last day.</string>
+    <string name="trip_dates_error_past">Your trip can\'t start in the past.</string>
+    <string name="trip_dates_error_order">Choose your first day before your last day.</string>
+    <string name="trip_dates_error_long">Choose 30 days or fewer.</string>
+    <string name="trip_download_action">Download trip pack</string>
+    <string name="trip_download_title">Saving your trip pack</string>
+    <string name="trip_download_wifi">Stay on Wi-Fi if you can.</string>
+    <string name="trip_download_percent">%1$d%%</string>
+    <string name="trip_step_manifest">Getting trip info</string>
+    <string name="trip_step_data">Saving places and roads</string>
+    <string name="trip_step_map">Saving the map</string>
+    <string name="trip_step_assets">Saving map labels</string>
+    <string name="trip_step_verify">Checking everything</string>
+    <string name="trip_step_done">Done</string>
+    <string name="trip_step_active">In progress</string>
+    <string name="trip_step_pending">Waiting</string>
+    <string name="trip_failed_title">The download didn\'t finish</string>
+    <string name="trip_failed_body">Check your connection and try again.</string>
+    <string name="trip_unavailable_body">This trip pack isn\'t available right now. Choose another place.</string>
+    <string name="trip_ready_title">You\'re ready to travel offline</string>
+    <string name="trip_ready_summary">%1$s · %2$s – %3$s</string>
+    <string name="trip_forecast">Forecast</string>
+    <string name="trip_forecast_empty">No forecast yet. Forecasts cover up to 16 days ahead.</string>
+    <string name="trip_forecast_rain">%1$s mm</string>
+    <string name="trip_forecast_wind">%1$s km/h</string>
+    <string name="risk_low">Low</string>
+    <string name="risk_moderate">Moderate</string>
+    <string name="risk_high">High</string>
+    <string name="risk_severe">Severe</string>
+    <string name="risk_unknown">Unknown</string>
+    <string name="trip_history">History</string>
+    <string name="trip_incidents">What happened here before</string>
+    <string name="trip_incident_source">Read the source</string>
+    <string name="trip_precautions">Before and during your trip</string>
+</resources>

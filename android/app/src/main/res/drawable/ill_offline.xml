@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Phone showing a map pin, with a crossed-out signal: "works offline". -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+    <path android:fillColor="#CDEDE9" android:pathData="M100,100m-90,0a90,90 0 1,1 180,0a90,90 0 1,1 -180,0" />
+    <path android:fillColor="#0B6E6E" android:pathData="M68,30h64a12,12 0 0 1 12,12v116a12,12 0 0 1 -12,12h-64a12,12 0 0 1 -12,-12v-116a12,12 0 0 1 12,-12z" />
+    <path android:fillColor="#F6F8F7" android:pathData="M72,48h56a4,4 0 0 1 4,4v92a4,4 0 0 1 -4,4h-56a4,4 0 0 1 -4,-4v-92a4,4 0 0 1 4,-4z" />
+    <path android:fillColor="#C62828" android:pathData="M100,70c-9,0 -16,7 -16,16c0,12 16,30 16,30s16,-18 16,-30c0,-9 -7,-16 -16,-16z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M100,86m-6,0a6,6 0 1,1 12,0a6,6 0 1,1 -12,0" />
+    <path android:fillColor="#0B6E6E" android:pathData="M76,132h48v6h-48z" />
+    <path android:fillColor="#0B6E6E" android:pathData="M76,144h30v6h-30z" />
+    <path android:strokeColor="#C62828" android:strokeWidth="6" android:strokeLineCap="round" android:pathData="M30,40L170,160" />
+</vector>

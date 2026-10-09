@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Speech bubble with a warning bell: "alerts in your language". -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+    <path android:fillColor="#CDEDE9" android:pathData="M100,100m-90,0a90,90 0 1,1 180,0a90,90 0 1,1 -180,0" />
+    <path android:fillColor="#0B6E6E" android:pathData="M48,44h104a12,12 0 0 1 12,12v64a12,12 0 0 1 -12,12h-60l-24,22v-22h-20a12,12 0 0 1 -12,-12v-64a12,12 0 0 1 12,-12z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M72,68h56v8h-56z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M72,86h40v8h-40z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M72,104h48v8h-48z" />
+    <path android:fillColor="#9A6700" android:pathData="M150,118m-26,0a26,26 0 1,1 52,0a26,26 0 1,1 -52,0" />
+    <path android:fillColor="#FFFFFF" android:pathData="M150,104c-8,0 -12,6 -12,14v8l-4,6h32l-4,-6v-8c0,-8 -4,-14 -12,-14z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M150,136m-4,0a4,4 0 1,1 8,0a4,4 0 1,1 -8,0" />
+</vector>
