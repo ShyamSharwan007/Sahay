@@ -127,8 +127,99 @@
     <string name="permission_open_settings">Open settings</string>
 
     <!-- Placeholders -->
-    <string name="placeholder_trip_title">Trip setup</string>
-    <string name="placeholder_trip_body">Choose your region and dates here. Coming soon.</string>
-    <string name="placeholder_main_title">Welcome to Sahay</string>
-    <string name="placeholder_main_body">Your profile is saved. The home screen is coming soon.</string>
+
+    <!-- Main scaffold -->
+    <string name="main_title_home" translatable="false">Sahay</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_map">Map</string>
+    <string name="nav_alerts">Alerts</string>
+    <string name="nav_me">Me</string>
+    <plurals name="nav_alerts_unread">
+        <item quantity="one">Alerts, %1$d unread</item>
+        <item quantity="other">Alerts, %1$d unread</item>
+    </plurals>
+    <string name="conn_online">Online</string>
+    <string name="conn_sms_only">SMS only</string>
+    <string name="conn_offline">Offline</string>
+    <plurals name="conn_offline_phones">
+        <item quantity="one">Offline · %1$d phone nearby</item>
+        <item quantity="other">Offline · %1$d phones nearby</item>
+    </plurals>
+    <string name="works_title">What works right now</string>
+    <string name="works_saved_map">Your saved map and places</string>
+    <string name="works_alerts_online">Live alerts from the internet</string>
+    <string name="works_sms">Alerts and SOS by text message</string>
+    <string name="works_nearby">Alerts from phones nearby</string>
+    <string name="works_yes">Works</string>
+    <string name="works_no">Not available</string>
+    <string name="offline_banner_since">Offline — using saved data from %1$s</string>
+    <string name="offline_banner">Offline — using saved data</string>
+    <string name="soon_body">This screen is coming soon.</string>
+    <string name="soon_back">Go back</string>
+
+    <!-- Home -->
+    <string name="home_safe_title">You\'re safe</string>
+    <string name="home_safe_body">No active warnings for your area</string>
+    <string name="home_zone_title">You\'re in a flood-prone area</string>
+    <string name="home_zone_body">Know the way to your nearest shelter.</string>
+    <string name="home_warning_generic_body">Stay alert and follow local advice.</string>
+    <string name="home_simulation">Simulation</string>
+    <string name="home_weather">Today: %1$s mm rain · wind %2$s km/h · %3$s°C</string>
+    <string name="home_weather_none">No forecast for today</string>
+    <string name="home_no_pack_title">Download your trip pack</string>
+    <string name="home_no_pack_body">Get maps, shelters and advice that work without internet.</string>
+    <string name="home_no_pack_action">Download trip pack</string>
+    <string name="home_precautions">Precautions</string>
+    <string name="action_go_safety">Go to safety</string>
+    <string name="action_sos">SOS</string>
+    <string name="action_show_local">Show to a local</string>
+    <string name="action_report_hazard">Report a hazard</string>
+    <string name="action_find_people">Find people</string>
+    <string name="action_emergency_mode">Emergency Mode</string>
+
+    <!-- Trip setup -->
+    <string name="trip_region_title">Where are you going?</string>
+    <string name="trip_region_body">Choose the place you will visit.</string>
+    <string name="trip_regions_empty_title">No places yet</string>
+    <string name="trip_regions_empty_body">Places will appear here soon. Try again in a moment.</string>
+    <string name="trip_regions_error_title">Couldn\'t load places</string>
+    <string name="trip_regions_error_body">Check your connection and try again.</string>
+    <string name="trip_skip">Skip for now</string>
+    <string name="trip_dates_title">When will you be there?</string>
+    <string name="trip_dates_hint">Pick your first and last day. Up to 30 days.</string>
+    <string name="trip_dates_forecast_note">Forecast is available up to 16 days ahead.</string>
+    <string name="trip_dates_error_missing">Choose your first and last day.</string>
+    <string name="trip_dates_error_past">Your trip can\'t start in the past.</string>
+    <string name="trip_dates_error_order">Choose your first day before your last day.</string>
+    <string name="trip_dates_error_long">Choose 30 days or fewer.</string>
+    <string name="trip_download_action">Download trip pack</string>
+    <string name="trip_download_title">Saving your trip pack</string>
+    <string name="trip_download_wifi">Stay on Wi-Fi if you can.</string>
+    <string name="trip_download_percent">%1$d%%</string>
+    <string name="trip_step_manifest">Getting trip info</string>
+    <string name="trip_step_data">Saving places and roads</string>
+    <string name="trip_step_map">Saving the map</string>
+    <string name="trip_step_assets">Saving map labels</string>
+    <string name="trip_step_verify">Checking everything</string>
+    <string name="trip_step_done">Done</string>
+    <string name="trip_step_active">In progress</string>
+    <string name="trip_step_pending">Waiting</string>
+    <string name="trip_failed_title">The download didn\'t finish</string>
+    <string name="trip_failed_body">Check your connection and try again.</string>
+    <string name="trip_unavailable_body">This trip pack isn\'t available right now. Choose another place.</string>
+    <string name="trip_ready_title">You\'re ready to travel offline</string>
+    <string name="trip_ready_summary">%1$s · %2$s – %3$s</string>
+    <string name="trip_forecast">Forecast</string>
+    <string name="trip_forecast_empty">No forecast yet. Forecasts cover up to 16 days ahead.</string>
+    <string name="trip_forecast_rain">%1$s mm</string>
+    <string name="trip_forecast_wind">%1$s km/h</string>
+    <string name="risk_low">Low</string>
+    <string name="risk_moderate">Moderate</string>
+    <string name="risk_high">High</string>
+    <string name="risk_severe">Severe</string>
+    <string name="risk_unknown">Unknown</string>
+    <string name="trip_history">History</string>
+    <string name="trip_incidents">What happened here before</string>
+    <string name="trip_incident_source">Read the source</string>
+    <string name="trip_precautions">Before and during your trip</string>
 </resources>

@@ -53,5 +53,9 @@ abstract class AppModule {
 
         @Provides @Singleton
         fun firebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
+
+        /** Injected so ViewModels can be tested with a fixed time. */
+        @Provides @Singleton
+        fun clock(): java.time.Clock = java.time.Clock.systemDefaultZone()
     }
 }
