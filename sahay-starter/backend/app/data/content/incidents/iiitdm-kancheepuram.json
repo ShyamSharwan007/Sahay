@@ -1,0 +1,83 @@
+[
+  {
+    "date": "2023-12-04",
+    "type": "cyclone",
+    "title": {
+      "en": "Cyclone Michaung (2023)",
+      "de": "Zyklon Michaung (2023)",
+      "fr": "Cyclone Michaung (2023)",
+      "es": "Ciclón Michaung (2023)",
+      "ru": "Циклон Михаунг (2023)",
+      "ja": "サイクロン・ミチョン（2023年）",
+      "ko": "사이클론 미챠웅 (2023)",
+      "zh": "迈绕气旋（2023年）",
+      "ar": "إعصار ميتشاونغ (2023)"
+    },
+    "summary": {
+      "en": "Cyclone Michaung brought severe rainfall and flooding to the Kancheepuram district (where IIITDM is located) on 4 December 2023. The campus area experienced power outages, waterlogging and disruption to roads. The cyclone made landfall near Bapatla, AP the following day.",
+      "de": "Zyklon Michaung brachte am 4. Dezember 2023 starken Regen und Überschwemmungen in den Distrikt Kancheepuram (wo sich IIITDM befindet). Der Campus-Bereich erlebte Stromausfälle und Straßenüberschwemmungen.",
+      "fr": "Le cyclone Michaung a apporté de fortes pluies et des inondations dans le district de Kancheepuram (où se trouve l'IIITDM) le 4 décembre 2023.",
+      "es": "El ciclón Michaung trajo lluvias intensas e inundaciones al distrito de Kancheepuram el 4 de diciembre de 2023, afectando el área del campus del IIITDM.",
+      "ru": "Циклон Михаунг принёс сильные дожди и наводнения в округ Канчипурам (где находится IIITDM) 4 декабря 2023 года.",
+      "ja": "サイクロン・ミチョンは2023年12月4日にカンチープラム地区（IIITDMのある場所）に大雨と洪水をもたらしました。",
+      "ko": "사이클론 미챠웅은 2023년 12월 4일 칸체푸람 지역(IIITDM이 위치한 곳)에 심한 강수와 홍수를 가져왔습니다.",
+      "zh": "迈绕气旋于2023年12月4日给甘吉布勒姆区（IIITDM所在地）带来强降雨和洪涝，校园区域经历了停电和道路积水。",
+      "ar": "أحضر إعصار ميتشاونغ أمطاراً غزيرة وفيضانات إلى منطقة كانشيبورام (حيث يقع IIITDM) في 4 ديسمبر 2023."
+    },
+    "sourceUrl": "https://en.wikipedia.org/wiki/Cyclone_Michaung"
+  },
+  {
+    "date": "2020-11-25",
+    "type": "cyclone",
+    "title": {
+      "en": "Cyclone Nivar (2020)",
+      "de": "Zyklon Nivar (2020)",
+      "fr": "Cyclone Nivar (2020)",
+      "es": "Ciclón Nivar (2020)",
+      "ru": "Циклон Нивар (2020)",
+      "ja": "サイクロン・ニヴァル（2020年）",
+      "ko": "사이클론 니바르 (2020)",
+      "zh": "尼瓦尔气旋（2020年）",
+      "ar": "إعصار نيفار (2020)"
+    },
+    "summary": {
+      "en": "Cyclone Nivar made landfall between Puducherry and Chennai on 25–26 November 2020, very close to the IIITDM Kancheepuram campus. The campus and surrounding roads experienced severe waterlogging and power cuts for multiple days.",
+      "de": "Zyklon Nivar traf in der Nacht des 25.–26. November 2020 zwischen Puducherry und Chennai auf Land, sehr nahe am IIITDM Kancheepuram Campus. Straßen waren tagelang überflutet.",
+      "fr": "Le cyclone Nivar a touché terre entre Pondichéry et Chennai les 25–26 novembre 2020, très proche du campus IIITDM Kancheepuram.",
+      "es": "El ciclón Nivar tocó tierra entre Puducherry y Chennai el 25–26 de noviembre de 2020, muy cerca del campus del IIITDM Kancheepuram.",
+      "ru": "Циклон Нивар вышел на берег между Пудучерри и Ченнаем 25–26 ноября 2020 года, вблизи кампуса IIITDM Канчипурам.",
+      "ja": "サイクロン・ニヴァルは2020年11月25〜26日にプドゥチェリーとチェンナイの間に上陸し、IIITDMカンチープラムキャンパスの非常に近くに位置しました。",
+      "ko": "사이클론 니바르는 2020년 11월 25~26일 푸두체리와 첸나이 사이에 상륙했으며, IIITDM 칸체푸람 캠퍼스 바로 인근에 영향을 미쳤습니다.",
+      "zh": "尼瓦尔气旋于2020年11月25至26日在本地治里和钦奈之间登陆，非常靠近IIITDM甘吉布勒姆校园，校园周边道路严重积水停电数天。",
+      "ar": "ضرب إعصار نيفار السواحل بين بوديتشيري وتشيناي في 25–26 نوفمبر 2020، بالقرب جداً من حرم IIITDM كانشيبورام."
+    },
+    "sourceUrl": "https://en.wikipedia.org/wiki/Cyclone_Nivar"
+  },
+  {
+    "date": "2015-12-01",
+    "type": "flood",
+    "title": {
+      "en": "2015 South India Floods",
+      "de": "Südindische Überschwemmungen 2015",
+      "fr": "Inondations du sud de l'Inde 2015",
+      "es": "Inundaciones del sur de India 2015",
+      "ru": "Наводнения в Южной Индии 2015 года",
+      "ja": "2015年南インド洪水",
+      "ko": "2015년 남인도 홍수",
+      "zh": "2015年南印度洪灾",
+      "ar": "فيضانات جنوب الهند 2015"
+    },
+    "summary": {
+      "en": "The 2015 northeast monsoon caused catastrophic flooding in Kanchipuram and Chennai districts. The IIITDM Kancheepuram area experienced severe waterlogging. Over 500 people died across Tamil Nadu and millions were displaced.",
+      "de": "Der Nordost-Monsun 2015 verursachte katastrophale Überschwemmungen in Kanchipuram und Chennai. Das IIITDM Kancheepuram-Gebiet war schwer überschwemmt. Über 500 Menschen starben in Tamil Nadu.",
+      "fr": "La mousson du nord-est de 2015 a provoqué des inondations catastrophiques dans les districts de Kanchipuram et Chennai. Plus de 500 personnes sont mortes au Tamil Nadu.",
+      "es": "El monzón del noreste de 2015 causó inundaciones catastróficas en Kanchipuram y Chennai. Más de 500 personas murieron en Tamil Nadu.",
+      "ru": "Северо-восточный муссон 2015 года вызвал катастрофические наводнения в округах Канчипурам и Ченнаи. Погибло более 500 человек в Тамилнаду.",
+      "ja": "2015年の北東モンスーンはカンチープラムとチェンナイ地区に壊滅的な洪水をもたらしました。500人以上がタミル・ナードゥ州で亡くなりました。",
+      "ko": "2015년 북동 몬순은 칸체푸람과 첸나이 지역에 대규모 홍수를 일으켰습니다. 타밀나두에서 500명 이상이 사망했습니다.",
+      "zh": "2015年东北季风在甘吉布勒姆和钦奈地区造成灾难性洪涝。IIITDM甘吉布勒姆地区严重积水。泰米尔纳德邦超过500人死亡。",
+      "ar": "تسبب موسم الرياح الموسمية الشمالية الشرقية لعام 2015 في فيضانات كارثية في منطقتي كانشيبورام وتشيناي. لقي أكثر من 500 شخص حتفهم في تاميل نادو."
+    },
+    "sourceUrl": "https://en.wikipedia.org/wiki/2015_South_India_floods"
+  }
+]

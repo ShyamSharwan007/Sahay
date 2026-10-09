@@ -1,0 +1,26 @@
+[
+  {
+    "name": "AIR FM Rainbow Chennai",
+    "frequency": "101.4 FM",
+    "lang": "en",
+    "source": "https://en.wikipedia.org/wiki/All_India_Radio"
+  },
+  {
+    "name": "AIR FM Gold Chennai",
+    "frequency": "100.1 FM",
+    "lang": "en",
+    "source": "https://en.wikipedia.org/wiki/All_India_Radio"
+  },
+  {
+    "name": "AIR Vividh Bharati Tamil Service",
+    "frequency": "102.3 FM",
+    "lang": "ta",
+    "source": "https://en.wikipedia.org/wiki/All_India_Radio"
+  },
+  {
+    "name": "AIR Chennai A (Akashvani Chennai, Medium Wave)",
+    "frequency": "720 kHz AM",
+    "lang": "ta",
+    "source": "https://en.wikipedia.org/wiki/All_India_Radio"
+  }
+]

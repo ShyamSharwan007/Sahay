@@ -1,0 +1,515 @@
+[
+  {
+    "id": "heavy_rain_indoor",
+    "severity": 1,
+    "trigger": "heavy_rain",
+    "title": {
+      "en": "Stay Away from Low-Lying Roads",
+      "de": "Meiden Sie tiefgelegene Straßen",
+      "fr": "Évitez les routes basses",
+      "es": "Evite las carreteras bajas",
+      "ru": "Избегайте низких дорог",
+      "ja": "低地の道路を避けてください",
+      "ko": "저지대 도로를 피하세요",
+      "zh": "避开低洼道路",
+      "ar": "تجنب الطرق المنخفضة"
+    },
+    "body": {
+      "en": "Heavy rain can cause sudden flooding on low-lying roads and underpasses. Choose elevated routes.",
+      "de": "Starker Regen kann plötzliche Überflutungen auf tiefliegenden Straßen verursachen. Wählen Sie erhöhte Routen.",
+      "fr": "Des pluies intenses peuvent provoquer des inondations soudaines sur les routes basses. Choisissez des itinéraires surélevés.",
+      "es": "Las lluvias intensas pueden causar inundaciones repentinas en carreteras bajas. Elija rutas elevadas.",
+      "ru": "Сильный дождь может вызвать внезапные наводнения на низких дорогах. Выбирайте возвышенные маршруты.",
+      "ja": "大雨は低地の道路に突然の洪水を引き起こす可能性があります。高い道路を選んでください。",
+      "ko": "폭우는 저지대 도로에서 갑작스러운 홍수를 일으킬 수 있습니다. 높은 경로를 선택하세요.",
+      "zh": "大雨可能导致低洼道路突然洪水泛滥。请选择较高的路线。",
+      "ar": "الأمطار الغزيرة قد تسبب فيضانات مفاجئة في الطرق المنخفضة. اختر طرقاً مرتفعة."
+    }
+  },
+  {
+    "id": "heavy_rain_drain",
+    "severity": 1,
+    "trigger": "heavy_rain",
+    "title": {
+      "en": "Keep Drains Clear",
+      "de": "Halten Sie Abflüsse frei",
+      "fr": "Gardez les canalisations dégagées",
+      "es": "Mantenga las desagües despejadas",
+      "ru": "Держите стоки свободными",
+      "ja": "排水溝を確保してください",
+      "ko": "배수구를 열어두세요",
+      "zh": "保持排水沟畅通",
+      "ar": "حافظ على نظافة المصارف"
+    },
+    "body": {
+      "en": "Clear debris from drains and gutters near your accommodation. Blocked drains worsen flooding.",
+      "de": "Entfernen Sie Ablagerungen aus Abflüssen in der Nähe Ihrer Unterkunft. Verstopfte Abflüsse verschlimmern Überschwemmungen.",
+      "fr": "Dégagez les débris des canalisations près de votre hébergement. Les canalisations bouchées aggravent les inondations.",
+      "es": "Limpie los desechos de los desagües cerca de su alojamiento. Los desagües bloqueados empeoran las inundaciones.",
+      "ru": "Уберите мусор со стоков рядом с вашим жильём. Заблокированные стоки усугубляют наводнение.",
+      "ja": "宿泊施設近くの排水溝から瓦礫を取り除いてください。詰まった排水溝は洪水を悪化させます。",
+      "ko": "숙소 근처 배수구에서 잔해를 치우세요. 막힌 배수구는 홍수를 악화시킵니다.",
+      "zh": "清除住所附近排水沟中的碎屑。堵塞的排水沟会加剧洪水。",
+      "ar": "أزل الحطام من المصارف بالقرب من إقامتك. المصارف المسدودة تفاقم الفيضانات."
+    }
+  },
+  {
+    "id": "heavy_rain_phone",
+    "severity": 1,
+    "trigger": "heavy_rain",
+    "title": {
+      "en": "Charge Your Phone Now",
+      "de": "Laden Sie Ihr Telefon jetzt auf",
+      "fr": "Chargez votre téléphone maintenant",
+      "es": "Cargue su teléfono ahora",
+      "ru": "Зарядите телефон сейчас",
+      "ja": "今すぐ電話を充電してください",
+      "ko": "지금 바로 전화기를 충전하세요",
+      "zh": "现在就给手机充电",
+      "ar": "اشحن هاتفك الآن"
+    },
+    "body": {
+      "en": "Heavy rain can cause power outages. Charge your phone, power bank and torch before the storm.",
+      "de": "Starker Regen kann Stromausfälle verursachen. Laden Sie Ihr Handy, Powerbank und Taschenlampe vor dem Sturm auf.",
+      "fr": "Les fortes pluies peuvent provoquer des pannes de courant. Chargez votre téléphone avant la tempête.",
+      "es": "Las fuertes lluvias pueden causar cortes de energía. Cargue su teléfono antes de la tormenta.",
+      "ru": "Сильный дождь может вызвать отключения электричества. Зарядите телефон и фонарик до шторма.",
+      "ja": "大雨は停電を引き起こす可能性があります。嵐の前に電話、モバイルバッテリー、懐中電灯を充電してください。",
+      "ko": "폭우는 정전을 일으킬 수 있습니다. 폭풍 전에 전화기, 보조 배터리, 손전등을 충전하세요.",
+      "zh": "大雨可能导致停电。在暴风雨前给手机、充电宝和手电筒充电。",
+      "ar": "الأمطار الغزيرة قد تتسبب في انقطاع الكهرباء. اشحن هاتفك وبطارية احتياطية ومصباحك قبل العاصفة."
+    }
+  },
+  {
+    "id": "very_heavy_rain_shelter",
+    "severity": 2,
+    "trigger": "very_heavy_rain",
+    "title": {
+      "en": "Move to a Safe Building",
+      "de": "In sicheres Gebäude gehen",
+      "fr": "Déplacez-vous dans un bâtiment sûr",
+      "es": "Muévase a un edificio seguro",
+      "ru": "Перейдите в безопасное здание",
+      "ja": "安全な建物に移動してください",
+      "ko": "안전한 건물로 이동하세요",
+      "zh": "转移到安全建筑",
+      "ar": "انتقل إلى مبنى آمن"
+    },
+    "body": {
+      "en": "Very heavy rain is dangerous. Seek solid shelter in an upper floor away from windows.",
+      "de": "Sehr starker Regen ist gefährlich. Suchen Sie festen Schutz im Obergeschoss fern von Fenstern.",
+      "fr": "Les très fortes pluies sont dangereuses. Cherchez un abri solide à un étage supérieur loin des fenêtres.",
+      "es": "Las lluvias muy intensas son peligrosas. Busque refugio sólido en un piso superior lejos de las ventanas.",
+      "ru": "Очень сильный дождь опасен. Укройтесь в прочном здании на верхнем этаже подальше от окон.",
+      "ja": "非常に強い雨は危険です。窓から離れた上階の頑丈な建物に避難してください。",
+      "ko": "매우 강한 폭우는 위험합니다. 창문에서 멀리 떨어진 위층의 견고한 건물에서 피신하세요.",
+      "zh": "大雨非常危险。请在远离窗户的上层坚固建筑中寻求庇护。",
+      "ar": "الأمطار الغزيرة جداً خطيرة. ابحث عن مأوى متين في الطابق العلوي بعيداً عن النوافذ."
+    }
+  },
+  {
+    "id": "very_heavy_rain_supplies",
+    "severity": 2,
+    "trigger": "very_heavy_rain",
+    "title": {
+      "en": "Stock Water and Food",
+      "de": "Wasser und Lebensmittel bevorraten",
+      "fr": "Réservez eau et nourriture",
+      "es": "Almacene agua y comida",
+      "ru": "Запасайтесь водой и едой",
+      "ja": "水と食料を確保してください",
+      "ko": "물과 음식을 비축하세요",
+      "zh": "储备水和食物",
+      "ar": "احتفظ بمياه وطعام"
+    },
+    "body": {
+      "en": "Fill water containers and stock dry food for 2 days. Shops may close during heavy rain.",
+      "de": "Füllen Sie Wassercontainer und bevorraten Sie Trockenfutter für 2 Tage. Geschäfte können bei starkem Regen schließen.",
+      "fr": "Remplissez des bidons d'eau et stockez des aliments secs pour 2 jours. Les magasins peuvent fermer.",
+      "es": "Llene contenedores de agua y almacene alimentos secos para 2 días. Las tiendas pueden cerrar.",
+      "ru": "Наполните ёмкости водой и запаситесь сухой едой на 2 дня. Магазины могут закрыться.",
+      "ja": "水容器を満たし、2日分の乾燥食品を確保してください。大雨中に店が閉まることがあります。",
+      "ko": "물 통을 채우고 2일분 건조 식품을 비축하세요. 폭우 중에 상점이 문을 닫을 수 있습니다.",
+      "zh": "装满水容器并储备2天的干粮。大雨期间商店可能关闭。",
+      "ar": "املأ أوعية المياه واحتفظ بطعام جاف ليومين. قد تغلق المتاجر خلال الأمطار الغزيرة."
+    }
+  },
+  {
+    "id": "very_heavy_rain_no_travel",
+    "severity": 2,
+    "trigger": "very_heavy_rain",
+    "title": {
+      "en": "Cancel All Travel Plans",
+      "de": "Reisepläne absagen",
+      "fr": "Annulez tous les plans de voyage",
+      "es": "Cancele todos los planes de viaje",
+      "ru": "Отменить все планы поездок",
+      "ja": "すべての旅行計画をキャンセル",
+      "ko": "모든 여행 계획을 취소하세요",
+      "zh": "取消所有旅行计划",
+      "ar": "إلغاء جميع خطط السفر"
+    },
+    "body": {
+      "en": "Very heavy rain causes dangerous road conditions. Cancel or postpone all travel until conditions improve.",
+      "de": "Sehr starker Regen verursacht gefährliche Straßenbedingungen. Alle Reisen absagen oder verschieben.",
+      "fr": "Les très fortes pluies créent des conditions routières dangereuses. Annulez ou reportez tous les voyages.",
+      "es": "Las lluvias muy intensas crean condiciones de carretera peligrosas. Cancele o posponga todos los viajes.",
+      "ru": "Очень сильный дождь создаёт опасные дорожные условия. Отмените или отложите все поездки.",
+      "ja": "非常に強い雨は危険な道路状況を引き起こします。状況が改善するまですべての旅行をキャンセルしてください。",
+      "ko": "매우 강한 폭우는 위험한 도로 상황을 만듭니다. 상황이 개선될 때까지 모든 여행을 취소하세요.",
+      "zh": "大雨会造成危险的道路状况。取消或推迟所有旅行直到情况改善。",
+      "ar": "الأمطار الغزيرة جداً تسبب ظروف طرق خطيرة. أجل أو أرجئ جميع السفريات حتى تتحسن الأحوال."
+    }
+  },
+  {
+    "id": "extreme_rain_evacuate",
+    "severity": 3,
+    "trigger": "extreme_rain",
+    "title": {
+      "en": "Go to Higher Ground Immediately",
+      "de": "Sofort auf höheres Gelände gehen",
+      "fr": "Montez immédiatement en altitude",
+      "es": "Vaya a terreno alto inmediatamente",
+      "ru": "Немедленно перейдите на возвышенность",
+      "ja": "直ちに高台に移動してください",
+      "ko": "즉시 고지대로 이동하세요",
+      "zh": "立即转移到高处",
+      "ar": "اذهب إلى أرض مرتفعة فوراً"
+    },
+    "body": {
+      "en": "Extreme rain causes life-threatening floods. Leave ground floors immediately and move to high ground.",
+      "de": "Extremer Regen verursacht lebensbedrohliche Überschwemmungen. Verlassen Sie das Erdgeschoss sofort.",
+      "fr": "Les pluies extrêmes provoquent des inondations mortelles. Quittez immédiatement les rez-de-chaussée.",
+      "es": "La lluvia extrema causa inundaciones mortales. Abandone inmediatamente los pisos bajos.",
+      "ru": "Экстремальный дождь вызывает опасные для жизни наводнения. Немедленно покиньте первый этаж.",
+      "ja": "極端な雨は生命を脅かす洪水を引き起こします。すぐに1階を離れ高台に移動してください。",
+      "ko": "극단적인 폭우는 생명을 위협하는 홍수를 일으킵니다. 즉시 1층을 떠나 고지대로 이동하세요.",
+      "zh": "极端大雨会引发危及生命的洪水。立即离开底层并转移到高处。",
+      "ar": "الأمطار الشديدة تسبب فيضانات تهدد الحياة. غادر الطوابق الأرضية فوراً وانتقل إلى مكان مرتفع."
+    }
+  },
+  {
+    "id": "extreme_rain_shelter",
+    "severity": 3,
+    "trigger": "extreme_rain",
+    "title": {
+      "en": "Use Official Shelters",
+      "de": "Offizielle Unterkünfte nutzen",
+      "fr": "Utilisez les abris officiels",
+      "es": "Use refugios oficiales",
+      "ru": "Используйте официальные убежища",
+      "ja": "公式の避難所を利用してください",
+      "ko": "공식 대피소를 이용하세요",
+      "zh": "使用官方避难所",
+      "ar": "استخدم الملاجئ الرسمية"
+    },
+    "body": {
+      "en": "During extreme rain, use only official shelters shown in this app. Avoid makeshift structures.",
+      "de": "Bei extremem Regen nur offizielle Unterkünfte nutzen. Behelfsbauten vermeiden.",
+      "fr": "Pendant les pluies extrêmes, n'utilisez que les abris officiels indiqués dans cette appli.",
+      "es": "Durante lluvias extremas, use solo los refugios oficiales mostrados en esta aplicación.",
+      "ru": "Во время сильных дождей используйте только официальные убежища, показанные в этом приложении.",
+      "ja": "極端な雨の間は、このアプリに表示されている公式の避難所のみを使用してください。",
+      "ko": "극단적인 폭우 중에는 이 앱에 표시된 공식 대피소만 이용하세요.",
+      "zh": "在极端大雨中，只使用此应用程序中显示的官方避难所。",
+      "ar": "خلال الأمطار الشديدة، استخدم فقط الملاجئ الرسمية المعروضة في هذا التطبيق."
+    }
+  },
+  {
+    "id": "extreme_rain_sos",
+    "severity": 3,
+    "trigger": "extreme_rain",
+    "title": {
+      "en": "Send Your Location to Contacts",
+      "de": "Standort an Kontakte senden",
+      "fr": "Envoyez votre position à vos contacts",
+      "es": "Envíe su ubicación a sus contactos",
+      "ru": "Отправьте своё местоположение контактам",
+      "ja": "連絡先に位置情報を送ってください",
+      "ko": "연락처에 위치를 전송하세요",
+      "zh": "将位置发送给联系人",
+      "ar": "أرسل موقعك إلى جهات اتصالك"
+    },
+    "body": {
+      "en": "During extreme rain, send your GPS location to emergency contacts via SMS so they can track you.",
+      "de": "Senden Sie Ihren GPS-Standort an Notfallkontakte per SMS, damit sie Sie verfolgen können.",
+      "fr": "Envoyez votre position GPS à vos contacts d'urgence par SMS pour qu'ils puissent vous localiser.",
+      "es": "Durante lluvias extremas, envíe su ubicación GPS a contactos de emergencia por SMS.",
+      "ru": "Во время экстремального дождя отправьте своё GPS-местоположение экстренным контактам по SMS.",
+      "ja": "極端な雨の間、緊急連絡先にGPS位置情報をSMSで送ってください。",
+      "ko": "극단적인 폭우 중에는 비상 연락처에 GPS 위치를 SMS로 전송하세요.",
+      "zh": "在极端大雨中，通过短信向紧急联系人发送您的GPS位置。",
+      "ar": "خلال الأمطار الشديدة، أرسل موقع GPS الخاص بك لجهات اتصال الطوارئ عبر الرسائل القصيرة."
+    }
+  },
+  {
+    "id": "cyclone_wind_indoors",
+    "severity": 2,
+    "trigger": "cyclone_wind",
+    "title": {
+      "en": "Stay Indoors During Cyclone",
+      "de": "Während des Zyklons drinnen bleiben",
+      "fr": "Restez à l'intérieur pendant le cyclone",
+      "es": "Quédese en casa durante el ciclón",
+      "ru": "Оставайтесь в помещении во время циклона",
+      "ja": "サイクロン中は屋内に留まってください",
+      "ko": "사이클론 중에는 실내에 머무세요",
+      "zh": "气旋期间留在室内",
+      "ar": "ابقَ في الداخل أثناء الإعصار"
+    },
+    "body": {
+      "en": "Strong cyclone winds can uproot trees and collapse structures. Stay in an interior room away from windows.",
+      "de": "Starke Zyklon-Winde können Bäume entwurzeln. Bleiben Sie in einem Innenraum fern von Fenstern.",
+      "fr": "Les vents cycloniques peuvent déraciner des arbres. Restez dans une pièce intérieure loin des fenêtres.",
+      "es": "Los vientos ciclónicos pueden derribar árboles. Quédese en una habitación interior lejos de las ventanas.",
+      "ru": "Сильные циклонические ветра могут вырывать деревья. Укройтесь в комнате без окон.",
+      "ja": "強いサイクロンの風は木を根こそぎにします。窓のない内部の部屋に留まってください。",
+      "ko": "강한 사이클론 바람은 나무를 뿌리째 뽑을 수 있습니다. 창문이 없는 내부 방에 머무세요.",
+      "zh": "强烈的气旋风可以连根拔起树木。留在远离窗户的内部房间。",
+      "ar": "رياح الإعصار القوية يمكن أن تقتلع الأشجار. ابقَ في غرفة داخلية بعيدة عن النوافذ."
+    }
+  },
+  {
+    "id": "cyclone_wind_secure",
+    "severity": 2,
+    "trigger": "cyclone_wind",
+    "title": {
+      "en": "Secure All Loose Objects",
+      "de": "Alle losen Gegenstände sichern",
+      "fr": "Sécurisez tous les objets non fixés",
+      "es": "Asegure todos los objetos sueltos",
+      "ru": "Закрепите все незафиксированные предметы",
+      "ja": "すべての固定されていない物を固定してください",
+      "ko": "모든 고정되지 않은 물체를 고정하세요",
+      "zh": "固定所有松散物品",
+      "ar": "ثبت جميع الأشياء غير المثبتة"
+    },
+    "body": {
+      "en": "Bring indoors or tie down furniture, bags and any loose items before cyclone winds arrive.",
+      "de": "Bringen Sie Möbel, Taschen und lose Gegenstände vor dem Zyklon ins Haus oder befestigen Sie sie.",
+      "fr": "Rentrez ou attachez les meubles et objets non fixés avant l'arrivée des vents cycloniques.",
+      "es": "Lleve adentro o amarre muebles, bolsas y objetos sueltos antes de la llegada de los vientos ciclónicos.",
+      "ru": "До прихода циклонических ветров занесите в помещение или закрепите мебель и незафиксированные предметы.",
+      "ja": "サイクロンの風が来る前に、家具、バッグ、固定されていない物を屋内に持ち込むか固定してください。",
+      "ko": "사이클론 바람이 오기 전에 가구, 가방, 고정되지 않은 물건을 실내로 가져오거나 고정하세요.",
+      "zh": "在气旋风到达之前，将家具、包和松散物品带入室内或固定好。",
+      "ar": "قبل وصول رياح الإعصار، أدخل الأثاث والحقائب والأشياء غير المثبتة إلى الداخل أو ثبتها."
+    }
+  },
+  {
+    "id": "cyclone_wind_emergency",
+    "severity": 3,
+    "trigger": "cyclone_wind",
+    "title": {
+      "en": "Know Emergency Numbers",
+      "de": "Notfallnummern kennen",
+      "fr": "Connaissez les numéros d'urgence",
+      "es": "Conozca los números de emergencia",
+      "ru": "Запомните экстренные номера",
+      "ja": "緊急番号を覚えてください",
+      "ko": "비상 전화번호를 알아두세요",
+      "zh": "了解紧急号码",
+      "ar": "تعرف على أرقام الطوارئ"
+    },
+    "body": {
+      "en": "Save 112 (police/fire/rescue), 108 (ambulance) and your country's embassy number before the cyclone.",
+      "de": "Speichern Sie 112 (Polizei/Feuerwehr), 108 (Krankenwagen) und die Botschaftsnummer vor dem Zyklon.",
+      "fr": "Sauvegardez 112, 108 et le numéro de votre ambassade avant le cyclone.",
+      "es": "Guarde el 112, el 108 y el número de su embajada antes del ciclón.",
+      "ru": "Сохраните номера 112, 108 и номер своего посольства до наступления циклона.",
+      "ja": "サイクロン前に112、108、自国の大使館番号を保存してください。",
+      "ko": "사이클론 전에 112, 108, 자국 대사관 번호를 저장하세요.",
+      "zh": "在气旋前保存112、108和您国家大使馆号码。",
+      "ar": "احفظ 112 و108 ورقم سفارة بلدك قبل الإعصار."
+    }
+  },
+  {
+    "id": "monsoon_season_documents",
+    "severity": 1,
+    "trigger": "monsoon_season",
+    "title": {
+      "en": "Keep Documents Waterproof",
+      "de": "Dokumente wasserdicht aufbewahren",
+      "fr": "Gardez vos documents à l'abri",
+      "es": "Mantenga los documentos impermeables",
+      "ru": "Храните документы в водонепроницаемом месте",
+      "ja": "書類を防水保管してください",
+      "ko": "서류를 방수 보관하세요",
+      "zh": "保持文件防水",
+      "ar": "احتفظ بالوثائق مقاومة للماء"
+    },
+    "body": {
+      "en": "Store passport and important documents in a sealed waterproof bag during monsoon season.",
+      "de": "Bewahren Sie Reisepass und wichtige Dokumente in einem versiegelten, wasserdichten Beutel auf.",
+      "fr": "Rangez votre passeport dans un sac étanche pendant la saison des moussons.",
+      "es": "Guarde el pasaporte en una bolsa sellada e impermeable durante la temporada de monzones.",
+      "ru": "Храните паспорт и важные документы в герметичном водонепроницаемом пакете в сезон муссонов.",
+      "ja": "モンスーンシーズン中はパスポートと重要書類を密封した防水バッグに保管してください。",
+      "ko": "몬순 시즌 동안 여권과 중요한 서류를 밀봉된 방수 가방에 보관하세요.",
+      "zh": "在季风季节将护照和重要文件存放在密封防水袋中。",
+      "ar": "احتفظ بجواز السفر والوثائق المهمة في كيس مانع للماء مختوم خلال موسم الرياح الموسمية."
+    }
+  },
+  {
+    "id": "monsoon_season_shelter",
+    "severity": 1,
+    "trigger": "monsoon_season",
+    "title": {
+      "en": "Know Your Nearest Shelter",
+      "de": "Nächste Unterkunft kennen",
+      "fr": "Connaissez l'abri le plus proche",
+      "es": "Conozca el refugio más cercano",
+      "ru": "Знайте ближайшее убежище",
+      "ja": "最寄りの避難所を把握してください",
+      "ko": "가장 가까운 대피소를 알아두세요",
+      "zh": "了解最近的避难所",
+      "ar": "اعرف أقرب ملجأ"
+    },
+    "body": {
+      "en": "Use this app to find and save the nearest emergency shelter before monsoon rains arrive.",
+      "de": "Nutzen Sie diese App, um vor dem Monsun die nächste Notunterkunft zu finden und zu speichern.",
+      "fr": "Utilisez cette appli pour trouver et sauvegarder l'abri d'urgence le plus proche avant les pluies.",
+      "es": "Use esta aplicación para encontrar y guardar el refugio de emergencia más cercano antes de las lluvias.",
+      "ru": "Используйте это приложение, чтобы найти и сохранить ближайшее аварийное убежище до прихода муссонных дождей.",
+      "ja": "モンスーンの雨が来る前に、このアプリを使って最寄りの緊急避難所を見つけて保存してください。",
+      "ko": "몬순 비가 오기 전에 이 앱을 사용하여 가장 가까운 비상 대피소를 찾고 저장하세요.",
+      "zh": "在季风雨来临前，使用此应用程序找到并保存最近的紧急避难所。",
+      "ar": "استخدم هذا التطبيق للعثور على أقرب ملجأ طوارئ وحفظه قبل وصول أمطار الرياح الموسمية."
+    }
+  },
+  {
+    "id": "monsoon_season_numbers",
+    "severity": 1,
+    "trigger": "monsoon_season",
+    "title": {
+      "en": "Save Emergency Numbers",
+      "de": "Notfallnummern speichern",
+      "fr": "Sauvegardez les numéros d'urgence",
+      "es": "Guarde los números de emergencia",
+      "ru": "Сохраните экстренные номера",
+      "ja": "緊急番号を保存してください",
+      "ko": "비상 전화번호를 저장하세요",
+      "zh": "保存紧急号码",
+      "ar": "احفظ أرقام الطوارئ"
+    },
+    "body": {
+      "en": "Save 112 (police/fire), 108 (ambulance) and your embassy's emergency line in your phone now.",
+      "de": "Speichern Sie 112, 108 und die Notfallnummer Ihrer Botschaft jetzt in Ihrem Telefon.",
+      "fr": "Sauvegardez le 112, le 108 et la ligne d'urgence de votre ambassade maintenant.",
+      "es": "Guarde ahora el 112, el 108 y la línea de emergencia de su embajada en su teléfono.",
+      "ru": "Сохраните в телефоне номера 112, 108 и экстренную линию своего посольства.",
+      "ja": "今すぐ電話に112、108、大使館の緊急番号を保存してください。",
+      "ko": "지금 바로 112, 108, 대사관 비상 연락처를 전화기에 저장하세요.",
+      "zh": "现在就在手机中保存112、108和大使馆紧急联系号码。",
+      "ar": "احفظ الآن 112 و108 وخط الطوارئ لسفارتك في هاتفك."
+    }
+  },
+  {
+    "id": "monsoon_season_northeast",
+    "severity": 1,
+    "trigger": "monsoon_season",
+    "title": {
+      "en": "Northeast Monsoon Season (Oct–Dec)",
+      "de": "Nordost-Monsun-Saison (Okt–Dez)",
+      "fr": "Mousson du nord-est (oct–déc)",
+      "es": "Temporada de monzón del noreste (oct–dic)",
+      "ru": "Сезон северо-восточного муссона (октябрь–декабрь)",
+      "ja": "北東モンスーンシーズン（10月～12月）",
+      "ko": "북동 몬순 시즌 (10월~12월)",
+      "zh": "东北季风季节（10–12月）",
+      "ar": "موسم الرياح الموسمية الشمالية الشرقية (أكتوبر–ديسمبر)"
+    },
+    "body": {
+      "en": "Chennai and Mahabalipuram receive most of their annual rainfall Oct–Dec. Expect heavy rain episodes.",
+      "de": "Chennai und Mahabalipuram erhalten ihren größten Teil der Jahresniederschläge von Oktober bis Dezember.",
+      "fr": "Chennai et Mahabalipuram reçoivent la majeure partie de leurs précipitations annuelles d'oct. à déc.",
+      "es": "Chennai y Mahabalipuram reciben la mayor parte de su lluvia anual de oct. a dic. Espere episodios de lluvia intensa.",
+      "ru": "Ченнаи и Махабалипурам получают большую часть годовых осадков с октября по декабрь.",
+      "ja": "チェンナイとマハーバリプラムは10月から12月にかけて年間降水量の大部分を受け取ります。",
+      "ko": "첸나이와 마하발리푸람은 연간 강수량의 대부분을 10월부터 12월 사이에 받습니다.",
+      "zh": "钦奈和马哈巴利普兰的年降水量主要集中在10月至12月。",
+      "ar": "تحصل تشيناي ومهابالبورام على معظم هطولها السنوي من أكتوبر إلى ديسمبر."
+    }
+  },
+  {
+    "id": "always_emergency_contacts",
+    "severity": 0,
+    "trigger": "always",
+    "title": {
+      "en": "Share Your Itinerary",
+      "de": "Reiseplan teilen",
+      "fr": "Partagez votre itinéraire",
+      "es": "Comparta su itinerario",
+      "ru": "Поделитесь своим маршрутом",
+      "ja": "旅程を共有してください",
+      "ko": "일정을 공유하세요",
+      "zh": "分享您的行程",
+      "ar": "شارك مسار رحلتك"
+    },
+    "body": {
+      "en": "Tell someone at home your daily plans and hotel details. Check in with them each day.",
+      "de": "Teilen Sie Ihre Tagespläne und Hoteldaten mit jemandem zu Hause. Melden Sie sich täglich.",
+      "fr": "Dites à quelqu'un chez vous vos plans quotidiens et les détails de votre hôtel. Donnez-vous des nouvelles chaque jour.",
+      "es": "Informe a alguien en casa sus planes diarios y datos del hotel. Comuníquese cada día.",
+      "ru": "Сообщите кому-то дома о своих ежедневных планах и данных отеля. Выходите на связь каждый день.",
+      "ja": "毎日の計画とホテルの詳細を自宅の誰かに伝えてください。毎日連絡してください。",
+      "ko": "집에 있는 누군가에게 매일 계획과 호텔 정보를 알려주세요. 매일 연락하세요.",
+      "zh": "告诉家人您每天的计划和酒店信息。每天与他们联系。",
+      "ar": "أخبر شخصاً في المنزل بخططك اليومية وتفاصيل الفندق. تواصل معهم كل يوم."
+    }
+  },
+  {
+    "id": "always_phone_charge",
+    "severity": 0,
+    "trigger": "always",
+    "title": {
+      "en": "Keep Your Phone Charged",
+      "de": "Telefon aufgeladen halten",
+      "fr": "Gardez votre téléphone chargé",
+      "es": "Mantenga su teléfono cargado",
+      "ru": "Держите телефон заряженным",
+      "ja": "電話を充電したままにしてください",
+      "ko": "전화기를 항상 충전 상태로 유지하세요",
+      "zh": "保持手机充电",
+      "ar": "حافظ على شحن هاتفك"
+    },
+    "body": {
+      "en": "Always keep your phone above 50% charge. Carry a power bank when exploring.",
+      "de": "Halten Sie Ihr Telefon stets über 50% geladen. Nehmen Sie eine Powerbank mit.",
+      "fr": "Gardez votre téléphone chargé à plus de 50%. Emportez une batterie externe.",
+      "es": "Mantenga su teléfono siempre por encima del 50% de carga. Lleve una batería externa.",
+      "ru": "Всегда держите заряд телефона выше 50%. При прогулках берите с собой павербанк.",
+      "ja": "電話の充電を常に50%以上に保ってください。外出時はモバイルバッテリーを持ちましょう。",
+      "ko": "전화기 배터리를 항상 50% 이상 유지하세요. 외출 시 보조 배터리를 가져가세요.",
+      "zh": "始终保持手机电量在50%以上。外出时携带充电宝。",
+      "ar": "احتفظ دائماً بشحن هاتفك فوق 50%. أحمل بطارية احتياطية عند الاستكشاف."
+    }
+  },
+  {
+    "id": "always_nearest_shelter",
+    "severity": 0,
+    "trigger": "always",
+    "title": {
+      "en": "Know Your Evacuation Route",
+      "de": "Evakuierungsweg kennen",
+      "fr": "Connaissez votre itinéraire d'évacuation",
+      "es": "Conozca su ruta de evacuación",
+      "ru": "Знайте свой маршрут эвакуации",
+      "ja": "避難ルートを把握してください",
+      "ko": "대피 경로를 알아두세요",
+      "zh": "了解您的疏散路线",
+      "ar": "تعرف على مسار الإخلاء الخاص بك"
+    },
+    "body": {
+      "en": "Before you explore, open this app and note the nearest shelter and hospital location.",
+      "de": "Öffnen Sie diese App vor dem Erkunden und merken Sie sich den nächsten Schutzraum und das nächste Krankenhaus.",
+      "fr": "Avant d'explorer, ouvrez cette appli et notez l'emplacement de l'abri et l'hôpital les plus proches.",
+      "es": "Antes de explorar, abra esta aplicación y anote la ubicación del refugio y hospital más cercanos.",
+      "ru": "Перед прогулками откройте это приложение и запомните местоположение ближайшего убежища и больницы.",
+      "ja": "探索する前に、このアプリを開いて最寄りの避難所と病院の場所を確認してください。",
+      "ko": "탐험 전에 이 앱을 열어 가장 가까운 대피소와 병원 위치를 메모해 두세요.",
+      "zh": "在探索之前，打开此应用程序并记下最近的避难所和医院位置。",
+      "ar": "قبل الاستكشاف، افتح هذا التطبيق ولاحظ موقع أقرب ملجأ ومستشفى."
+    }
+  }
+]
