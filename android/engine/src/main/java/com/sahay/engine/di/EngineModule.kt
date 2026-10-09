@@ -7,21 +7,21 @@ import com.sahay.core.contracts.RiskMonitor
 import com.sahay.core.contracts.RoutingEngine
 import com.sahay.engine.fake.FakeEmergencyModeController
 import com.sahay.engine.fake.FakeLocationProvider
-import com.sahay.engine.fake.FakePackRepository
 import com.sahay.engine.fake.FakeRiskMonitor
 import com.sahay.engine.fake.FakeRoutingEngine
+import com.sahay.engine.pack.RealPackRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
-/** Phase 0: every binding points at a fake. Person B swaps them for the real engine. */
+/** Real pack repository; the other bindings still point at fakes until the rest of the engine lands. */
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class EngineModule {
     @Binds @Singleton
-    abstract fun packRepository(impl: FakePackRepository): PackRepository
+    abstract fun packRepository(impl: RealPackRepository): PackRepository
 
     @Binds @Singleton
     abstract fun locationProvider(impl: FakeLocationProvider): LocationProvider

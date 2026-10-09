@@ -1,0 +1,10 @@
+{
+  "mahabalipuram": {
+    "name": "Mahabalipuram",
+    "bbox": [80.16, 12.59, 80.21, 12.65]
+  },
+  "iiitdm-kancheepuram": {
+    "name": "IIITDM Kancheepuram",
+    "bbox": [80.13, 12.82, 80.18, 12.86]
+  }
+}
