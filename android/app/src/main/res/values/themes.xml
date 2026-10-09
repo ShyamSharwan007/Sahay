@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Sahay" parent="Theme.AppCompat.DayNight.NoActionBar" />
+
+    <style name="Theme.Sahay.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/sahay_teal</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+        <item name="postSplashScreenTheme">@style/Theme.Sahay</item>
+    </style>
+</resources>
