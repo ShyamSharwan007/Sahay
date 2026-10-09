@@ -62,3 +62,54 @@ class AdminOverview(CamelModel):
     groups: int
     beacons: int
     sms_sent_today: int
+
+
+class ForecastDay(CamelModel):
+    date: str
+    rain_mm: float
+    wind_kmh: float
+    max_temp_c: float
+    risk_level: str
+
+
+class HistorySummary(CamelModel):
+    years: list[int]
+    avg_rain_mm: float
+    heavy_rain_days: int
+    summary: dict[str, str]
+
+
+class Incident(CamelModel):
+    date: str
+    type: str
+    title: dict[str, str]
+    summary: dict[str, str]
+    source_url: str | None = None
+
+
+class Precaution(CamelModel):
+    id: str
+    severity: int
+    title: dict[str, str]
+    body: dict[str, str]
+
+
+class ManifestResponse(CamelModel):
+    region_id: str
+    region_name: str
+    pack_version: str
+    bbox: list[float]
+    sqlite_url: str | None
+    sqlite_bytes: int | None
+    sqlite_sha256: str | None
+    pmtiles_url: str | None
+    pmtiles_bytes: int | None
+    style_light_url: str | None
+    style_dark_url: str | None
+    assets_zip_url: str | None
+    assets_zip_bytes: int | None
+    public_key_b64: str
+    forecast: list[ForecastDay]
+    history: HistorySummary | dict
+    incidents: list[Incident]
+    precautions: list[Precaution]

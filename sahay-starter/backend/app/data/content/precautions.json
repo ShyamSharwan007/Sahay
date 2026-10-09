@@ -1,0 +1,35 @@
+[
+  {
+    "id": "p_general_1",
+    "trigger": "always",
+    "severity": 1,
+    "title": {
+      "en": "Save emergency numbers"
+    },
+    "body": {
+      "en": "Call 112 for all emergencies."
+    }
+  },
+  {
+    "id": "p_monsoon",
+    "trigger": "monsoon_season",
+    "severity": 1,
+    "title": {
+      "en": "Northeast Monsoon"
+    },
+    "body": {
+      "en": "Expect frequent rain between October and December."
+    }
+  },
+  {
+    "id": "p_flood_1",
+    "trigger": "heavy_rain",
+    "severity": 2,
+    "title": {
+      "en": "Avoid flooded roads"
+    },
+    "body": {
+      "en": "Water may be deeper than it appears."
+    }
+  }
+]

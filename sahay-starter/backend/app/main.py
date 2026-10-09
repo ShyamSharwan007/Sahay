@@ -22,7 +22,7 @@ from slowapi.errors import RateLimitExceeded
 from app.config import settings
 from app.db.session import init_db
 from app.limiter import limiter
-from app.routers import admin, admin_ui, alerts, health, shelters
+from app.routers import admin, admin_ui, alerts, health, packs, shelters
 
 logging.basicConfig(
     level=logging.INFO,
@@ -76,6 +76,17 @@ def create_app() -> FastAPI:
         )
         return response
 
+    from starlette.exceptions import HTTPException as StarletteHTTPException
+
+    @application.exception_handler(StarletteHTTPException)
+    async def custom_http_exception_handler(request: Request, exc: StarletteHTTPException):
+        if isinstance(exc.detail, dict) and "error" in exc.detail:
+            return JSONResponse(status_code=exc.status_code, content=exc.detail)
+        return JSONResponse(
+            status_code=exc.status_code,
+            content={"error": {"code": "HTTP_ERROR", "message": str(exc.detail)}}
+        )
+
     # --- Global error handler ---
     @application.exception_handler(Exception)
     async def global_error_handler(request: Request, exc: Exception):
@@ -93,6 +104,7 @@ def create_app() -> FastAPI:
     application.include_router(alerts.router, prefix="/api/v1")
     application.include_router(shelters.router, prefix="/api/v1")
     application.include_router(admin.router, prefix="/api/v1")
+    application.include_router(packs.router, prefix="/api/v1")
 
     # UI router directly at root or /admin
     application.include_router(admin_ui.router)
