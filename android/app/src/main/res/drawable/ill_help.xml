@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Big round button with a cross and ripples: "help is one tap away". -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+    <path android:fillColor="#CDEDE9" android:pathData="M100,100m-90,0a90,90 0 1,1 180,0a90,90 0 1,1 -180,0" />
+    <path android:fillColor="#F4C7C3" android:pathData="M100,100m-68,0a68,68 0 1,1 136,0a68,68 0 1,1 -136,0" />
+    <path android:fillColor="#E88A84" android:pathData="M100,100m-54,0a54,54 0 1,1 108,0a54,54 0 1,1 -108,0" />
+    <path android:fillColor="#C62828" android:pathData="M100,100m-40,0a40,40 0 1,1 80,0a40,40 0 1,1 -80,0" />
+    <path android:fillColor="#FFFFFF" android:pathData="M94,78h12v16h16v12h-16v16h-12v-16h-16v-12h16z" />
+</vector>

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Language names are shown in their own language, never translated. -->
+    <string name="lang_en" translatable="false">English</string>
+    <string name="lang_de" translatable="false">Deutsch</string>
+    <string name="lang_fr" translatable="false">Français</string>
+    <string name="lang_es" translatable="false">Español</string>
+    <string name="lang_ru" translatable="false">Русский</string>
+    <string name="lang_ja" translatable="false">日本語</string>
+    <string name="lang_ko" translatable="false">한국어</string>
+    <string name="lang_zh" translatable="false">中文</string>
+    <string name="lang_ar" translatable="false">العربية</string>
+
+    <!-- Common -->
+    <string name="action_back">Back</string>
+    <string name="action_next">Next</string>
+    <string name="action_skip">Skip</string>
+    <string name="action_continue">Continue</string>
+    <string name="action_finish">Finish</string>
+    <string name="action_retry">Try again</string>
+    <string name="action_remove">Remove</string>
+    <string name="action_close">Close</string>
+    <string name="loading">Loading</string>
+
+    <!-- Language picker -->
+    <string name="language_title">Choose your language</string>
+    <string name="language_subtitle">Alerts and help will use this language.</string>
+    <string name="language_selected">Selected</string>
+
+    <!-- Welcome -->
+    <string name="welcome_get_started">Get started</string>
+    <string name="welcome_slide1_title">Works offline</string>
+    <string name="welcome_slide1_body">Maps, shelters and routes are saved on your phone. No signal needed.</string>
+    <string name="welcome_slide2_title">Alerts in your language</string>
+    <string name="welcome_slide2_body">Official warnings are translated into words you understand.</string>
+    <string name="welcome_slide3_title">Help is one tap away</string>
+    <string name="welcome_slide3_body">Send an SOS text to your contacts, even with no internet.</string>
+    <string name="welcome_page_indicator">Page %1$d of %2$d</string>
+
+    <!-- Sign in -->
+    <string name="signin_title">Sign in to Sahay</string>
+    <string name="signin_body">You need internet once to sign in. After that, Sahay works offline.</string>
+    <string name="signin_google">Continue with Google</string>
+    <string name="signin_guest">Continue as guest</string>
+    <string name="signin_error_no_internet_title">You need internet once to sign in</string>
+    <string name="signin_error_no_internet_body">Connect to Wi-Fi or mobile data, then try again.</string>
+    <string name="signin_error_no_account_title">No Google account found</string>
+    <string name="signin_error_no_account_body">Add a Google account in Settings, or continue as a guest.</string>
+    <string name="signin_error_failed_title">Couldn\'t sign you in</string>
+    <string name="signin_error_failed_body">Something went wrong. Try again, or continue as a guest.</string>
+
+    <!-- Wizard shell -->
+    <string name="wizard_step_of">Step %1$d of %2$d</string>
+    <string name="wizard_save_failed_title">Couldn\'t save your details</string>
+    <string name="wizard_save_failed_body">Check that you are signed in, then try again.</string>
+
+    <!-- Step 1: Essentials -->
+    <string name="essentials_title">About you</string>
+    <string name="essentials_body">Rescuers and locals see this on your help card.</string>
+    <string name="essentials_name">Your name</string>
+    <string name="essentials_name_error">Enter your name.</string>
+    <string name="essentials_nationality">Nationality</string>
+    <string name="essentials_nationality_empty">Choose your country</string>
+    <string name="essentials_nationality_search">Search countries</string>
+    <string name="essentials_nationality_none">No country matches your search.</string>
+    <string name="essentials_phone">Phone with country code (optional)</string>
+    <string name="essentials_phone_hint">+49 151 2345 6789</string>
+    <string name="essentials_phone_error">Start with + and the country code, for example +49.</string>
+
+    <!-- Step 2: Medical -->
+    <string name="medical_title">Medical details</string>
+    <string name="medical_body">Optional — helps rescuers.</string>
+    <string name="medical_blood_group">Blood group</string>
+    <string name="medical_blood_unknown">Don\'t know</string>
+    <string name="medical_allergies">Allergies</string>
+    <string name="medical_medications">Medications</string>
+    <string name="medical_conditions">Medical conditions</string>
+    <string name="medical_quick_add">Quick add</string>
+    <string name="medical_chip_penicillin">Penicillin</string>
+    <string name="medical_chip_nuts">Nuts</string>
+    <string name="medical_chip_asthma">Asthma</string>
+    <string name="medical_chip_diabetes">Diabetes</string>
+
+    <!-- Step 3: Contacts -->
+    <string name="contacts_title">Emergency contacts</string>
+    <string name="contacts_body">We text them if you send an SOS. Add 1 to 3 people.</string>
+    <string name="contacts_card_title">Contact %1$d</string>
+    <string name="contacts_name">Name</string>
+    <string name="contacts_name_error">Enter a name.</string>
+    <string name="contacts_phone">Phone with country code</string>
+    <string name="contacts_phone_error">Start with + and the country code, for example +49.</string>
+    <string name="contacts_relation">Relation</string>
+    <string name="contacts_relation_error">Choose a relation.</string>
+    <string name="contacts_add">Add another contact</string>
+    <string name="relation_parent">Parent</string>
+    <string name="relation_partner">Partner</string>
+    <string name="relation_sibling">Sibling</string>
+    <string name="relation_friend">Friend</string>
+    <string name="relation_other">Other</string>
+
+    <!-- Step 4: Where you stay -->
+    <string name="stay_title">Where you stay</string>
+    <string name="stay_body">Optional. Shown on your help card for locals.</string>
+    <string name="stay_hotel_name">Hotel or place name</string>
+    <string name="stay_hotel_address">Address</string>
+
+    <!-- Step 5: Privacy -->
+    <string name="privacy_title">Your privacy</string>
+    <string name="privacy_group_finder">Help me find nearby groups</string>
+    <string name="privacy_group_finder_body">Only groups of 5 or more people are shown. Nobody sees you personally.</string>
+    <string name="privacy_medical_note">Medical details stay on this phone. They\'re only sent in an SOS text you choose to send.</string>
+
+    <!-- Step 6: Permissions -->
+    <string name="permissions_title">Allow what Sahay needs</string>
+    <string name="permissions_body">You can change these later in Settings.</string>
+    <string name="permission_allow">Allow</string>
+    <string name="permission_granted">Allowed</string>
+    <string name="permission_location_title">Location</string>
+    <string name="permission_location_why">Finds the nearest shelter and shows where you are.</string>
+    <string name="permission_location_denied">Without it, routes to shelters won\'t start from where you are.</string>
+    <string name="permission_notifications_title">Notifications</string>
+    <string name="permission_notifications_why">Warns you when danger is close.</string>
+    <string name="permission_notifications_denied">Without it, you won\'t see alerts while the app is closed.</string>
+    <string name="permission_sms_title">Text messages</string>
+    <string name="permission_sms_why">Sends your SOS and reads official alerts with no internet.</string>
+    <string name="permission_sms_denied">Without it, SOS texts and offline alerts won\'t work.</string>
+    <string name="permission_open_settings">Open settings</string>
+
+    <!-- Placeholders -->
+    <string name="placeholder_trip_title">Trip setup</string>
+    <string name="placeholder_trip_body">Choose your region and dates here. Coming soon.</string>
+    <string name="placeholder_main_title">Welcome to Sahay</string>
+    <string name="placeholder_main_body">Your profile is saved. The home screen is coming soon.</string>
+</resources>
