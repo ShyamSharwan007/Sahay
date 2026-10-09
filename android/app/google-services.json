@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "649539640951",
+    "project_id": "sahay-8e275",
+    "storage_bucket": "sahay-8e275.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:649539640951:android:23ec5712f6e394552cf072",
+        "android_client_info": {
+          "package_name": "com.sahay"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "649539640951-aaf1541l4ovlrtlp8ia6qbqlc822muut.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sahay",
+            "certificate_hash": "8d127b3b06676016df93b73615c947a9b268cdbf"
+          }
+        },
+        {
+          "client_id": "649539640951-ga0r3gge9nqmf88rkqddh4h5tdh2k19u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBX8NJ4-_6W_po32rKwgPTXEry5VwWaVfw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "649539640951-ga0r3gge9nqmf88rkqddh4h5tdh2k19u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
