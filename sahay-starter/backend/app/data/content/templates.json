@@ -1,0 +1,502 @@
+{
+  "RAIN_HVY": {
+    "severity": 1,
+    "title": {
+      "en": "Heavy Rain Expected",
+      "de": "Starkregen erwartet",
+      "fr": "Fortes pluies attendues",
+      "es": "Lluvia intensa esperada",
+      "ru": "Ожидается сильный дождь",
+      "ja": "大雨の見込み",
+      "ko": "폭우 예상",
+      "zh": "预计大雨",
+      "ar": "أمطار غزيرة متوقعة"
+    },
+    "body": {
+      "en": "Heavy rain expected in the area. Avoid low-lying roads and underpasses.",
+      "de": "Starkregen erwartet. Meiden Sie tiefgelegene Straßen und Unterführungen.",
+      "fr": "Fortes pluies attendues. Évitez les routes basses et les passages souterrains.",
+      "es": "Se esperan fuertes lluvias. Evite carreteras bajas y pasos subterráneos.",
+      "ru": "Ожидается сильный дождь. Избегайте низких дорог и тоннелей.",
+      "ja": "大雨が予想されます。低い道路や地下道を避けてください。",
+      "ko": "폭우가 예상됩니다. 저지대 도로와 지하도를 피하세요.",
+      "zh": "预计大雨。请避开低洼道路和地下通道。",
+      "ar": "أمطار غزيرة متوقعة. تجنب الطرق المنخفضة والأنفاق."
+    }
+  },
+  "RAIN_XHVY": {
+    "severity": 2,
+    "title": {
+      "en": "Very Heavy Rain Expected",
+      "de": "Sehr starker Regen erwartet",
+      "fr": "Très fortes pluies attendues",
+      "es": "Lluvias muy intensas esperadas",
+      "ru": "Ожидаются очень сильные дожди",
+      "ja": "非常に強い雨の見込み",
+      "ko": "매우 강한 폭우 예상",
+      "zh": "预计非常大的雨",
+      "ar": "أمطار غزيرة جداً متوقعة"
+    },
+    "body": {
+      "en": "Very heavy rain expected. Stay indoors and avoid all travel if possible.",
+      "de": "Sehr starker Regen erwartet. Bleiben Sie drinnen und meiden Sie Reisen.",
+      "fr": "Très fortes pluies attendues. Restez à l'intérieur et évitez tout déplacement.",
+      "es": "Se esperan lluvias muy intensas. Quédese en casa y evite viajar si es posible.",
+      "ru": "Ожидаются очень сильные дожди. Оставайтесь в помещении и по возможности не выезжайте.",
+      "ja": "非常に強い雨が予想されます。屋内に留まり、可能であれば移動を避けてください。",
+      "ko": "매우 강한 폭우가 예상됩니다. 실내에 머물고 가능하면 이동을 자제하세요.",
+      "zh": "预计非常大的雨。请留在室内，尽量避免出行。",
+      "ar": "أمطار غزيرة جداً متوقعة. ابقَ في الداخل وتجنب السفر إن أمكن."
+    }
+  },
+  "FLD_WATCH": {
+    "severity": 1,
+    "title": {
+      "en": "Flood Watch Issued",
+      "de": "Hochwasserwarnung ausgegeben",
+      "fr": "Surveillance de crue émise",
+      "es": "Alerta de inundación emitida",
+      "ru": "Объявлено наблюдение за наводнением",
+      "ja": "洪水注意報発令",
+      "ko": "홍수 주의보 발령",
+      "zh": "洪水观察警告",
+      "ar": "تحذير مراقبة الفيضانات"
+    },
+    "body": {
+      "en": "Flooding possible in low-lying areas. Monitor local updates and be ready to move.",
+      "de": "Überschwemmungen in Tieflagen möglich. Beobachten Sie lokale Updates und seien Sie bereit zu gehen.",
+      "fr": "Inondations possibles dans les zones basses. Suivez les mises à jour locales et soyez prêt à partir.",
+      "es": "Posibles inundaciones en zonas bajas. Monitoree las actualizaciones locales y esté listo para moverse.",
+      "ru": "Возможны наводнения в низинах. Следите за местными новостями и будьте готовы к эвакуации.",
+      "ja": "低地での洪水の可能性があります。地元の情報を確認し、移動の準備をしてください。",
+      "ko": "저지대에서 홍수 가능성이 있습니다. 지역 업데이트를 모니터링하고 이동 준비를 하세요.",
+      "zh": "低洼地区可能发生洪水。请关注当地更新并准备好疏散。",
+      "ar": "فيضانات محتملة في المناطق المنخفضة. راقب التحديثات المحلية وكن مستعداً للتحرك."
+    }
+  },
+  "FLD_WARN": {
+    "severity": 2,
+    "title": {
+      "en": "Flood Warning",
+      "de": "Hochwasseralarm",
+      "fr": "Alerte inondation",
+      "es": "Alerta de inundación",
+      "ru": "Предупреждение о наводнении",
+      "ja": "洪水警報",
+      "ko": "홍수 경보",
+      "zh": "洪水警告",
+      "ar": "تحذير من الفيضانات"
+    },
+    "body": {
+      "en": "Flooding likely. Avoid low roads and underpasses. Move to higher ground now.",
+      "de": "Überschwemmungen wahrscheinlich. Meiden Sie niedrige Straßen. Begeben Sie sich auf höheres Gelände.",
+      "fr": "Inondations probables. Évitez les routes basses. Montez en altitude maintenant.",
+      "es": "Inundaciones probables. Evite carreteras bajas. Muévase a terrenos más altos ahora.",
+      "ru": "Наводнения вероятны. Избегайте низких дорог. Переместитесь на возвышенность.",
+      "ja": "洪水が発生する可能性が高い。低い道路を避け、今すぐ高台に移動してください。",
+      "ko": "홍수 가능성 높음. 저지대 도로를 피하고 지금 고지대로 이동하세요.",
+      "zh": "洪水可能发生。避开低洼道路，立即转移到高处。",
+      "ar": "الفيضانات محتملة. تجنب الطرق المنخفضة وتوجه إلى الأماكن المرتفعة الآن."
+    }
+  },
+  "FLD_EVAC": {
+    "severity": 3,
+    "title": {
+      "en": "Evacuate: Flooding Imminent",
+      "de": "Evakuierung: Überflutung droht",
+      "fr": "Évacuez: inondation imminente",
+      "es": "Evacúe: inundación inminente",
+      "ru": "Эвакуация: угроза наводнения",
+      "ja": "避難：洪水が迫っています",
+      "ko": "대피: 홍수 임박",
+      "zh": "撤离：洪水即将来临",
+      "ar": "إخلاء: فيضان وشيك"
+    },
+    "body": {
+      "en": "Flooding is happening now. Move to higher ground or a shelter immediately.",
+      "de": "Überflutung findet statt. Begeben Sie sich sofort auf höheres Gelände oder einen Schutzraum.",
+      "fr": "L'inondation est en cours. Rejoignez immédiatement un terrain élevé ou un abri.",
+      "es": "La inundación está ocurriendo. Muévase inmediatamente a terrenos más altos o un refugio.",
+      "ru": "Наводнение происходит прямо сейчас. Немедленно переместитесь на возвышенность или в убежище.",
+      "ja": "現在洪水が発生しています。今すぐ高台または避難所に移動してください。",
+      "ko": "현재 홍수가 발생 중입니다. 즉시 고지대나 대피소로 이동하세요.",
+      "zh": "洪水正在发生。请立即转移到高处或避难所。",
+      "ar": "الفيضانات تحدث الآن. انتقل إلى مكان مرتفع أو ملجأ فوراً."
+    }
+  },
+  "CYC_WATCH": {
+    "severity": 1,
+    "title": {
+      "en": "Cyclone Watch",
+      "de": "Zyklon-Beobachtung",
+      "fr": "Surveillance cyclone",
+      "es": "Vigilancia de ciclón",
+      "ru": "Наблюдение за циклоном",
+      "ja": "サイクロン注意報",
+      "ko": "사이클론 주의보",
+      "zh": "气旋监测",
+      "ar": "مراقبة الإعصار"
+    },
+    "body": {
+      "en": "A cyclone may affect the area. Stay tuned and prepare an emergency kit.",
+      "de": "Ein Zyklon könnte das Gebiet treffen. Informieren Sie sich und bereiten Sie ein Notfallpaket vor.",
+      "fr": "Un cyclone pourrait affecter la région. Restez informé et préparez un kit d'urgence.",
+      "es": "Un ciclón podría afectar el área. Manténgase informado y prepare un equipo de emergencia.",
+      "ru": "Циклон может затронуть этот район. Следите за новостями и подготовьте аварийный набор.",
+      "ja": "サイクロンが地域に影響を与える可能性があります。情報に注意し、緊急キットを準備してください。",
+      "ko": "사이클론이 이 지역에 영향을 줄 수 있습니다. 주시하고 비상 키트를 준비하세요.",
+      "zh": "气旋可能影响该地区。请保持关注并准备应急包。",
+      "ar": "قد يؤثر إعصار على المنطقة. ابقَ على اطلاع وجهز حقيبة الطوارئ."
+    }
+  },
+  "CYC_WARN": {
+    "severity": 2,
+    "title": {
+      "en": "Cyclone Warning",
+      "de": "Zyklon-Warnung",
+      "fr": "Alerte cyclone",
+      "es": "Advertencia de ciclón",
+      "ru": "Предупреждение о циклоне",
+      "ja": "サイクロン警報",
+      "ko": "사이클론 경보",
+      "zh": "气旋警告",
+      "ar": "تحذير من الإعصار"
+    },
+    "body": {
+      "en": "Cyclone warning issued. Stay indoors and secure loose belongings immediately.",
+      "de": "Zyklon-Warnung ausgegeben. Bleiben Sie drinnen und sichern Sie lose Gegenstände.",
+      "fr": "Alerte cyclone émise. Restez à l'intérieur et sécurisez les objets non fixés.",
+      "es": "Advertencia de ciclón emitida. Permanezca en el interior y asegure los objetos sueltos.",
+      "ru": "Выдано предупреждение о циклоне. Оставайтесь в помещении и закрепите незафиксированные предметы.",
+      "ja": "サイクロン警報が発令されました。屋内に留まり、固定されていない物をすぐに固定してください。",
+      "ko": "사이클론 경보가 발령되었습니다. 실내에 머물고 즉시 고정되지 않은 물건을 고정하세요.",
+      "zh": "发布气旋警告。请留在室内，立即固定松散物品。",
+      "ar": "صدر تحذير من الإعصار. ابقَ في الداخل وثبت الأشياء غير المثبتة فوراً."
+    }
+  },
+  "CYC_LANDFALL": {
+    "severity": 3,
+    "title": {
+      "en": "Cyclone Landfall Imminent",
+      "de": "Zyklon-Landfall unmittelbar bevor",
+      "fr": "Atterrissage de cyclone imminent",
+      "es": "Aterrizaje de ciclón inminente",
+      "ru": "Циклон вот-вот выйдет на берег",
+      "ja": "サイクロン上陸間近",
+      "ko": "사이클론 상륙 임박",
+      "zh": "气旋即将登陆",
+      "ar": "وصول الإعصار وشيك"
+    },
+    "body": {
+      "en": "Cyclone landfall imminent. Go to the nearest shelter now. Do not stay outside.",
+      "de": "Zyklon-Landfall unmittelbar bevorstehend. Gehen Sie sofort zum nächsten Schutzraum.",
+      "fr": "Atterrissage de cyclone imminent. Rejoignez l'abri le plus proche maintenant.",
+      "es": "Aterrizaje de ciclón inminente. Vaya al refugio más cercano ahora. No permanezca afuera.",
+      "ru": "Циклон вот-вот выйдет на берег. Немедленно направляйтесь в ближайшее убежище.",
+      "ja": "サイクロンが間もなく上陸します。今すぐ最寄りの避難所に行ってください。",
+      "ko": "사이클론 상륙이 임박했습니다. 지금 즉시 가장 가까운 대피소로 가세요.",
+      "zh": "气旋即将登陆。立即前往最近的避难所。不要待在室外。",
+      "ar": "وصول الإعصار وشيك. اذهب إلى أقرب ملجأ الآن. لا تبقَ في الخارج."
+    }
+  },
+  "WIND_HIGH": {
+    "severity": 2,
+    "title": {
+      "en": "Strong Winds Warning",
+      "de": "Sturmwarnung",
+      "fr": "Alerte vents forts",
+      "es": "Alerta de vientos fuertes",
+      "ru": "Предупреждение о сильном ветре",
+      "ja": "強風警報",
+      "ko": "강풍 경보",
+      "zh": "强风警告",
+      "ar": "تحذير من الرياح العاتية"
+    },
+    "body": {
+      "en": "Strong winds expected. Stay away from trees, hoardings and power lines.",
+      "de": "Starker Wind erwartet. Halten Sie Abstand von Bäumen, Plakaten und Stromleitungen.",
+      "fr": "Vents forts attendus. Éloignez-vous des arbres, panneaux et lignes électriques.",
+      "es": "Se esperan vientos fuertes. Aléjese de árboles, carteles y líneas eléctricas.",
+      "ru": "Ожидается сильный ветер. Держитесь подальше от деревьев, щитов и проводов.",
+      "ja": "強風が予想されます。木、看板、電線から離れてください。",
+      "ko": "강풍이 예상됩니다. 나무, 광고판, 전선에서 멀리하세요.",
+      "zh": "预计强风。请远离树木、广告牌和电线。",
+      "ar": "رياح قوية متوقعة. ابتعد عن الأشجار واللافتات وخطوط الكهرباء."
+    }
+  },
+  "SEA_ROUGH": {
+    "severity": 2,
+    "title": {
+      "en": "Rough Sea Warning",
+      "de": "Warnung: Stürmische See",
+      "fr": "Alerte mer agitée",
+      "es": "Alerta de mar agitado",
+      "ru": "Предупреждение о шторме на море",
+      "ja": "荒天警報",
+      "ko": "거친 바다 경보",
+      "zh": "波涛汹涌警告",
+      "ar": "تحذير من البحر الهائج"
+    },
+    "body": {
+      "en": "Rough sea conditions. Stay away from the beach and the shoreline.",
+      "de": "Stürmische See. Halten Sie sich vom Strand und der Küste fern.",
+      "fr": "Mer agitée. Restez loin de la plage et du rivage.",
+      "es": "Mar agitado. Manténgase alejado de la playa y la orilla.",
+      "ru": "Шторм на море. Держитесь подальше от пляжа и берега.",
+      "ja": "海が荒れています。ビーチや海岸沿いには近づかないでください。",
+      "ko": "바다가 거칩니다. 해변과 해안선에서 멀리 떨어지세요.",
+      "zh": "海况恶劣。请远离海滩和海岸线。",
+      "ar": "البحر هائج. ابتعد عن الشاطئ والساحل."
+    }
+  },
+  "COAST_EVAC": {
+    "severity": 3,
+    "title": {
+      "en": "Coastal Evacuation Order",
+      "de": "Küstenräumungsbefehl",
+      "fr": "Ordre d'évacuation côtière",
+      "es": "Orden de evacuación costera",
+      "ru": "Приказ о прибрежной эвакуации",
+      "ja": "沿岸部避難命令",
+      "ko": "해안 대피 명령",
+      "zh": "沿海撤离命令",
+      "ar": "أمر إخلاء ساحلي"
+    },
+    "body": {
+      "en": "Coastal evacuation is ordered. Leave the coastline immediately and go inland.",
+      "de": "Küstenräumung angeordnet. Verlassen Sie die Küste sofort und gehen Sie ins Landesinnere.",
+      "fr": "Évacuation côtière ordonnée. Quittez immédiatement le littoral.",
+      "es": "Evacuación costera ordenada. Abandone la costa inmediatamente y diríjase al interior.",
+      "ru": "Прибрежная эвакуация приказана. Немедленно покиньте побережье.",
+      "ja": "沿岸部の避難が命じられました。今すぐ海岸を離れ、内陸に移動してください。",
+      "ko": "해안 대피 명령이 내려졌습니다. 즉시 해안을 떠나 내륙으로 이동하세요.",
+      "zh": "已下令沿海撤离。立即离开海岸线，向内陆转移。",
+      "ar": "صدر أمر بالإخلاء الساحلي. غادر الساحل فوراً وتوجه نحو الداخل."
+    }
+  },
+  "SURGE": {
+    "severity": 3,
+    "title": {
+      "en": "Storm Surge: Move Now",
+      "de": "Sturmflut: Sofort evakuieren",
+      "fr": "Onde de tempête: évacuez",
+      "es": "Marejada: evacúe ahora",
+      "ru": "Штормовой нагон: эвакуируйтесь",
+      "ja": "高潮：今すぐ避難",
+      "ko": "해일: 지금 대피",
+      "zh": "风暴潮：立即撤离",
+      "ar": "موجة عاصفة: اخرج الآن"
+    },
+    "body": {
+      "en": "Storm surge is occurring. Move away from the coast immediately. Do not return.",
+      "de": "Sturmflut tritt auf. Verlassen Sie die Küste sofort. Kehren Sie nicht zurück.",
+      "fr": "Onde de tempête en cours. Éloignez-vous immédiatement de la côte.",
+      "es": "Marejada en curso. Aléjese de la costa inmediatamente. No regrese.",
+      "ru": "Происходит штормовой нагон. Немедленно уйдите от побережья. Не возвращайтесь.",
+      "ja": "高潮が発生しています。今すぐ海岸から離れてください。戻らないでください。",
+      "ko": "폭풍 해일이 발생하고 있습니다. 즉시 해안에서 멀리 이동하세요. 돌아오지 마세요.",
+      "zh": "风暴潮正在发生。立即远离海岸。不要返回。",
+      "ar": "موجة العاصفة تحدث الآن. ابتعد عن الساحل فوراً. لا تعود."
+    }
+  },
+  "LIGHTNING": {
+    "severity": 1,
+    "title": {
+      "en": "Lightning Risk",
+      "de": "Blitzgefahr",
+      "fr": "Risque de foudre",
+      "es": "Riesgo de rayos",
+      "ru": "Опасность молнии",
+      "ja": "落雷の危険",
+      "ko": "낙뢰 위험",
+      "zh": "雷电风险",
+      "ar": "خطر البرق"
+    },
+    "body": {
+      "en": "Lightning risk in the area. Stay indoors and away from tall trees and metal objects.",
+      "de": "Blitzgefahr im Gebiet. Bleiben Sie drinnen und halten Sie Abstand von hohen Bäumen.",
+      "fr": "Risque de foudre dans la zone. Restez à l'intérieur et éloignez-vous des grands arbres.",
+      "es": "Riesgo de rayos en el área. Permanezca en el interior y aléjese de árboles altos.",
+      "ru": "Опасность молнии в районе. Оставайтесь в помещении и держитесь подальше от высоких деревьев.",
+      "ja": "地域に落雷の危険があります。屋内に留まり、高い木や金属物から離れてください。",
+      "ko": "이 지역에 낙뢰 위험이 있습니다. 실내에 머물고 큰 나무와 금속 물체에서 멀리하세요.",
+      "zh": "该区域有雷电风险。请留在室内，远离高大树木和金属物体。",
+      "ar": "خطر البرق في المنطقة. ابقَ في الداخل وابتعد عن الأشجار الطويلة والأجسام المعدنية."
+    }
+  },
+  "ROAD_CLOSED": {
+    "severity": 1,
+    "title": {
+      "en": "Roads Closed Nearby",
+      "de": "Straßen in der Nähe gesperrt",
+      "fr": "Routes fermées à proximité",
+      "es": "Carreteras cerradas cercanas",
+      "ru": "Дороги поблизости закрыты",
+      "ja": "近くの道路が閉鎖",
+      "ko": "인근 도로 폐쇄",
+      "zh": "附近道路封闭",
+      "ar": "طرق قريبة مغلقة"
+    },
+    "body": {
+      "en": "Roads in the area are closed. Use alternate routes and follow official directions.",
+      "de": "Straßen im Gebiet sind gesperrt. Nutzen Sie Ausweichrouten und folgen Sie offiziellen Anweisungen.",
+      "fr": "Les routes de la zone sont fermées. Utilisez des itinéraires alternatifs.",
+      "es": "Las carreteras del área están cerradas. Use rutas alternativas y siga las indicaciones oficiales.",
+      "ru": "Дороги в районе закрыты. Используйте объездные пути и следуйте официальным указаниям.",
+      "ja": "地域の道路が閉鎖されています。迂回路を利用し、公式の指示に従ってください。",
+      "ko": "해당 지역 도로가 폐쇄되었습니다. 대체 경로를 이용하고 공식 지시를 따르세요.",
+      "zh": "该区域道路已关闭。请使用替代路线并遵循官方指示。",
+      "ar": "الطرق في المنطقة مغلقة. استخدم طرقاً بديلة واتبع التعليمات الرسمية."
+    }
+  },
+  "POWER_OUT": {
+    "severity": 1,
+    "title": {
+      "en": "Power Cuts Expected",
+      "de": "Stromausfälle erwartet",
+      "fr": "Coupures de courant attendues",
+      "es": "Cortes de energía esperados",
+      "ru": "Ожидаются отключения электричества",
+      "ja": "停電が予想されます",
+      "ko": "정전 예상",
+      "zh": "预计停电",
+      "ar": "انقطاع الكهرباء متوقع"
+    },
+    "body": {
+      "en": "Power cuts expected in the area. Charge your phone and torches now.",
+      "de": "Stromausfälle im Gebiet erwartet. Laden Sie jetzt Ihr Telefon und Ihre Taschenlampen auf.",
+      "fr": "Coupures de courant attendues dans la zone. Chargez votre téléphone et vos lampes maintenant.",
+      "es": "Se esperan cortes de energía. Cargue su teléfono y linternas ahora.",
+      "ru": "В районе ожидаются отключения электричества. Зарядите телефон и фонари сейчас.",
+      "ja": "地域で停電が予想されます。今すぐスマートフォンと懐中電灯を充電してください。",
+      "ko": "이 지역에서 정전이 예상됩니다. 지금 바로 전화기와 손전등을 충전하세요.",
+      "zh": "该区域预计停电。请立即为手机和手电筒充电。",
+      "ar": "انقطاع الكهرباء متوقع في المنطقة. اشحن هاتفك والمصابيح الآن."
+    }
+  },
+  "STAY_INDOORS": {
+    "severity": 2,
+    "title": {
+      "en": "Stay Indoors",
+      "de": "In der Unterkunft bleiben",
+      "fr": "Restez à l'intérieur",
+      "es": "Quédese en el interior",
+      "ru": "Оставайтесь в помещении",
+      "ja": "屋内に留まること",
+      "ko": "실내에 머무세요",
+      "zh": "留在室内",
+      "ar": "ابقَ في الداخل"
+    },
+    "body": {
+      "en": "Stay indoors until further notice. Conditions outside are dangerous.",
+      "de": "Bleiben Sie bis auf Weiteres drinnen. Draußen herrschen gefährliche Bedingungen.",
+      "fr": "Restez à l'intérieur jusqu'à nouvel ordre. Les conditions extérieures sont dangereuses.",
+      "es": "Permanezca en el interior hasta nuevo aviso. Las condiciones afuera son peligrosas.",
+      "ru": "Оставайтесь в помещении до дальнейших указаний. Условия снаружи опасны.",
+      "ja": "追って通知があるまで屋内に留まってください。外の状況は危険です。",
+      "ko": "추가 공지가 있을 때까지 실내에 머무세요. 외부 상황이 위험합니다.",
+      "zh": "请留在室内，直到另行通知。室外条件危险。",
+      "ar": "ابقَ في الداخل حتى إشعار آخر. الأوضاع في الخارج خطيرة."
+    }
+  },
+  "SHELTER_OPEN": {
+    "severity": 1,
+    "title": {
+      "en": "Relief Shelters Are Open",
+      "de": "Notunterkünfte geöffnet",
+      "fr": "Abris de secours ouverts",
+      "es": "Refugios de ayuda abiertos",
+      "ru": "Убежища для пострадавших открыты",
+      "ja": "救援シェルターが開設",
+      "ko": "구호 대피소 개설",
+      "zh": "救援避难所已开放",
+      "ar": "ملاجئ الإغاثة مفتوحة"
+    },
+    "body": {
+      "en": "Relief shelters are open nearby. Go to the nearest shelter if you need help.",
+      "de": "Notunterkünfte sind in der Nähe geöffnet. Gehen Sie zum nächsten Schutzraum, wenn Sie Hilfe benötigen.",
+      "fr": "Des abris de secours sont ouverts à proximité. Rejoignez l'abri le plus proche si vous avez besoin d'aide.",
+      "es": "Los refugios de ayuda están abiertos cerca. Vaya al refugio más cercano si necesita ayuda.",
+      "ru": "Рядом открыты убежища для пострадавших. Обратитесь в ближайшее убежище, если нужна помощь.",
+      "ja": "近くに救援シェルターが開設されました。助けが必要な場合は最寄りのシェルターに行ってください。",
+      "ko": "인근에 구호 대피소가 개설되었습니다. 도움이 필요하면 가장 가까운 대피소로 가세요.",
+      "zh": "附近的救援避难所已开放。如需帮助，请前往最近的避难所。",
+      "ar": "ملاجئ الإغاثة مفتوحة قريباً. توجه إلى أقرب ملجأ إذا كنت بحاجة إلى مساعدة."
+    }
+  },
+  "BOIL_WATER": {
+    "severity": 1,
+    "title": {
+      "en": "Boil Drinking Water",
+      "de": "Trinkwasser abkochen",
+      "fr": "Faites bouillir l'eau potable",
+      "es": "Hierva el agua potable",
+      "ru": "Кипятите питьевую воду",
+      "ja": "飲料水を沸かしてください",
+      "ko": "음용수를 끓이세요",
+      "zh": "煮沸饮用水",
+      "ar": "اغلِ مياه الشرب"
+    },
+    "body": {
+      "en": "Drink only boiled or bottled water. Tap water may be contaminated.",
+      "de": "Trinken Sie nur abgekochtes oder Flaschenwasser. Leitungswasser kann verunreinigt sein.",
+      "fr": "Ne buvez que de l'eau bouillie ou en bouteille. L'eau du robinet peut être contaminée.",
+      "es": "Beba solo agua hervida o embotellada. El agua del grifo puede estar contaminada.",
+      "ru": "Пейте только кипяченую или бутилированную воду. Водопроводная вода может быть заражена.",
+      "ja": "沸かした水またはボトル入りの水のみ飲んでください。水道水は汚染されている可能性があります。",
+      "ko": "끓인 물이나 생수만 마시세요. 수돗물이 오염되었을 수 있습니다.",
+      "zh": "只饮用煮沸的水或瓶装水。自来水可能受到污染。",
+      "ar": "اشرب الماء المغلي أو المعبأ فقط. قد يكون ماء الصنبور ملوثاً."
+    }
+  },
+  "ALL_CLEAR": {
+    "severity": 0,
+    "title": {
+      "en": "All Clear",
+      "de": "Entwarnung",
+      "fr": "Tout clair",
+      "es": "Todo despejado",
+      "ru": "Угроза миновала",
+      "ja": "警報解除",
+      "ko": "위험 해제",
+      "zh": "全部解除",
+      "ar": "انتهى الخطر"
+    },
+    "body": {
+      "en": "The danger has passed. You may resume normal activities with caution.",
+      "de": "Die Gefahr ist vorüber. Sie können vorsichtig zum normalen Alltag zurückkehren.",
+      "fr": "Le danger est passé. Vous pouvez reprendre vos activités normales avec prudence.",
+      "es": "El peligro ha pasado. Puede reanudar actividades normales con precaución.",
+      "ru": "Опасность миновала. Вы можете с осторожностью вернуться к обычной жизни.",
+      "ja": "危険は去りました。注意しながら通常の活動を再開できます。",
+      "ko": "위험이 지나갔습니다. 주의를 기울이며 정상 활동을 재개할 수 있습니다.",
+      "zh": "危险已经过去。您可以谨慎地恢复正常活动。",
+      "ar": "انتهى الخطر. يمكنك استئناف الأنشطة الطبيعية بحذر."
+    }
+  },
+  "TEST": {
+    "severity": 0,
+    "title": {
+      "en": "Test Message",
+      "de": "Testnachricht",
+      "fr": "Message de test",
+      "es": "Mensaje de prueba",
+      "ru": "Тестовое сообщение",
+      "ja": "テストメッセージ",
+      "ko": "테스트 메시지",
+      "zh": "测试消息",
+      "ar": "رسالة اختبار"
+    },
+    "body": {
+      "en": "This is a test message. No action is needed.",
+      "de": "Dies ist eine Testnachricht. Es ist keine Aktion erforderlich.",
+      "fr": "Ceci est un message de test. Aucune action n'est requise.",
+      "es": "Este es un mensaje de prueba. No se requiere ninguna acción.",
+      "ru": "Это тестовое сообщение. Никаких действий не требуется.",
+      "ja": "これはテストメッセージです。対応は不要です。",
+      "ko": "이것은 테스트 메시지입니다. 아무런 조치가 필요하지 않습니다.",
+      "zh": "这是一条测试消息。无需采取任何行动。",
+      "ar": "هذه رسالة اختبار. لا يلزم اتخاذ أي إجراء."
+    }
+  }
+}

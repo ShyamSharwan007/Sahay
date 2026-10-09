@@ -1,0 +1,102 @@
+[
+  {
+    "countryCode": "DE",
+    "name": "Consulate General of Germany, Chennai",
+    "phone": "+91-7397392250",
+    "address": "No. 9, Boat Club Road, R.A. Puram, Chennai 600028",
+    "lat": 13.0292,
+    "lon": 80.2561,
+    "url": "https://india.diplo.de/in-en/vertretungen/gk-chennai",
+    "source": "https://india.diplo.de/in-en/vertretungen/gk-chennai"
+  },
+  {
+    "countryCode": "FR",
+    "name": "Bureau de France (Consulate General of France, Pondicherry), Chennai",
+    "phone": null,
+    "address": "6th Floor, Bannari Amman Towers, 29 Dr. Radhakrishnan Salai, Mylapore, Chennai 600004",
+    "lat": 13.0337,
+    "lon": 80.2701,
+    "url": "https://in.ambafrance.org",
+    "source": "https://www.diplomatie.gouv.fr"
+  },
+  {
+    "countryCode": "US",
+    "name": "U.S. Consulate General, Chennai",
+    "phone": "+91-44-2857-4000",
+    "address": "220 Anna Salai, Gemini Circle, Chennai 600006",
+    "lat": 13.0606,
+    "lon": 80.2528,
+    "url": "https://in.usembassy.gov/embassy-consulates/chennai/",
+    "source": "https://in.usembassy.gov/embassy-consulates/chennai/"
+  },
+  {
+    "countryCode": "GB",
+    "name": "British Deputy High Commission, Chennai",
+    "phone": null,
+    "address": "20 Anderson Road, Chennai 600006",
+    "lat": 13.0614,
+    "lon": 80.2503,
+    "url": "https://www.gov.uk/world/organisations/british-deputy-high-commission-chennai",
+    "source": "https://www.gov.uk/world/organisations/british-deputy-high-commission-chennai"
+  },
+  {
+    "countryCode": "JP",
+    "name": "Consulate General of Japan, Chennai",
+    "phone": "+91-44-2432-3860",
+    "address": "No. 12/1, Cenetoph Road, 1st Street, Teynampet, Chennai 600018",
+    "lat": 13.0415,
+    "lon": 80.2494,
+    "url": "https://www.chennai.in.emb-japan.go.jp/itprtop_en/index.html",
+    "source": "https://www.chennai.in.emb-japan.go.jp/itprtop_en/index.html"
+  },
+  {
+    "countryCode": "KR",
+    "name": "Consulate General of the Republic of Korea, Chennai",
+    "phone": "+91-44-4061-5500",
+    "address": "5th Floor, Bannari Amman Towers, 29 Dr. Radhakrishnan Salai, Mylapore, Chennai 600004",
+    "lat": 13.0337,
+    "lon": 80.2701,
+    "url": "https://overseas.mofa.go.kr/in-chennai-ko/index.do",
+    "source": "https://overseas.mofa.go.kr/in-chennai-ko/index.do"
+  },
+  {
+    "countryCode": "RU",
+    "name": "Consulate General of the Russian Federation, Chennai",
+    "phone": "+91-44-2498-2320",
+    "address": "No. 33 (old No. 14), Santhome High Road, Mylapore, Chennai 600004",
+    "lat": 13.0344,
+    "lon": 80.2748,
+    "url": "https://chennai.mid.ru/en/",
+    "source": "https://chennai.mid.ru/en/"
+  },
+  {
+    "countryCode": "AE",
+    "name": "Embassy of the United Arab Emirates, New Delhi (nearest mission — no UAE consulate in Chennai)",
+    "phone": "+91-11-26111111",
+    "address": "12, Chandragupta Marg, Chanakyapuri, New Delhi 110021",
+    "lat": 28.5963,
+    "lon": 77.1848,
+    "url": "https://www.mofa.gov.ae",
+    "source": "https://www.mofa.gov.ae"
+  },
+  {
+    "countryCode": "CN",
+    "name": "Embassy of the People's Republic of China, New Delhi (nearest mission — no Chinese consulate in Chennai)",
+    "phone": "+91-11-26112345",
+    "address": "50-D, Shantipath, Chanakyapuri, New Delhi 110021",
+    "lat": 28.5951,
+    "lon": 77.1866,
+    "url": "https://in.china-embassy.gov.cn/eng/",
+    "source": "https://in.china-embassy.gov.cn/eng/"
+  },
+  {
+    "countryCode": "ES",
+    "name": "Honorary Consulate of Spain, Chennai",
+    "phone": "+91-44-4210-7657",
+    "address": "AMLO Advisory Pvt. Ltd., No. 6, Nimmo Road, Santhome, Chennai 600004",
+    "lat": 13.0296,
+    "lon": 80.2768,
+    "url": "https://www.exteriores.gob.es/Consulados/chennai/es/Paginas/index.aspx",
+    "source": "https://www.exteriores.gob.es/Consulados/chennai/es/Paginas/index.aspx"
+  }
+]
