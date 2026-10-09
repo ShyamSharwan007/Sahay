@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
 }
 
@@ -21,7 +22,21 @@ android {
     buildFeatures {
         compose = true
     }
+
+    testOptions {
+        unitTests.isIncludeAndroidResources = true   // Robolectric
+    }
 }
+
+// Person C's small test pack is copied next to the unit-test resources (git-ignored, see engine/.gitignore).
+// If it is not in the repo yet, the tests build an equivalent pack on the fly (see TestPacks).
+val sampleSqlite = rootProject.projectDir.resolve("../samples/mahabalipuram-sample.sqlite")
+val copySampleSqlite by tasks.registering(Copy::class) {
+    description = "Copies samples/mahabalipuram-sample.sqlite into src/test/resources (does nothing if the file is missing)."
+    from(sampleSqlite)
+    into(layout.projectDirectory.dir("src/test/resources"))
+}
+tasks.matching { it.name.endsWith("UnitTestJavaRes") }.configureEach { dependsOn(copySampleSqlite) }
 
 dependencies {
     implementation(project(":core:contracts"))
@@ -34,8 +49,22 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.serialization.json)
+
+    implementation(libs.okhttp)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.kotlinx.serialization)
+
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+
+    implementation(libs.maplibre.android)
+
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.turbine)
     testImplementation(libs.mockk)
+    testImplementation(libs.robolectric)
 }
