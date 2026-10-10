@@ -9,7 +9,7 @@
   <a href="https://github.com/ShyamSharwan007/Sahay/releases/latest/download/sahay.apk"><strong>📲 Download APK</strong></a> &nbsp;·&nbsp;
   <a href="https://sahay-vr1c.onrender.com/admin"><strong>🖥 Admin dashboard</strong></a> &nbsp;·&nbsp;
   <a href="https://sahay-vr1c.onrender.com/api/v1/health"><strong>💚 Backend health</strong></a> &nbsp;·&nbsp;
-  <a href="demo/sahay-demo.mp4"><strong>🎬 Demo video</strong></a>
+  <a href="https://drive.google.com/file/d/1jDQ_RlSQlVfOpHVZjVOZIOIYfUme3kEv/view?usp=sharing"><strong>🎬 Demo video</strong></a>
 </p>
 
 <p align="center">
