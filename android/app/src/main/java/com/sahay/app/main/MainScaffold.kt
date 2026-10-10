@@ -44,7 +44,22 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.sahay.R
+import com.sahay.app.alerts.AlertDetailRoute
+import com.sahay.app.alerts.AlertDetailScreen
+import com.sahay.app.alerts.AlertsScreen
+import com.sahay.app.alerts.PasteAlertRoute
+import com.sahay.app.alerts.PasteAlertScreen
 import com.sahay.app.home.HomeScreen
+import com.sahay.app.map.MapScreen
+import com.sahay.app.navigate.NavTarget
+import com.sahay.app.navigate.NavigateRoute
+import com.sahay.app.navigate.NavigateScreen
+import com.sahay.app.navigate.encode
+import com.sahay.app.people.PeopleRoute
+import com.sahay.app.people.PeopleScreen
+import com.sahay.app.report.ReportRoute
+import com.sahay.app.report.ReportScreen
+import androidx.navigation.NavHostController
 import com.sahay.core.contracts.ConnectivityState
 import com.sahay.designsystem.LocalSahayColors
 import com.sahay.designsystem.SahaySpacing
@@ -110,12 +125,49 @@ fun MainScaffold(
         ) {
             composable<HomeTab> {
                 HomeScreen(
-                    onOpenAction = { titleRes -> navController.navigate(ComingSoonRoute(titleRes)) },
+                    onOpenAction = { titleRes -> navController.openHomeAction(titleRes) },
                     onDownloadPack = onOpenTripSetup,
                 )
             }
-            composable<MapTab> { ComingSoon(R.string.nav_map, onBack = null) }
-            composable<AlertsTab> { ComingSoon(R.string.nav_alerts, onBack = null) }
+            composable<MapTab> {
+                MapScreen(
+                    onGoTo = { target -> navController.navigate(NavigateRoute(target.encode())) },
+                    onDownloadPack = onOpenTripSetup,
+                )
+            }
+            composable<AlertsTab> {
+                AlertsScreen(
+                    onOpenAlert = { id -> navController.navigate(AlertDetailRoute(id)) },
+                    onPaste = { navController.navigate(PasteAlertRoute) },
+                )
+            }
+            composable<AlertDetailRoute> {
+                AlertDetailScreen(
+                    onBack = { navController.popBackStack() },
+                    onGoToSafety = { navController.navigate(NavigateRoute()) },
+                )
+            }
+            composable<PasteAlertRoute> {
+                PasteAlertScreen(
+                    onBack = { navController.popBackStack() },
+                    onOpenAlert = { id ->
+                        navController.navigate(AlertDetailRoute(id)) { popUpTo<PasteAlertRoute> { inclusive = true } }
+                    },
+                )
+            }
+            composable<NavigateRoute> {
+                NavigateScreen(
+                    onBack = { navController.popBackStack() },
+                    onShowLocal = { navController.navigate(ComingSoonRoute(R.string.action_show_local)) },
+                )
+            }
+            composable<ReportRoute> { ReportScreen(onBack = { navController.popBackStack() }) }
+            composable<PeopleRoute> {
+                PeopleScreen(
+                    onBack = { navController.popBackStack() },
+                    onGoToGroup = { group -> navController.navigate(NavigateRoute(NavTarget.ToPoint(group.point).encode())) },
+                )
+            }
             composable<MeTab> { ComingSoon(R.string.nav_me, onBack = null) }
             composable<ComingSoonRoute> { entry ->
                 ComingSoon(entry.toRoute<ComingSoonRoute>().titleRes, onBack = { navController.popBackStack() })
@@ -136,6 +188,16 @@ fun MainScaffold(
     }
 
     if (showSheet) WhatWorksSheet(state.connectivity, onDismiss = { showSheet = false })
+}
+
+/** Home tiles that have a real screen open it; the rest still show the placeholder. */
+private fun NavHostController.openHomeAction(titleRes: Int) {
+    when (titleRes) {
+        R.string.action_go_safety -> navigate(NavigateRoute())
+        R.string.action_report_hazard -> navigate(ReportRoute)
+        R.string.action_find_people -> navigate(PeopleRoute)
+        else -> navigate(ComingSoonRoute(titleRes))
+    }
 }
 
 @Composable
