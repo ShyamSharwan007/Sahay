@@ -1,0 +1,188 @@
+package com.sahay.app.profile
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.sahay.app.auth.AuthRepository
+import com.sahay.app.onboarding.AppLocaleController
+import com.sahay.core.contracts.EmergencyContact
+import com.sahay.core.contracts.ProfileStore
+import com.sahay.core.contracts.UserProfile
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+enum class WizardStep { ESSENTIALS, MEDICAL, CONTACTS, STAY, PRIVACY, PERMISSIONS }
+
+const val MAX_CONTACTS = 3
+
+data class ContactDraft(val name: String = "", val phone: String = "", val relation: Relation? = null) {
+    val isValid get() = name.isNotBlank() && isValidE164(phone) && relation != null
+}
+
+data class WizardState(
+    val step: WizardStep = WizardStep.ESSENTIALS,
+    val name: String = "",
+    val nationality: String? = null,
+    val phone: String = "",
+    val bloodGroup: String? = null,
+    val allergies: String = "",
+    val medications: String = "",
+    val conditions: String = "",
+    val contacts: List<ContactDraft> = listOf(ContactDraft()),
+    val hotelName: String = "",
+    val hotelAddress: String = "",
+    val groupFinderOptIn: Boolean = false,
+    /** Set once the user tries to go on with a problem, so fields only turn red after a first attempt. */
+    val showErrors: Boolean = false,
+    val saving: Boolean = false,
+    val saveFailed: Boolean = false,
+    val finished: Boolean = false,
+) {
+    val stepIndex get() = step.ordinal
+    val stepCount get() = WizardStep.entries.size
+    val nameError get() = name.isBlank()
+    val phoneError get() = phone.isNotBlank() && !isValidE164(phone)
+    val canAddContact get() = contacts.size < MAX_CONTACTS
+}
+
+@HiltViewModel
+class ProfileWizardViewModel @Inject constructor(
+    private val auth: AuthRepository,
+    private val profiles: ProfileStore,
+    private val locales: AppLocaleController,
+) : ViewModel() {
+
+    // Prefill the name from the Google account; guests have none.
+    private val _state = MutableStateFlow(WizardState(name = auth.currentUser?.displayName.orEmpty()))
+    val state: StateFlow<WizardState> = _state.asStateFlow()
+
+    // ---- field editing
+
+    fun setName(value: String) = edit { copy(name = value) }
+    fun setNationality(code: String?) = edit { copy(nationality = code) }
+    fun setPhone(value: String) = edit { copy(phone = value) }
+    fun setBloodGroup(value: String?) = edit { copy(bloodGroup = value) }
+    fun setAllergies(value: String) = edit { copy(allergies = value) }
+    fun setMedications(value: String) = edit { copy(medications = value) }
+    fun setConditions(value: String) = edit { copy(conditions = value) }
+    fun setHotelName(value: String) = edit { copy(hotelName = value) }
+    fun setHotelAddress(value: String) = edit { copy(hotelAddress = value) }
+    fun setGroupFinder(value: Boolean) = edit { copy(groupFinderOptIn = value) }
+
+    fun addAllergy(item: String) = edit { copy(allergies = allergies.withItem(item)) }
+    fun addCondition(item: String) = edit { copy(conditions = conditions.withItem(item)) }
+
+    fun updateContact(index: Int, contact: ContactDraft) = edit {
+        if (index !in contacts.indices) this
+        else copy(contacts = contacts.toMutableList().also { it[index] = contact })
+    }
+
+    fun addContact() = edit { if (canAddContact) copy(contacts = contacts + ContactDraft()) else this }
+
+    /** The first contact is required, so it cannot be removed. */
+    fun removeContact(index: Int) = edit {
+        if (index == 0 || index !in contacts.indices) this
+        else copy(contacts = contacts.filterIndexed { i, _ -> i != index })
+    }
+
+    // ---- navigation
+
+    /** Validates the current step and moves on; on the last step saves the profile. */
+    fun next() {
+        val s = _state.value
+        if (s.saving) return
+        if (!isStepValid(s)) {
+            edit { copy(showErrors = true) }
+            return
+        }
+        if (s.step == WizardStep.PERMISSIONS) save() else goTo(WizardStep.entries[s.stepIndex + 1])
+    }
+
+    /** "Skip" on the Medical step: forget anything typed there and move on. */
+    fun skipMedical() {
+        edit { copy(bloodGroup = null, allergies = "", medications = "", conditions = "") }
+        goTo(WizardStep.CONTACTS)
+    }
+
+    /** Returns false on the first step, where the caller should leave the wizard. */
+    fun back(): Boolean {
+        val s = _state.value
+        if (s.stepIndex == 0) return false
+        if (!s.saving) goTo(WizardStep.entries[s.stepIndex - 1])
+        return true
+    }
+
+    fun retrySave() = save()
+
+    // ---- internals
+
+    private fun isStepValid(s: WizardState) = when (s.step) {
+        WizardStep.ESSENTIALS -> !s.nameError && !s.phoneError
+        WizardStep.CONTACTS -> s.contacts.all { it.isValid }
+        else -> true
+    }
+
+    private fun goTo(step: WizardStep) = edit { copy(step = step, showErrors = false, saveFailed = false) }
+
+    private fun save() {
+        val user = auth.currentUser
+        if (user == null) { // signed out underneath us; the screen offers a retry
+            edit { copy(saveFailed = true) }
+            return
+        }
+        val s = _state.value
+        edit { copy(saving = true, saveFailed = false) }
+        viewModelScope.launch {
+            try {
+                profiles.save(s.toProfile(user.uid, user.isAnonymous, user.email, user.photoUrl, locales.currentLanguage()))
+                edit { copy(saving = false, finished = true) }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (_: Exception) {
+                edit { copy(saving = false, saveFailed = true) }
+            }
+        }
+    }
+
+    private fun edit(change: WizardState.() -> WizardState) = _state.update { it.change() }
+}
+
+/** Appends [item] to a comma-separated list unless it is already there (case-insensitive). */
+internal fun String.withItem(item: String): String {
+    val items = split(',').map { it.trim() }.filter { it.isNotEmpty() }
+    return if (items.any { it.equals(item, ignoreCase = true) }) this else (items + item).joinToString(", ")
+}
+
+private fun String.orNullIfBlank(): String? = trim().ifEmpty { null }
+
+internal fun WizardState.toProfile(
+    uid: String,
+    isGuest: Boolean,
+    email: String?,
+    photoUrl: String?,
+    language: String,
+) = UserProfile(
+    uid = uid,
+    isGuest = isGuest,
+    displayName = name.trim(),
+    email = email,
+    photoUrl = photoUrl,
+    language = language,
+    nationality = nationality,
+    phone = phone.orNullIfBlank()?.let(::normalizePhone),
+    bloodGroup = bloodGroup?.takeIf { it != BLOOD_GROUP_UNKNOWN },
+    allergies = allergies.orNullIfBlank(),
+    medications = medications.orNullIfBlank(),
+    conditions = conditions.orNullIfBlank(),
+    hotelName = hotelName.orNullIfBlank(),
+    hotelAddress = hotelAddress.orNullIfBlank(),
+    contacts = contacts.map { EmergencyContact(it.name.trim(), normalizePhone(it.phone), it.relation?.key.orEmpty()) },
+    smsAlertsOptIn = false, // always false in this build
+    groupFinderOptIn = groupFinderOptIn,
+    onboardingComplete = true,
+)

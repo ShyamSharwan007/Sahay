@@ -1,0 +1,53 @@
+
+# ==========================================
+# Sahay Backend - Python 3.12
+# ==========================================
+
+# FastAPI application
+fastapi
+uvicorn[standard]
+pydantic>=2.0
+pydantic-settings
+
+# Database - Supabase PostgreSQL
+sqlalchemy>=2.0
+psycopg[binary]
+
+# Authentication - Firebase
+firebase-admin
+
+# Cryptographic signing
+cryptography
+
+# HTTP requests and rate limiting
+httpx
+slowapi
+python-multipart
+
+# Weather, clustering, and numerical processing
+scikit-learn
+numpy
+
+# Testing
+pytest
+pytest-cov
+respx
+
+# Code quality
+ruff
+
+# ==========================================
+# Optional: LLM integration
+# ==========================================
+# Gemini can be called using httpx, so a separate
+# Google SDK is not required by default.
+
+# ==========================================
+# Optional: C3 trip-pack pipeline dependencies
+# Install only if you need to run the pipeline.
+# ==========================================
+osmnx>=2.0
+geopandas
+shapely
+pyproj
+requests

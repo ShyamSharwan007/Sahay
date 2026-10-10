@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sahay Admin Dashboard</title>
+    <!-- MapLibre -->
+    <link href="https://unpkg.com/maplibre-gl@4.7.0/dist/maplibre-gl.css" rel="stylesheet" />
+    <script src="https://unpkg.com/maplibre-gl@4.7.0/dist/maplibre-gl.js"></script>
+    
+    <style>
+        /* Design Tokens from DESIGN.md */
+        :root {
+            --bg: #F6F8F7;
+            --surface: #FFFFFF;
+            --surface-variant: #EBF0EE;
+            --outline: #C5D0CD;
+            --on-bg: #132120;
+            --on-surface-variant: #4A5A57;
+            --primary: #0B6E6E;
+            --on-primary: #FFFFFF;
+            --danger: #C62828;
+            --watch: #9A6700;
+            --safe: #18794C;
+            --radius-card: 16px;
+            --radius-btn: 16px;
+        }
+
+        [data-theme="dark"] {
+            --bg: #0D1413;
+            --surface: #141D1C;
+            --surface-variant: #1C2726;
+            --outline: #2F3D3B;
+            --on-bg: #E5EEEC;
+            --on-surface-variant: #A3B3B0;
+            --primary: #5FD3CA;
+            --on-primary: #00332F;
+            --danger: #FF6B6B;
+            --watch: #F2C14E;
+            --safe: #4ADE95;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Manrope', system-ui, sans-serif;
+            background-color: var(--bg);
+            color: var(--on-bg);
+            transition: background-color 0.2s, color 0.2s;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Basic Layout */
+        #sidebar {
+            width: 250px;
+            background: var(--surface);
+            border-right: 1px solid var(--outline);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        #content {
+            flex-grow: 1;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Typography */
+        h1, h2, h3 { margin: 0; font-weight: 700; }
+        .caption { font-size: 12px; color: var(--on-surface-variant); font-weight: 600; }
+        
+        /* Components */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--outline);
+            border-radius: var(--radius-card);
+            padding: 20px;
+        }
+        .btn {
+            background: var(--primary);
+            color: var(--on-primary);
+            border: none;
+            border-radius: var(--radius-btn);
+            padding: 12px 24px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        
+        .badge {
+            background: var(--watch);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+            display: none;
+        }
+
+        /* Form */
+        label { display: block; margin-bottom: 8px; font-weight: 600; }
+        select, input, textarea {
+            width: 100%;
+            padding: 12px;
+            background: var(--surface-variant);
+            border: 1px solid var(--outline);
+            border-radius: 12px;
+            color: var(--on-bg);
+            font-family: inherit;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+        }
+
+        /* Map */
+        #map { height: 300px; border-radius: 12px; margin-bottom: 16px; border: 1px solid var(--outline); }
+
+        /* Auth */
+        #auth-guard {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--bg); display: flex; flex-direction: column;
+            align-items: center; justify-content: center; z-index: 1000;
+        }
+    </style>
+    <!-- Firebase -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "__FIREBASE_API_KEY__",
+            authDomain: "__FIREBASE_AUTH_DOMAIN__",
+            projectId: "__FIREBASE_PROJECT_ID__",
+            appId: "__FIREBASE_APP_ID__"
+        };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        let idToken = "";
+
+        // UI Logic
+        const loginBtn = document.getElementById("loginBtn");
+        loginBtn.onclick = () => signInWithPopup(auth, provider);
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                idToken = await user.getIdToken();
+                document.getElementById("auth-guard").style.display = "none";
+                loadRegions();
+            } else {
+                document.getElementById("auth-guard").style.display = "flex";
+            }
+        });
+
+        // Theme toggle
+        document.getElementById("themeToggle").onclick = () => {
+            const isDark = document.body.getAttribute('data-theme') === 'dark';
+            document.body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+        };
+
+        // Fetch Regions
+        async function loadRegions() {
+            const res = await fetch("/api/v1/regions");
+            const regions = await res.json();
+            const select = document.getElementById("regionSelect");
+            regions.forEach(r => {
+                const opt = document.createElement("option");
+                opt.value = r.id;
+                opt.textContent = r.name;
+                select.appendChild(opt);
+            });
+            select.onchange = () => initMap(regions.find(r => r.id === select.value).bbox);
+            initMap(regions[0].bbox);
+        }
+
+        // Map setup
+        let map, marker, circle;
+        function initMap(bbox) {
+            const center = [(bbox[0]+bbox[2])/2, (bbox[1]+bbox[3])/2];
+            if(map) map.remove();
+            
+            map = new maplibregl.Map({
+                container: 'map',
+                style: 'https://tiles.openfreemap.org/styles/liberty',
+                center: center,
+                zoom: 12
+            });
+
+            marker = new maplibregl.Marker({draggable: true}).setLngLat(center).addTo(map);
+            
+            map.on('click', (e) => marker.setLngLat(e.lngLat));
+        }
+
+        // Templates setup
+        let templates = [];
+        async function loadTemplates() {
+            const res = await fetch("/api/v1/alert-templates");
+            templates = await res.json();
+            const select = document.getElementById("templateSelect");
+            templates.forEach(t => {
+                const opt = document.createElement("option");
+                opt.value = t.code;
+                opt.textContent = t.title;
+                select.appendChild(opt);
+            });
+            select.onchange = () => {
+                const sel = templates.find(t => t.code === select.value);
+                document.getElementById("severity").value = sel.severity;
+            };
+        }
+        loadTemplates();
+
+        // Simulate toggle
+        document.getElementById("simToggle").onchange = (e) => {
+            document.getElementById("simBadge").style.display = e.target.checked ? 'block' : 'none';
+        };
+
+        // Publish alert
+        document.getElementById("publishBtn").onclick = async () => {
+            const pos = marker.getLngLat();
+            const body = {
+                regionId: document.getElementById("regionSelect").value,
+                templateCode: document.getElementById("templateSelect").value,
+                severity: parseInt(document.getElementById("severity").value),
+                lat: pos.lat,
+                lon: pos.lng,
+                radiusM: parseInt(document.getElementById("radius").value),
+                extraText: document.getElementById("extraText").value || null,
+                isSimulation: document.getElementById("simToggle").checked
+            };
+            
+            const res = await fetch("/api/v1/alerts", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${idToken}` },
+                body: JSON.stringify(body)
+            });
+            const data = await res.json();
+            if (res.ok) {
+                alert(`Published! Wire format (${data.wire.length}/160 chars):\n${data.wire}`);
+            } else {
+                alert(`Error: ${data.error?.message}`);
+            }
+        };
+
+        // Simulate Scenario
+        document.getElementById("simulateScenarioBtn").onclick = async () => {
+            if(!confirm("Are you sure you want to run the cyclone simulation scenario?")) return;
+            const res = await fetch("/api/v1/admin/simulate", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${idToken}` },
+                body: JSON.stringify({
+                    regionId: document.getElementById("regionSelect").value,
+                    scenario: "cyclone"
+                })
+            });
+            if(res.ok) alert("Simulation generated successfully.");
+            else alert("Failed to generate simulation.");
+        };
+
+    </script>
+</head>
+<body>
+
+<div id="auth-guard">
+    <div class="card" style="text-align: center;">
+        <h2>Sahay Admin</h2>
+        <p>Please sign in to continue.</p>
+        <button id="loginBtn" class="btn">Sign in with Google</button>
+    </div>
+</div>
+
+<div id="sidebar">
+    <h2>Sahay Admin</h2>
+    <div id="simBadge" class="badge">SIMULATION MODE</div>
+    
+    <label>Region</label>
+    <select id="regionSelect"></select>
+    
+    <button class="btn" id="themeToggle" style="margin-top:auto; background:var(--surface-variant); color:var(--on-bg)">Toggle Theme</button>
+</div>
+
+<div id="content">
+    <div class="card">
+        <h2>Simulate Scenario</h2>
+        <p class="caption">Generates 2 alerts (CYC_WARN, FLD_EVAC) at the region centre and marks a shelter FULL.</p>
+        <button id="simulateScenarioBtn" class="btn btn-danger">Simulate Cyclone</button>
+    </div>
+
+    <div class="card">
+        <h2>Publish Alert</h2>
+        
+        <label>Template</label>
+        <select id="templateSelect"></select>
+        
+        <label>Severity (0-3)</label>
+        <input type="number" id="severity" min="0" max="3" value="1">
+        
+        <label>Location (Click map to set)</label>
+        <div id="map"></div>
+        
+        <label>Radius (m)</label>
+        <input type="number" id="radius" value="5000" min="100" max="20000">
+        
+        <label>Extra Text</label>
+        <input type="text" id="extraText" placeholder="Optional">
+        
+        <label style="display:flex; align-items:center; gap:8px;">
+            <input type="checkbox" id="simToggle" checked style="width:auto; margin:0;"> 
+            This is a simulation
+        </label>
+        
+        <button id="publishBtn" class="btn" style="margin-top:16px;">Publish Alert</button>
+    </div>
+</div>
+
+</body>
+</html>

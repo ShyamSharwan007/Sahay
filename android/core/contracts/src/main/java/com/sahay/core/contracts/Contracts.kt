@@ -11,7 +11,7 @@ import java.time.LocalDate
 // ---------------------------------------------------------------- config
 
 object SahayConfig {
-    const val BASE_URL = "https://CHANGE-ME.onrender.com/api/v1/"   // A updates when C deploys
+    const val BASE_URL = "https://sahay-vr1c.onrender.com/api/v1/"   // A updates when C deploys  // A updates when C deploys
     const val SMS_GATEWAY_NUMBER = "+910000000000"                   // A updates when D sets up the gateway phone
     const val EMERGENCY_NUMBER = "112"
     const val NETWORK_TIMEOUT_MS = 10_000L

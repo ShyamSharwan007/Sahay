@@ -1,0 +1,45 @@
+{
+  "publicKeyB64": "MzWetJVgmDX/H1qzZ2Wf+ygUf1M/kiYtvwbNCE0EOr0=",
+  "cases": [
+    {
+      "wire": "SH1*A*a1b2c3*FLD_EVAC*3*12.62080,80.19450*2000*S*1760000000*FRI92nsz3sx840hLI-jXVe4RU0ovcTV1qZHvXJwPR4R-vgirnHvUuxqQHtBJniqndt8NLknSzeYvkxZoDw1sBw",
+      "valid": true,
+      "note": "Valid alert \u2013 FLD_EVAC severity 3, simulation flag"
+    },
+    {
+      "wire": "SH1*S*poi_123*F*1760000000*hwojqoOhIypV48ZZ1ONnrCDUeHpFdsZOUTKoBBk0VKxQ2e3bY3JBUcx8DdAb3qgrE8cMQydihjZdP7ECYCLlAw",
+      "valid": true,
+      "note": "Valid shelter status \u2013 FULL"
+    },
+    {
+      "wire": "SH1*G*12.621,80.193*7*A*1760000000*_fwlIcHk0WYMLc1hI0dMMTgNK_Guqkfiv2xEMYPf76eemkgapAbaQQN2MiXo5i_eDkmxMyY-vWsT7N9dTnoSAw",
+      "valid": true,
+      "note": "Valid group \u2013 7 people AT_SHELTER"
+    },
+    {
+      "wire": "SH1*A*a1b2c3*FLD_EVAC*2*12.62080,80.19450*2000*S*1760000000*FRI92nsz3sx840hLI-jXVe4RU0ovcTV1qZHvXJwPR4R-vgirnHvUuxqQHtBJniqndt8NLknSzeYvkxZoDw1sBw",
+      "valid": false,
+      "note": "Invalid \u2013 tampered severity field (3\u21922), signature mismatch"
+    },
+    {
+      "wire": "SH1*A*a1b2c3*FLD_EVAC*3*12.62080,80.19450*2000*S*1760000000*FRI92nsz3sx840hLI-jXVe4RU0ovcTV1qZHvXJwPR4R-vgirnHvUuxqQHtBJniqndt8NLknSzeYvkxZoDwXXXX",
+      "valid": false,
+      "note": "Invalid \u2013 corrupted signature bytes"
+    },
+    {
+      "wire": "SH2*A*a1b2c3*FLD_EVAC*3*12.62080,80.19450*2000*S*1760000000*FRI92nsz3sx840hLI-jXVe4RU0ovcTV1qZHvXJwPR4R-vgirnHvUuxqQHtBJniqndt8NLknSzeYvkxZoDw1sBw",
+      "valid": false,
+      "note": "Invalid \u2013 wrong prefix SH2 instead of SH1"
+    },
+    {
+      "wire": "SH1*A*a1b2c3*FLD_EVAC*3*12.62080,80.19450*2000*1760000000*FRI92nsz3sx840hLI-jXVe4RU0ovcTV1qZHvXJwPR4R-vgirnHvUuxqQHtBJniqndt8NLknSzeYvkxZoDw1sBw",
+      "valid": false,
+      "note": "Invalid \u2013 wrong field count for Alert (missing flags field)"
+    },
+    {
+      "wire": "SH1*S*poi_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx*O*1760000000*QyVlgJ2BMi8hGwxSExl6wWE86VZPZgS61ACKx547tgeKO2IWZxl3odmqA4O2mky1T2wdMHE24h-cADSQKmBLCg",
+      "valid": false,
+      "note": "Invalid \u2013 wire length 180 exceeds 160 char limit"
+    }
+  ]
+}
