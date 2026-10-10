@@ -360,7 +360,6 @@ private fun Capability.labelRes(): Int = when (this) {
     Capability.SAVED_MAP -> R.string.works_saved_map
     Capability.ALERTS_ONLINE -> R.string.works_alerts_online
     Capability.SMS -> R.string.works_sms
-    Capability.NEARBY_PHONES -> R.string.works_nearby
 }
 
 @Composable

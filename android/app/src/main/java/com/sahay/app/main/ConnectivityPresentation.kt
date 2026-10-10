@@ -25,12 +25,11 @@ fun connectivityLabel(state: ConnectivityState): String = when (connectivityLeve
 }
 
 /** Things the "What works right now" sheet reports on. */
-enum class Capability { SAVED_MAP, ALERTS_ONLINE, SMS, NEARBY_PHONES }
+enum class Capability { SAVED_MAP, ALERTS_ONLINE, SMS }
 
 /** SAVED_MAP always works: it is read from the downloaded pack, never the network. */
 fun capabilityAvailable(capability: Capability, state: ConnectivityState): Boolean = when (capability) {
     Capability.SAVED_MAP -> true
     Capability.ALERTS_ONLINE -> state.internet
     Capability.SMS -> state.cellular
-    Capability.NEARBY_PHONES -> state.meshActive
 }

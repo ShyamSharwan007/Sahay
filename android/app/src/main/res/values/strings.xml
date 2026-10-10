@@ -156,7 +156,6 @@
     <string name="works_saved_map">Your saved map and places</string>
     <string name="works_alerts_online">Live alerts from the internet</string>
     <string name="works_sms">Alerts and SOS by text message</string>
-    <string name="works_nearby">Alerts from phones nearby</string>
     <string name="works_yes">Works</string>
     <string name="works_no">Not available</string>
     <string name="offline_banner_since">Offline — using saved data from %1$s</string>
@@ -170,7 +169,7 @@
     <string name="home_warning_generic_body">Stay alert and follow local advice.</string>
     <string name="home_simulation">Simulation</string>
     <string name="home_weather">Today: %1$s mm rain · wind %2$s km/h · %3$s°C</string>
-    <string name="home_weather_none">No forecast for today</string>
+    <string name="home_weather_none">Forecast unavailable — showing past patterns</string>
     <string name="home_no_pack_title">Download your trip pack</string>
     <string name="home_no_pack_body">Get maps, shelters and advice that work without internet.</string>
     <string name="home_no_pack_action">Download trip pack</string>

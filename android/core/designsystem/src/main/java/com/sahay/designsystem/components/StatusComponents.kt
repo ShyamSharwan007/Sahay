@@ -53,6 +53,8 @@ fun StatusCard(
     icon: ImageVector = kind.defaultIcon(),
     actionLabel: String? = null,
     onAction: (() -> Unit)? = null,
+    /** Small label inside the card, above the title (e.g. "Simulation"). */
+    tag: String? = null,
 ) {
     val palette = kind.palette()
     CardSurface(modifier = modifier.fillMaxWidth(), color = palette.container) {
@@ -68,6 +70,7 @@ fun StatusCard(
                         modifier = Modifier.semantics(mergeDescendants = true) { liveRegion = LiveRegionMode.Polite },
                         verticalArrangement = Arrangement.spacedBy(4.dp),
                     ) {
+                        if (tag != null) SimulationTag(tag)
                         Text(title, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface)
                         if (body != null) {
                             Text(body, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
