@@ -22,6 +22,8 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import com.sahay.designsystem.LocalReduceMotion
+import com.sahay.designsystem.SahayMotion
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -172,10 +174,15 @@ fun MainScaffold(
 
         // The bottom bar hides itself in Emergency Mode, so give the content the nav-bar inset back.
         val contentInsets = if (state.emergency && !selfInsets) Modifier.navigationBarsPadding() else Modifier
+        val reduceMotion = LocalReduceMotion.current
         NavHost(
             navController = navController,
             startDestination = HomeTab,
             modifier = Modifier.weight(1f).then(contentInsets),
+            enterTransition = { SahayMotion.enter(reduceMotion) },
+            exitTransition = { SahayMotion.exit(reduceMotion) },
+            popEnterTransition = { SahayMotion.enter(reduceMotion) },
+            popExitTransition = { SahayMotion.exit(reduceMotion) },
         ) {
             composable<HomeTab> {
                 HomeScreen(

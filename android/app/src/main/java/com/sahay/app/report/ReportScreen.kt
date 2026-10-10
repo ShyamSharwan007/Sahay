@@ -23,6 +23,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -67,6 +69,7 @@ fun ReportScreen(
 
 @Composable
 private fun FormContent(state: ReportUiState, viewModel: ReportViewModel) {
+    val haptic = LocalHapticFeedback.current
     Column(
         Modifier.fillMaxSize().verticalScroll(rememberScrollState())
             .padding(horizontal = SahaySpacing.screenPadding, vertical = SahaySpacing.xs),
@@ -104,7 +107,7 @@ private fun FormContent(state: ReportUiState, viewModel: ReportViewModel) {
         }
         SahayButton(
             text = stringResource(R.string.report_submit),
-            onClick = viewModel::submit,
+            onClick = { haptic.performHapticFeedback(HapticFeedbackType.LongPress); viewModel.submit() },
             icon = Icons.AutoMirrored.Rounded.Send,
             enabled = state.canSubmit,
             loading = state.submitting,

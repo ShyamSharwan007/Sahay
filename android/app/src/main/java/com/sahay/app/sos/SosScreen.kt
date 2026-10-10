@@ -33,7 +33,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
@@ -84,6 +86,12 @@ fun SosScreen(
     LaunchedEffect(state === SosUiState.NeedsSmsPermission) {
         if (state === SosUiState.NeedsSmsPermission) smsPermission.launch(Manifest.permission.SEND_SMS)
     }
+    // A tick for every countdown second and a firm buzz when the result arrives.
+    val haptic = LocalHapticFeedback.current
+    val secondsLeft = (state as? SosUiState.Countdown)?.secondsLeft
+    LaunchedEffect(secondsLeft) { if (secondsLeft != null) haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove) }
+    val done = state is SosUiState.Done
+    LaunchedEffect(done) { if (done) haptic.performHapticFeedback(HapticFeedbackType.LongPress) }
     val smsApp = state as? SosUiState.SmsApp
     LaunchedEffect(smsApp?.autoOpen) {
         if (smsApp != null && smsApp.autoOpen) {

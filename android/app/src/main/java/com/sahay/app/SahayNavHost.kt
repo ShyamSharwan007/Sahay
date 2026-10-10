@@ -3,6 +3,8 @@ package com.sahay.app
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
+import com.sahay.designsystem.LocalReduceMotion
+import com.sahay.designsystem.SahayMotion
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -48,7 +50,15 @@ fun SahayNavHost(startViewModel: StartViewModel = hiltViewModel()) {
 
 @Composable
 private fun OnboardingGraph(start: Any, navController: NavHostController = rememberNavController()) {
-    NavHost(navController, startDestination = start) {
+    val reduceMotion = LocalReduceMotion.current
+    NavHost(
+        navController,
+        startDestination = start,
+        enterTransition = { SahayMotion.enter(reduceMotion) },
+        exitTransition = { SahayMotion.exit(reduceMotion) },
+        popEnterTransition = { SahayMotion.enter(reduceMotion) },
+        popExitTransition = { SahayMotion.exit(reduceMotion) },
+    ) {
         composable<LanguageRoute> {
             LanguageScreen(onContinue = { navController.navigate(WelcomeRoute) })
         }
