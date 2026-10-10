@@ -81,14 +81,16 @@ def get_admin_overview(
 
 
 def _get_sqlite_url(region_id: str) -> str | None:
+    """Get the SQLite download URL for a region from packs.json (object keyed by regionId)."""
     packs_file = Path(__file__).resolve().parent.parent / "data" / "packs.json"
     if not packs_file.exists():
         return None
     try:
         packs = json.loads(packs_file.read_text())
-        for p in packs:
-            if p.get("regionId") == region_id:
-                return p.get("sqliteUrl")
+        if isinstance(packs, dict):
+            pack = packs.get(region_id)
+            if pack:
+                return pack.get("sqliteUrl")
     except Exception:
         pass
     return None
