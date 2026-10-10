@@ -35,8 +35,12 @@ def configure_osmnx(cache_dir: Path):
 
 
 def fetch_walk_graph(ox, bbox: BBox) -> tuple[dict[int, tuple[float, float]], list[RawEdge]]:
-    """Simplified walking graph: ({osm node id: (lat, lon)}, edges with their geometry midpoint)."""
-    graph = ox.graph.graph_from_bbox(bbox, network_type="walk", simplify=True, retain_all=False)
+    """Walking graph with every OSM node kept: ({osm node id: (lat, lon)}, edges with their geometry midpoint).
+
+    Not simplified on purpose: simplification drops the nodes between junctions, so the app would draw
+    straight lines through buildings instead of following the road shape.
+    """
+    graph = ox.graph.graph_from_bbox(bbox, network_type="walk", simplify=False, retain_all=False)
     nodes = {int(n): (float(d["y"]), float(d["x"])) for n, d in graph.nodes(data=True)}
 
     edges: list[RawEdge] = []
