@@ -64,6 +64,10 @@ class AdminOverview(CamelModel):
     groups: int
     beacons: int
     sms_sent_today: int
+    # Added for the admin overview; older clients ignore them.
+    active_alerts: int = 0
+    pending_reviews: int = 0
+    people_in_groups: int = 0
 
 
 class ForecastDay(CamelModel):

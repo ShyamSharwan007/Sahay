@@ -70,14 +70,61 @@ def get_admin_overview(
 
     beacons = db.scalar(text("SELECT COUNT(*) FROM beacons WHERE active = TRUE")) or 0
 
+    active_alerts = (
+        db.scalar(
+            text("SELECT COUNT(*) FROM alerts WHERE region_id = :r AND expires_at > :now"),
+            {"r": region_id, "now": now},
+        )
+        or 0
+    )
+    pending_reviews = (
+        db.scalar(
+            text(
+                "SELECT COUNT(*) FROM reports WHERE region_id = :r AND photo_url IS NOT NULL "
+                "AND review_status = 'pending'"
+            ),
+            {"r": region_id},
+        )
+        or 0
+    )
+    sms_today = (
+        db.scalar(
+            text("SELECT COUNT(*) FROM sms_log WHERE direction = 'OUT' AND created_at >= :since"),
+            {"since": now - 24 * 3600},
+        )
+        or 0
+    )
+
     return AdminOverview(
         devices=devices,
         reports=reports,
         presence=presence,
         groups=groups,
         beacons=beacons,
-        sms_sent_today=0,
+        sms_sent_today=sms_today,
+        active_alerts=active_alerts,
+        pending_reviews=pending_reviews,
+        people_in_groups=_people_in_groups(db, region_id, now),
     )
+
+
+def _people_in_groups(db: Session, region_id: str, now: int) -> int:
+    """People currently inside a cluster of the group finder. 0 if the clustering is unavailable."""
+    try:
+        from app.services.groups import calculate_groups
+
+        rows = (
+            db.execute(
+                text("SELECT uid, lat, lon, updated_at FROM presence WHERE updated_at >= :cutoff"),
+                {"cutoff": now - 10 * 60},
+            )
+            .mappings()
+            .all()
+        )
+        return sum(int(g.get("size", 0)) for g in calculate_groups([dict(r) for r in rows], region_id, []))
+    except Exception:
+        logger.warning("Could not count people in groups", exc_info=True)
+        return 0
 
 
 def _get_sqlite_url(region_id: str) -> str | None:
@@ -267,6 +314,110 @@ def end_simulation(
     )
     db.commit()
     return {"status": "ok", "ended": result.rowcount}
+
+
+class SmsLogEntry(CamelModel):
+    id: str
+    direction: str | None = None
+    phone: str | None = None
+    body: str | None = None
+    created_at: int | None = None
+    status: str | None = None
+
+
+@router.get("/admin/sms-log", response_model=list[SmsLogEntry])
+@limiter.limit("30/minute")
+def get_sms_log(
+    request: Request,
+    limit: int = Query(100, ge=1, le=500),
+    user: dict = Depends(admin_user),
+    db: Session = Depends(get_db),
+):
+    """GET /admin/sms-log — newest SMS sent and received."""
+    rows = (
+        db.execute(text("SELECT * FROM sms_log ORDER BY created_at DESC LIMIT :n"), {"n": limit})
+        .mappings()
+        .all()
+    )
+    return [SmsLogEntry(**{k: r[k] for k in ("id", "direction", "phone", "body", "created_at", "status")}) for r in rows]
+
+
+class AdminShelter(CamelModel):
+    id: str
+    name: str
+    type: str
+    lat: float
+    lon: float
+    status: str
+    updated_at: int | None = None
+
+
+_shelter_cache: dict[str, tuple[float, list[dict]]] = {}
+_SHELTER_CACHE_SECONDS = 3600
+
+
+def _load_pack_shelters(region_id: str) -> list[dict]:
+    """Shelters (official and possible) from the region's trip pack. Cached for an hour; [] if unavailable."""
+    cached = _shelter_cache.get(region_id)
+    if cached and time.time() - cached[0] < _SHELTER_CACHE_SECONDS:
+        return cached[1]
+    url = _get_sqlite_url(region_id)
+    shelters: list[dict] = []
+    if url:
+        tmp_path = None
+        try:
+            with httpx.Client(follow_redirects=True) as client:
+                resp = client.get(url, timeout=10.0)
+            if resp.status_code == 200:
+                with tempfile.NamedTemporaryFile(delete=False, suffix=".sqlite") as tmp:
+                    tmp.write(resp.content)
+                    tmp_path = tmp.name
+                conn = sqlite3.connect(tmp_path)
+                try:
+                    rows = conn.execute(
+                        "SELECT id, name, type, lat, lon FROM poi WHERE type IN ('SHELTER', 'CANDIDATE_SHELTER') ORDER BY name"
+                    ).fetchall()
+                finally:
+                    conn.close()
+                shelters = [{"id": r[0], "name": r[1], "type": r[2], "lat": r[3], "lon": r[4]} for r in rows]
+        except Exception:
+            logger.warning("Could not read shelters of %s from its pack", region_id, exc_info=True)
+        finally:
+            if tmp_path:
+                Path(tmp_path).unlink(missing_ok=True)
+    if shelters:  # do not cache failures
+        _shelter_cache[region_id] = (time.time(), shelters)
+    return shelters
+
+
+@router.get("/admin/shelters", response_model=list[AdminShelter])
+@limiter.limit("30/minute")
+def list_admin_shelters(
+    request: Request,
+    region_id: str = Query(..., alias="regionId"),
+    user: dict = Depends(admin_user),
+    db: Session = Depends(get_db),
+):
+    """GET /admin/shelters?regionId — the pack's shelters with their current status (UNKNOWN until set)."""
+    status_rows = (
+        db.execute(
+            text("SELECT shelter_id, status, updated_at FROM shelter_status WHERE region_id = :r"),
+            {"r": region_id},
+        )
+        .mappings()
+        .all()
+    )
+    status = {r["shelter_id"]: r for r in status_rows}
+    out = []
+    for s in _load_pack_shelters(region_id):
+        st = status.get(s["id"])
+        out.append(
+            AdminShelter(
+                id=s["id"], name=s["name"], type=s["type"], lat=s["lat"], lon=s["lon"],
+                status=st["status"] if st else "UNKNOWN", updated_at=st["updated_at"] if st else None,
+            )
+        )
+    return out
 
 
 class AdminReport(Report):

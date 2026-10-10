@@ -108,3 +108,25 @@ def test_delete_alert_requires_admin(client):
     app.dependency_overrides.pop(admin_user)
     assert client.delete("/api/v1/admin/alerts/abc123").status_code == 401
     assert client.post("/api/v1/admin/simulate/end", json={"regionId": REGION}).status_code == 401
+
+
+def test_overview_counts_active_alerts_and_pending_reviews(client):
+    _simulate(client)
+    body = client.get(f"/api/v1/admin/overview?regionId={REGION}").json()
+    assert body["activeAlerts"] == 2
+    assert body["pendingReviews"] == 0
+    assert "peopleInGroups" in body
+
+
+def test_admin_shelters_and_sms_log_answer_without_a_pack(client, monkeypatch):
+    monkeypatch.setattr(
+        "app.routers.admin._load_pack_shelters",
+        lambda region_id: [{"id": "poi_1", "name": "School", "type": "SHELTER", "lat": 12.6, "lon": 80.2}],
+    )
+    shelters = client.get(f"/api/v1/admin/shelters?regionId={REGION}").json()
+    assert shelters[0]["id"] == "poi_1" and shelters[0]["status"] == "UNKNOWN"
+
+    client.post("/api/v1/admin/shelters/poi_1/status", json={"regionId": REGION, "status": "FULL"})
+    assert client.get(f"/api/v1/admin/shelters?regionId={REGION}").json()[0]["status"] == "FULL"
+
+    assert client.get("/api/v1/admin/sms-log").json() == []
