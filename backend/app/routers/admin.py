@@ -153,11 +153,13 @@ def simulate_scenario(
         },
     ]
 
+    expires_at = now + 6 * 3600
+
     for a in alerts_data:
         db.execute(
             text("""
-                INSERT INTO alerts (id, region_id, template_code, severity, lat, lon, radius_m, is_simulation, issued_at, wire, created_by)
-                VALUES (:id, :region_id, :template_code, :severity, :lat, :lon, :radius_m, TRUE, :issued_at, :wire, :created_by)
+                INSERT INTO alerts (id, region_id, template_code, severity, lat, lon, radius_m, is_simulation, issued_at, expires_at, wire, created_by)
+                VALUES (:id, :region_id, :template_code, :severity, :lat, :lon, :radius_m, TRUE, :issued_at, :expires_at, :wire, :created_by)
             """),
             {
                 "id": a["id"],
@@ -168,6 +170,7 @@ def simulate_scenario(
                 "lon": a["lon"],
                 "radius_m": a["radius_m"],
                 "issued_at": now,
+                "expires_at": expires_at,
                 "wire": a["wire"],
                 "created_by": user.get("uid", "admin"),
             },
@@ -220,3 +223,31 @@ def simulate_scenario(
     db.commit()
 
     return SimulateResponse(alerts=alerts_data, shelter_changes=shelter_changes)
+
+
+class EndSimulationRequest(CamelModel):
+    region_id: str
+
+
+@router.post("/admin/simulate/end")
+@limiter.limit("30/minute")
+def end_simulation(
+    req: EndSimulationRequest,
+    request: Request,
+    user: dict = Depends(admin_user),
+    db: Session = Depends(get_db),
+):
+    """POST /admin/simulate/end"""
+    now = int(time.time())
+    db.execute(
+        text("""
+            UPDATE alerts 
+            SET expires_at = :now 
+            WHERE region_id = :region_id 
+              AND is_simulation = TRUE 
+              AND expires_at > :now
+        """),
+        {"now": now, "region_id": req.region_id},
+    )
+    db.commit()
+    return {"status": "ok"}

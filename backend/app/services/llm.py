@@ -57,7 +57,7 @@ async def call_gemini_translation(text: str, target_lang: str) -> dict:
             return json.loads(content)
     except Exception as e:
         logger.error(f"LLM API failed: {e}")
-        return fallback_keyword_match(text, target_lang)
+        raise
 
 
 def fallback_keyword_match(text: str, target_lang: str) -> dict:
