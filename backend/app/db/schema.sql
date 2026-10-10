@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS alerts (
     extra_text     TEXT,
     is_simulation  BOOLEAN DEFAULT TRUE,
     issued_at      BIGINT,
+    expires_at     BIGINT,
     wire           TEXT,
     created_by     TEXT
 );

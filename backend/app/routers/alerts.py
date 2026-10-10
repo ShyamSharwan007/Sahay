@@ -61,24 +61,53 @@ def get_alert_templates(request: Request, lang: str = Query("en")):
 def get_alerts(
     request: Request,
     region_id: str | None = Query(None, alias="regionId"),
+    region: str | None = Query(None),
     since: int | None = Query(None),
+    from_date: str | None = Query(None, alias="from"),
+    to_date: str | None = Query(None, alias="to"),
     db: Session = Depends(get_db),
 ):
-    """GET /alerts?regionId&since"""
-    # Max 50, newest first, last 72 hours max
+    """GET /alerts?region&from&to"""
+    import datetime
+
     now = int(time.time())
-    oldest_allowed = now - (72 * 3600)
 
-    query = "SELECT * FROM alerts WHERE 1=1"
-    params: dict[str, Any] = {}
+    query = "SELECT * FROM alerts WHERE expires_at > :now"
+    params: dict[str, Any] = {"now": now}
 
-    if region_id:
+    target_region = region or region_id
+    if target_region:
         query += " AND region_id = :region_id"
-        params["region_id"] = region_id
+        params["region_id"] = target_region
 
-    actual_since = max(since or 0, oldest_allowed)
-    query += " AND issued_at >= :since"
-    params["since"] = actual_since
+    if since:
+        query += " AND issued_at >= :since"
+        params["since"] = since
+
+    if from_date and to_date:
+        try:
+            from_dt = datetime.datetime.strptime(from_date, "%Y-%m-%d").replace(
+                tzinfo=datetime.timezone.utc
+            )
+            to_dt = datetime.datetime.strptime(to_date, "%Y-%m-%d").replace(
+                tzinfo=datetime.timezone.utc
+            )
+            # Add 23:59:59 to the end of to_date
+            to_dt = to_dt + datetime.timedelta(days=1) - datetime.timedelta(seconds=1)
+
+            query += " AND issued_at <= :to_ts AND expires_at >= :from_ts"
+            params["from_ts"] = int(from_dt.timestamp())
+            params["to_ts"] = int(to_dt.timestamp())
+        except ValueError:
+            raise HTTPException(
+                status_code=400,
+                detail={
+                    "error": {
+                        "code": "BAD_REQUEST",
+                        "message": "Invalid date format, use YYYY-MM-DD",
+                    }
+                },
+            )
 
     query += " ORDER BY issued_at DESC LIMIT 50"
 
@@ -96,6 +125,7 @@ def get_alerts(
                 lon=r["lon"],
                 radius_m=r["radius_m"],
                 issued_at=r["issued_at"],
+                expires_at=r["expires_at"],
                 extra_text=r["extra_text"],
                 is_simulation=r["is_simulation"],
                 wire=r["wire"],
@@ -145,6 +175,10 @@ def post_alert(
     alert_id = _generate_id()
     now = int(time.time())
 
+    expires_at = req.expires_at
+    if expires_at is None:
+        expires_at = now + (6 * 3600 if req.is_simulation else 24 * 3600)
+
     try:
         wire = build_alert(
             alert_id=alert_id,
@@ -163,8 +197,8 @@ def post_alert(
 
     db.execute(
         text("""
-            INSERT INTO alerts (id, region_id, template_code, severity, lat, lon, radius_m, extra_text, is_simulation, issued_at, wire, created_by)
-            VALUES (:id, :region_id, :template_code, :severity, :lat, :lon, :radius_m, :extra_text, :is_simulation, :issued_at, :wire, :created_by)
+            INSERT INTO alerts (id, region_id, template_code, severity, lat, lon, radius_m, extra_text, is_simulation, issued_at, expires_at, wire, created_by)
+            VALUES (:id, :region_id, :template_code, :severity, :lat, :lon, :radius_m, :extra_text, :is_simulation, :issued_at, :expires_at, :wire, :created_by)
         """),
         {
             "id": alert_id,
@@ -177,6 +211,7 @@ def post_alert(
             "extra_text": req.extra_text,
             "is_simulation": req.is_simulation,
             "issued_at": now,
+            "expires_at": expires_at,
             "wire": wire,
             "created_by": user.get("uid", "unknown"),
         },
@@ -192,6 +227,7 @@ def post_alert(
         lon=req.lon,
         radius_m=req.radius_m,
         issued_at=now,
+        expires_at=expires_at,
         extra_text=req.extra_text,
         is_simulation=req.is_simulation,
         wire=wire,

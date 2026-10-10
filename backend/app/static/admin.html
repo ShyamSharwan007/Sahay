@@ -174,8 +174,12 @@
                 opt.textContent = r.name;
                 select.appendChild(opt);
             });
-            select.onchange = () => initMap(regions.find(r => r.id === select.value).bbox);
+            select.onchange = () => {
+                initMap(regions.find(r => r.id === select.value).bbox);
+                if (idToken) loadAlerts();
+            };
             initMap(regions[0].bbox);
+            if (idToken) loadAlerts();
         }
 
         // Map setup
@@ -258,9 +262,65 @@
                     scenario: "cyclone"
                 })
             });
-            if(res.ok) alert("Simulation generated successfully.");
-            else alert("Failed to generate simulation.");
+            if(res.ok) {
+                alert("Simulation generated successfully.");
+                loadAlerts();
+            } else alert("Failed to generate simulation.");
         };
+
+        // End Simulation
+        document.getElementById("endSimulationBtn").onclick = async () => {
+            if(!confirm("End all active simulations in this region?")) return;
+            const res = await fetch("/api/v1/admin/simulate/end", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${idToken}` },
+                body: JSON.stringify({
+                    regionId: document.getElementById("regionSelect").value
+                })
+            });
+            if(res.ok) {
+                alert("Simulation ended.");
+                loadAlerts();
+            } else alert("Failed to end simulation.");
+        };
+
+        // Load Alerts
+        async function loadAlerts() {
+            const regionId = document.getElementById("regionSelect").value;
+            const res = await fetch(`/api/v1/alerts?region=${regionId}`, {
+                headers: { "Authorization": `Bearer ${idToken}` }
+            });
+            if (!res.ok) return;
+            const alerts = await res.json();
+            const list = document.getElementById("alertList");
+            list.innerHTML = "";
+            const now = Math.floor(Date.now() / 1000);
+            
+            alerts.forEach(a => {
+                const div = document.createElement("div");
+                div.style.padding = "12px";
+                div.style.background = "var(--surface-variant)";
+                div.style.borderRadius = "8px";
+                
+                const status = a.expiresAt > now ? 
+                    '<span style="color:var(--safe);font-weight:bold;">Active</span>' : 
+                    '<span style="color:var(--on-surface-variant);">Expired</span>';
+                
+                div.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                        <strong>${a.templateCode}</strong>
+                        ${status}
+                    </div>
+                    <div style="font-size: 12px; color: var(--on-surface-variant);">
+                        Issued: ${new Date(a.issuedAt * 1000).toLocaleString()} <br>
+                        Simulation: ${a.isSimulation ? 'Yes' : 'No'}
+                    </div>
+                `;
+                list.appendChild(div);
+            });
+        }
+        
+        document.getElementById("refreshAlertsBtn").onclick = loadAlerts;
 
     </script>
 </head>
@@ -289,6 +349,13 @@
         <h2>Simulate Scenario</h2>
         <p class="caption">Generates 2 alerts (CYC_WARN, FLD_EVAC) at the region centre and marks a shelter FULL.</p>
         <button id="simulateScenarioBtn" class="btn btn-danger">Simulate Cyclone</button>
+        <button id="endSimulationBtn" class="btn" style="margin-left: 8px;">End Simulation</button>
+    </div>
+
+    <div class="card">
+        <h2>Recent Alerts</h2>
+        <button id="refreshAlertsBtn" class="btn" style="margin-bottom: 16px;">Refresh List</button>
+        <div id="alertList" style="display: flex; flex-direction: column; gap: 8px;"></div>
     </div>
 
     <div class="card">
