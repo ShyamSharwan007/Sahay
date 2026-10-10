@@ -146,3 +146,43 @@ def test_manifest_10_days_ahead(mock_open_meteo, packs_with_valid_entry):
     assert "forecast" in data
     # mock_open_meteo returns 1 day of data, which should be included if dates overlap
     assert len(data["forecast"]) >= 0
+
+
+def test_manifest_2_days_forecast(packs_with_valid_entry):
+    """Test forecast for 2 days ahead returns 2 entries."""
+    import datetime
+    today = datetime.datetime.now()
+    d1 = today + datetime.timedelta(days=1)
+    d2 = today + datetime.timedelta(days=2)
+    
+    start_str = d1.strftime("%Y-%m-%d")
+    end_str = d2.strftime("%Y-%m-%d")
+    
+    with respx.mock(assert_all_called=False) as respx_mock:
+        respx_mock.get(url__regex=r"https://api\.open-meteo\.com/v1/forecast.*").respond(
+            status_code=200,
+            json={
+                "daily": {
+                    "time": [start_str, end_str],
+                    "precipitation_sum": [10.5, 75.0],
+                    "wind_speed_10m_max": [15.2, 20.0],
+                    "temperature_2m_max": [31.5, 30.0],
+                }
+            },
+        )
+        respx_mock.get(url__regex=r"https://archive-api\.open-meteo\.com/v1/archive.*").respond(
+            status_code=200,
+            json={"daily": {"time": [], "precipitation_sum": []}},
+        )
+        
+        resp = client.get(
+            f"/api/v1/packs/mahabalipuram/manifest?start={start_str}&end={end_str}"
+        )
+        
+        assert resp.status_code == 200
+        data = resp.json()
+        
+        assert len(data["forecast"]) == 2
+        assert data["forecast"][0]["date"] == start_str
+        assert data["forecast"][0]["rainMm"] == 10.5
+        assert data["forecast"][1]["riskLevel"] == "HIGH"  # 75.0 mm -> HIGH

@@ -14,13 +14,11 @@ _HISTORY_CACHE: dict[str, dict] = {}
 CONTENT_DIR = Path(__file__).resolve().parent.parent / "data" / "content"
 
 def get_risk_level(rain_mm: float, wind_kmh: float) -> str:
-    """IMD thresholds: heavy >= 64.5, very heavy >= 115.6, extremely heavy >= 204.5 or wind >= 62"""
-    if rain_mm >= 204.5 or wind_kmh >= 62:
-        return "SEVERE"
-    if rain_mm >= 115.6:
+    """Risk levels: LOW <20 mm, MEDIUM 20-64, HIGH >=65"""
+    if rain_mm >= 65:
         return "HIGH"
-    if rain_mm >= 64.5:
-        return "MODERATE"
+    if rain_mm >= 20:
+        return "MEDIUM"
     return "LOW"
 
 async def fetch_forecast(lat: float, lon: float, start_date: str, end_date: str) -> list[dict]:
@@ -48,12 +46,14 @@ async def fetch_forecast(lat: float, lon: float, start_date: str, end_date: str)
         f"&start_date={clipped_start.strftime('%Y-%m-%d')}&end_date={clipped_end.strftime('%Y-%m-%d')}"
         f"&daily=precipitation_sum,wind_speed_10m_max,temperature_2m_max"
         f"&timezone=Asia/Kolkata"
-        f"&forecast_days=16"
     )
 
     try:
         async with httpx.AsyncClient() as client:
+            logger.info(f"Open-Meteo request URL: {url}")
             resp = await client.get(url, timeout=5.0)
+            logger.info(f"Open-Meteo status: {resp.status_code}")
+            logger.info(f"Open-Meteo response: {resp.text}")
             resp.raise_for_status()
             data = resp.json()
 
@@ -65,8 +65,8 @@ async def fetch_forecast(lat: float, lon: float, start_date: str, end_date: str)
 
             result = []
             for i, d in enumerate(times):
-                d_dt = datetime.datetime.strptime(d, "%Y-%m-%d")
-                if not (start_dt <= d_dt <= end_dt):
+                d_dt = datetime.datetime.strptime(d, "%Y-%m-%d").date()
+                if not (start_dt.date() <= d_dt <= end_dt.date()):
                     continue
                 r = float(rain[i]) if rain[i] is not None else 0.0
                 w = float(wind[i]) if wind[i] is not None else 0.0
@@ -74,16 +74,19 @@ async def fetch_forecast(lat: float, lon: float, start_date: str, end_date: str)
 
                 result.append({
                     "date": d,
-                    "rain_mm": r,
-                    "wind_kmh": w,
-                    "max_temp_c": t,
-                    "risk_level": get_risk_level(r, w)
+                    "rainMm": r,
+                    "windKmh": w,
+                    "maxTempC": t,
+                    "riskLevel": get_risk_level(r, w)
                 })
 
-            _FORECAST_CACHE[cache_key] = (now, result)
+            if result:
+                _FORECAST_CACHE[cache_key] = (now, result)
+            else:
+                _FORECAST_CACHE.pop(cache_key, None)
             return result
     except Exception as e:
-        logger.warning(f"Forecast API failed: {e}")
+        logger.error(f"Forecast API failed: {e}", exc_info=True)
         return []
 
 async def fetch_history(lat: float, lon: float, start_date: str, end_date: str) -> dict:
