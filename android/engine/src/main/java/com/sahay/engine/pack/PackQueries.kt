@@ -16,6 +16,7 @@ import com.sahay.core.contracts.PoiType
 import com.sahay.core.contracts.RadioStation
 import com.sahay.core.contracts.RiskLevel
 import com.sahay.core.contracts.RiskZone
+import com.sahay.engine.routing.RoadGraphBuilder
 import java.io.File
 
 /** One routing-graph node (`node` table). */
@@ -194,6 +195,21 @@ internal class PackQueries private constructor(private val db: SQLiteDatabase) :
         db.rawQuery("SELECT from_id, to_id, length_m, risk_cost, road_class FROM edge ORDER BY from_id", null).use { cursor ->
             cursor.mapRows { GraphEdge(it.getLong(0), it.getLong(1), it.getDouble(2), it.getDouble(3), it.getStringOrNull(4)) }
         }
+    }
+
+    /**
+     * Streams the whole road network straight into a primitive-array builder (no per-row objects), nodes
+     * ordered by id. Call [RoadGraphBuilder.build] on a compute dispatcher.
+     */
+    fun readRoadGraph(): RoadGraphBuilder = read {
+        val builder = RoadGraphBuilder(rowCount(Table.NODE).toInt(), rowCount(Table.EDGE).toInt())
+        db.rawQuery("SELECT id, lat, lon FROM node ORDER BY id", null).use { cursor ->
+            while (cursor.moveToNext()) builder.addNode(cursor.getLong(0), cursor.getDouble(1), cursor.getDouble(2))
+        }
+        db.rawQuery("SELECT from_id, to_id, length_m, risk_cost FROM edge", null).use { cursor ->
+            while (cursor.moveToNext()) builder.addEdge(cursor.getLong(0), cursor.getLong(1), cursor.getDouble(2), cursor.getDouble(3))
+        }
+        builder
     }
 
     // ------------------------------------------------------------------ helpers
