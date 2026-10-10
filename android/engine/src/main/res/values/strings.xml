@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Shown on the map; required by the OpenStreetMap and OpenFreeMap licences. Keep it untranslated. -->
+    <string name="engine_map_attribution" translatable="false">© OpenStreetMap contributors · OpenFreeMap</string>
+    <string name="engine_map_content_description">Map</string>
+</resources>
