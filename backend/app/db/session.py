@@ -54,6 +54,27 @@ def get_db():
         db.close()
 
 
+# Columns added after the first release. Postgres only (ADD COLUMN IF NOT EXISTS); fresh databases get them from
+# schema.sql. Each statement runs on its own so one failure cannot block the others.
+MIGRATIONS = [
+    "ALTER TABLE alerts ADD COLUMN IF NOT EXISTS expires_at BIGINT",
+    "ALTER TABLE reports ADD COLUMN IF NOT EXISTS photo_data BYTEA",
+    "ALTER TABLE reports ADD COLUMN IF NOT EXISTS photo_mime TEXT",
+    "ALTER TABLE reports ADD COLUMN IF NOT EXISTS review_status TEXT NOT NULL DEFAULT 'pending'",
+]
+
+
+def run_migrations(engine) -> None:
+    from sqlalchemy import text
+
+    for statement in MIGRATIONS:
+        try:
+            with engine.begin() as conn:
+                conn.execute(text(statement))
+        except Exception:
+            logger.warning("Migration failed: %s", statement, exc_info=True)
+
+
 def init_db() -> None:
     """Run schema.sql against the database (CREATE IF NOT EXISTS, idempotent)."""
     schema_path = Path(__file__).parent / "schema.sql"
@@ -69,6 +90,7 @@ def init_db() -> None:
                 if stmt:
                     conn.execute(text(stmt))
             conn.commit()
+        run_migrations(engine)
         logger.info("Database schema initialized successfully")
     except Exception:
         logger.warning(

@@ -125,6 +125,11 @@
             background: var(--bg); display: flex; flex-direction: column;
             align-items: center; justify-content: center; z-index: 1000;
         }
+            .toast-wrap { position: fixed; right: 16px; bottom: 16px; display: flex; flex-direction: column; gap: 8px; z-index: 2000; }
+        .toast { background: var(--surface); color: var(--on-bg); border: 1px solid var(--outline); border-left: 4px solid var(--safe);
+                 border-radius: 12px; padding: 12px 16px; max-width: 320px; font-weight: 600; }
+        .toast-error { border-left-color: var(--danger); }
+        .alert-row { padding: 12px; background: var(--surface-variant); border-radius: 12px; }
     </style>
     <!-- Firebase -->
     <script type="module">
@@ -142,6 +147,29 @@
         const provider = new GoogleAuthProvider();
 
         let idToken = "";
+        let currentUser = null;
+
+        function toast(message, isError) {
+            const el = document.createElement("div");
+            el.className = "toast" + (isError ? " toast-error" : "");
+            el.textContent = message;
+            document.getElementById("toasts").appendChild(el);
+            setTimeout(() => el.remove(), 4500);
+        }
+
+        // Every API call: fresh Firebase ID token, JSON, and a readable error message.
+        async function api(path, method = "GET", body = null) {
+            if (currentUser) idToken = await currentUser.getIdToken();
+            const res = await fetch("/api/v1" + path, {
+                method,
+                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${idToken}` },
+                body: body ? JSON.stringify(body) : undefined
+            });
+            let data = null;
+            try { data = await res.json(); } catch (e) { /* empty body */ }
+            if (!res.ok) throw new Error(data?.error?.message || `Request failed (${res.status})`);
+            return data;
+        }
 
         // UI Logic
         const loginBtn = document.getElementById("loginBtn");
@@ -149,6 +177,7 @@
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
+                currentUser = user;
                 idToken = await user.getIdToken();
                 document.getElementById("auth-guard").style.display = "none";
                 loadRegions();
@@ -219,10 +248,6 @@
         }
         loadTemplates();
 
-        // Simulate toggle
-        document.getElementById("simToggle").onchange = (e) => {
-            document.getElementById("simBadge").style.display = e.target.checked ? 'block' : 'none';
-        };
 
         // Publish alert
         document.getElementById("publishBtn").onclick = async () => {
@@ -238,93 +263,86 @@
                 isSimulation: document.getElementById("simToggle").checked
             };
             
-            const res = await fetch("/api/v1/alerts", {
-                method: "POST",
-                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${idToken}` },
-                body: JSON.stringify(body)
-            });
-            const data = await res.json();
-            if (res.ok) {
-                alert(`Published! Wire format (${data.wire.length}/160 chars):\n${data.wire}`);
-            } else {
-                alert(`Error: ${data.error?.message}`);
-            }
+            try {
+                const data = await api("/alerts", "POST", body);
+                toast(`Published (${data.wire.length}/160 chars)`);
+                loadAlerts();
+            } catch (e) { toast(e.message, true); }
         };
 
         // Simulate Scenario
         document.getElementById("simulateScenarioBtn").onclick = async () => {
-            if(!confirm("Are you sure you want to run the cyclone simulation scenario?")) return;
-            const res = await fetch("/api/v1/admin/simulate", {
-                method: "POST",
-                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${idToken}` },
-                body: JSON.stringify({
+            if (!confirm("Run the cyclone simulation for this region?")) return;
+            try {
+                const data = await api("/admin/simulate", "POST", {
                     regionId: document.getElementById("regionSelect").value,
                     scenario: "cyclone"
-                })
-            });
-            if(res.ok) {
-                alert("Simulation generated successfully.");
+                });
+                toast(`Simulation started: ${data.alerts.length} alerts, ${data.shelterChanges.length} shelter change(s)`);
                 loadAlerts();
-            } else alert("Failed to generate simulation.");
+            } catch (e) { toast("Simulation failed: " + e.message, true); }
         };
 
         // End Simulation
         document.getElementById("endSimulationBtn").onclick = async () => {
-            if(!confirm("End all active simulations in this region?")) return;
-            const res = await fetch("/api/v1/admin/simulate/end", {
-                method: "POST",
-                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${idToken}` },
-                body: JSON.stringify({
-                    regionId: document.getElementById("regionSelect").value
-                })
-            });
-            if(res.ok) {
-                alert("Simulation ended.");
+            if (!confirm("End all active simulations in this region?")) return;
+            try {
+                const data = await api("/admin/simulate/end", "POST", { regionId: document.getElementById("regionSelect").value });
+                toast(`Simulation ended (${data.ended} alerts expired)`);
                 loadAlerts();
-            } else alert("Failed to end simulation.");
+            } catch (e) { toast("Could not end simulation: " + e.message, true); }
         };
 
-        // Load Alerts
+        async function deleteAlert(id) {
+            if (!confirm("Delete this alert?")) return;
+            try {
+                await api("/admin/alerts/" + encodeURIComponent(id), "DELETE");
+                toast("Alert deleted");
+                loadAlerts();
+            } catch (e) { toast("Delete failed: " + e.message, true); }
+        }
+        window.deleteAlert = deleteAlert;
+
+        // Load Alerts (active and expired)
         async function loadAlerts() {
             const regionId = document.getElementById("regionSelect").value;
-            const res = await fetch(`/api/v1/alerts?region=${regionId}`, {
-                headers: { "Authorization": `Bearer ${idToken}` }
-            });
-            if (!res.ok) return;
-            const alerts = await res.json();
             const list = document.getElementById("alertList");
+            let alerts;
+            try {
+                alerts = await api("/admin/alerts?regionId=" + encodeURIComponent(regionId));
+            } catch (e) { toast("Could not load alerts: " + e.message, true); return; }
             list.innerHTML = "";
-            const now = Math.floor(Date.now() / 1000);
-            
+            if (alerts.length === 0) { list.innerHTML = '<div class="caption">No alerts yet.</div>'; }
+            let simActive = false;
             alerts.forEach(a => {
+                if (a.active && a.isSimulation) simActive = true;
                 const div = document.createElement("div");
-                div.style.padding = "12px";
-                div.style.background = "var(--surface-variant)";
-                div.style.borderRadius = "8px";
-                
-                const status = a.expiresAt > now ? 
-                    '<span style="color:var(--safe);font-weight:bold;">Active</span>' : 
+                div.className = "alert-row";
+                const status = a.active ?
+                    '<span style="color:var(--safe);font-weight:700;">Active</span>' :
                     '<span style="color:var(--on-surface-variant);">Expired</span>';
-                
                 div.innerHTML = `
-                    <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-                        <strong>${a.templateCode}</strong>
+                    <div style="display:flex; justify-content:space-between; gap:8px; margin-bottom:4px;">
+                        <strong>${a.templateCode} · sev ${a.severity}</strong>
                         ${status}
                     </div>
-                    <div style="font-size: 12px; color: var(--on-surface-variant);">
-                        Issued: ${new Date(a.issuedAt * 1000).toLocaleString()} <br>
-                        Simulation: ${a.isSimulation ? 'Yes' : 'No'}
+                    <div class="caption">
+                        Issued ${new Date(a.issuedAt * 1000).toLocaleString()} · expires ${new Date(a.expiresAt * 1000).toLocaleString()}<br>
+                        ${a.isSimulation ? 'Simulation' : 'Real'} · id ${a.id}
                     </div>
-                `;
+                    <button class="btn btn-danger" style="margin-top:8px;padding:6px 14px" onclick="deleteAlert('${a.id}')">Delete</button>`;
                 list.appendChild(div);
             });
+            document.getElementById("simBadge").style.display = simActive ? 'block' : 'none';
         }
-        
+
         document.getElementById("refreshAlertsBtn").onclick = loadAlerts;
 
     </script>
 </head>
 <body>
+
+<div id="toasts" class="toast-wrap"></div>
 
 <div id="auth-guard">
     <div class="card" style="text-align: center;">

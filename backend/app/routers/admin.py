@@ -15,7 +15,7 @@ from sqlalchemy.orm import Session
 from app.auth import admin_user
 from app.db.session import get_db
 from app.limiter import limiter
-from app.models import AdminOverview, CamelModel, SimulateRequest
+from app.models import AdminOverview, AlertResponse, CamelModel, SimulateRequest
 from app.routers.alerts import _generate_id, _get_region_bbox
 from app.wire import build_alert, build_shelter
 
@@ -24,7 +24,7 @@ router = APIRouter()
 
 
 class SimulateResponse(CamelModel):
-    alerts: list[dict]
+    alerts: list[AlertResponse]
     shelter_changes: list[dict]
 
 
@@ -222,7 +222,23 @@ def simulate_scenario(
 
     db.commit()
 
-    return SimulateResponse(alerts=alerts_data, shelter_changes=shelter_changes)
+    alerts_out = [
+        AlertResponse(
+            id=a["id"],
+            region_id=req.region_id,
+            template_code=a["template_code"],
+            severity=a["severity"],
+            lat=a["lat"],
+            lon=a["lon"],
+            radius_m=a["radius_m"],
+            issued_at=now,
+            expires_at=expires_at,
+            is_simulation=True,
+            wire=a["wire"],
+        )
+        for a in alerts_data
+    ]
+    return SimulateResponse(alerts=alerts_out, shelter_changes=shelter_changes)
 
 
 class EndSimulationRequest(CamelModel):
@@ -239,15 +255,76 @@ def end_simulation(
 ):
     """POST /admin/simulate/end"""
     now = int(time.time())
-    db.execute(
+    result = db.execute(
         text("""
-            UPDATE alerts 
-            SET expires_at = :now 
-            WHERE region_id = :region_id 
-              AND is_simulation = TRUE 
+            UPDATE alerts
+            SET expires_at = :now
+            WHERE region_id = :region_id
+              AND is_simulation = TRUE
               AND expires_at > :now
         """),
         {"now": now, "region_id": req.region_id},
     )
     db.commit()
+    return {"status": "ok", "ended": result.rowcount}
+
+
+class AdminAlert(AlertResponse):
+    active: bool
+
+
+@router.get("/admin/alerts", response_model=list[AdminAlert])
+@limiter.limit("60/minute")
+def list_admin_alerts(
+    request: Request,
+    region_id: str = Query(..., alias="regionId"),
+    user: dict = Depends(admin_user),
+    db: Session = Depends(get_db),
+):
+    """GET /admin/alerts?regionId= — newest 100 alerts of the region, expired ones included."""
+    now = int(time.time())
+    rows = (
+        db.execute(
+            text("SELECT * FROM alerts WHERE region_id = :r ORDER BY issued_at DESC LIMIT 100"),
+            {"r": region_id},
+        )
+        .mappings()
+        .all()
+    )
+    return [
+        AdminAlert(
+            id=r["id"],
+            region_id=r["region_id"],
+            template_code=r["template_code"],
+            severity=r["severity"],
+            lat=r["lat"],
+            lon=r["lon"],
+            radius_m=r["radius_m"],
+            issued_at=r["issued_at"],
+            expires_at=r["expires_at"] or 0,
+            extra_text=r["extra_text"],
+            is_simulation=bool(r["is_simulation"]),
+            wire=r["wire"],
+            active=(r["expires_at"] or 0) > now,
+        )
+        for r in rows
+    ]
+
+
+@router.delete("/admin/alerts/{alert_id}")
+@limiter.limit("30/minute")
+def delete_alert(
+    alert_id: str,
+    request: Request,
+    user: dict = Depends(admin_user),
+    db: Session = Depends(get_db),
+):
+    """DELETE /admin/alerts/{id} — removes the alert for everyone (apps drop it when it expires on their side)."""
+    result = db.execute(text("DELETE FROM alerts WHERE id = :id"), {"id": alert_id})
+    db.commit()
+    if result.rowcount == 0:
+        raise HTTPException(
+            status_code=404,
+            detail={"error": {"code": "NOT_FOUND", "message": "Alert not found"}},
+        )
     return {"status": "ok"}
