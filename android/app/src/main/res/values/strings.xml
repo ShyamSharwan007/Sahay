@@ -222,4 +222,153 @@
     <string name="trip_incidents">What happened here before</string>
     <string name="trip_incident_source">Read the source</string>
     <string name="trip_precautions">Before and during your trip</string>
+
+    <!-- Shared: distances, times, places -->
+    <string name="distance_m">%1$d m</string>
+    <string name="distance_km">%1$s km</string>
+    <string name="distance_away">%1$s away</string>
+    <string name="distance_unknown">Distance unknown</string>
+    <string name="time_just_now">Just now</string>
+    <plurals name="time_min_ago">
+        <item quantity="one">%1$d min ago</item>
+        <item quantity="other">%1$d min ago</item>
+    </plurals>
+    <plurals name="time_hours_ago">
+        <item quantity="one">%1$d h ago</item>
+        <item quantity="other">%1$d h ago</item>
+    </plurals>
+    <plurals name="time_days_ago">
+        <item quantity="one">%1$d d ago</item>
+        <item quantity="other">%1$d d ago</item>
+    </plurals>
+    <string name="updated_ago">Updated %1$s</string>
+    <string name="action_call_number">Call %1$s</string>
+    <string name="action_go_here">Go here</string>
+    <string name="action_go">Go</string>
+    <string name="action_recenter">Recenter</string>
+    <string name="action_refresh">Refresh</string>
+    <string name="action_turn_on">Turn on</string>
+    <string name="action_done">Done</string>
+    <string name="poi_type_shelter">Shelter</string>
+    <string name="poi_type_possible_shelter">Possible shelter</string>
+    <string name="poi_type_hospital">Hospital</string>
+    <string name="poi_type_police">Police station</string>
+    <string name="shelter_open">Open</string>
+    <string name="shelter_full">Full</string>
+    <string name="shelter_closed">Closed</string>
+    <string name="shelter_unknown">Status unknown</string>
+    <string name="hazard_flood">Flooding</string>
+    <string name="hazard_road_blocked">Road blocked</string>
+    <string name="hazard_shelter_full">Shelter full</string>
+    <string name="hazard_shelter_open">Shelter open</string>
+    <string name="hazard_power_line">Power line down</string>
+    <string name="hazard_landslide">Landslide</string>
+    <string name="hazard_other">Something else</string>
+    <string name="trust_verified">Verified</string>
+    <string name="trust_likely">Likely</string>
+    <string name="trust_unconfirmed">Unconfirmed</string>
+    <string name="trust_description">%1$s report, score %2$d percent</string>
+    <plurals name="group_people">
+        <item quantity="one">%1$d person</item>
+        <item quantity="other">%1$d people</item>
+    </plurals>
+    <string name="group_at_shelter">At a shelter</string>
+    <string name="group_safe_area">In a safe area</string>
+    <string name="group_risk">Flood risk</string>
+    <string name="group_dont_go">Don\'t go — flood risk</string>
+    <string name="group_summary">%1$s · %2$s · %3$s</string>
+
+    <!-- Map -->
+    <string name="map_filter_shelters">Shelters</string>
+    <string name="map_filter_hospitals">Hospitals</string>
+    <string name="map_filter_police">Police</string>
+    <string name="map_filter_reports">Reports</string>
+    <string name="map_filter_groups">Groups</string>
+    <string name="map_filter_risk">Risk areas</string>
+    <string name="map_no_pack_title">No trip pack yet</string>
+    <string name="map_no_pack_body">Download a trip pack to see shelters and safe routes on the map.</string>
+    <string name="map_error_title">Couldn\'t open the map</string>
+    <string name="map_error_body">Your saved trip pack couldn\'t be read. Try again.</string>
+    <string name="report_age">Reported %1$s</string>
+    <string name="report_no_note">No note</string>
+    <string name="report_pending_send">Saved. Will send when connected</string>
+
+    <!-- Navigate -->
+    <string name="nav_header">%1$s · %2$s</string>
+    <string name="nav_eta_walk">%1$d min walk</string>
+    <string name="nav_finding">Finding the safest way…</string>
+    <string name="nav_no_fix_title">Couldn\'t get your location</string>
+    <string name="nav_no_fix_body">Move near a window and try again.</string>
+    <string name="nav_no_permission_body">Allow location in Settings so Sahay can start from where you are.</string>
+    <string name="nav_no_route_title">Couldn\'t find a way</string>
+    <string name="nav_no_route_body">Try again, or look for shelters on the map.</string>
+    <string name="nav_destination_point">Your chosen spot</string>
+    <string name="nav_avoids_risk">Avoids flood-prone roads</string>
+    <string name="nav_warn_far_from_road">You\'re far from a road. Walk to the nearest road first.</string>
+    <string name="nav_warn_hospital">No open shelter found. This leads to a hospital.</string>
+    <string name="nav_warn_risk_area">This way passes a flood-prone area. Take care.</string>
+    <string name="nav_warn_no_pack">No saved roads. Showing a straight line.</string>
+    <string name="nav_straight_line">This is a straight line, not a road route.</string>
+    <string name="nav_arrived_title">You\'ve arrived</string>
+    <string name="nav_arrived_body">Stay here and follow local advice.</string>
+    <string name="nav_show_local">Show this to a local</string>
+
+    <!-- Alerts -->
+    <string name="alerts_paste">Paste an alert</string>
+    <string name="alerts_empty_title">No alerts</string>
+    <string name="alerts_empty_body">We\'ll show official warnings here in your language.</string>
+    <string name="alerts_refresh_failed_title">Couldn\'t check for new alerts</string>
+    <string name="alerts_refresh_failed_body">Showing saved alerts. Pull down to try again.</string>
+    <string name="severity_emergency">Emergency</string>
+    <string name="severity_warning">Warning</string>
+    <string name="severity_watch">Watch</string>
+    <string name="severity_info">Info</string>
+    <string name="verif_official">Verified official</string>
+    <string name="verif_looks_official">Looks official — not verified</string>
+    <string name="verif_unverified">Unverified</string>
+    <string name="source_internet">Internet</string>
+    <string name="source_sms_server">Text from Sahay</string>
+    <string name="source_sms_official">Official text</string>
+    <string name="source_mesh">Phone nearby</string>
+    <string name="source_pasted">Pasted</string>
+    <string name="alert_unread">Unread</string>
+    <string name="alert_received">Received %1$s</string>
+    <string name="alert_in_english">In English</string>
+    <string name="alert_show_original">Show original</string>
+    <string name="alert_hide_original">Hide original</string>
+    <string name="alert_not_found_title">Alert not found</string>
+    <string name="alert_not_found_body">It may have been removed.</string>
+    <string name="paste_body">Paste a text message you got. We\'ll put it in plain words.</string>
+    <string name="paste_hint">Paste the message here</string>
+    <string name="paste_action">Translate</string>
+    <string name="paste_empty_error">Paste a message first.</string>
+
+    <!-- Report a hazard -->
+    <string name="report_what">What do you see?</string>
+    <string name="report_location_label">Your location</string>
+    <string name="report_locating">Finding your location…</string>
+    <string name="report_no_fix_title">We need your location</string>
+    <string name="report_no_fix_body">Move near a window and try again.</string>
+    <string name="report_note_label">Note (optional)</string>
+    <string name="report_note_counter">%1$d/%2$d</string>
+    <string name="report_submit">Send report</string>
+    <string name="report_failed">Couldn\'t save your report. Try again.</string>
+    <string name="report_sent_title">Sent</string>
+    <string name="report_sent_body">Thank you. People nearby can now see it.</string>
+    <string name="report_saved_title">Saved — will send when connected</string>
+    <string name="report_saved_body">We\'ll send it as soon as you have a signal.</string>
+    <string name="report_selected">Selected</string>
+
+    <!-- Find people -->
+    <string name="people_privacy">Only groups of %1$d+ are shown. Nobody sees you personally.</string>
+    <string name="people_optin_title">Find people is off</string>
+    <string name="people_optin_body">Turn it on to see groups of travellers near you. Your phone shares only a rough area.</string>
+    <string name="people_optin_failed">Couldn\'t turn it on. Try again.</string>
+    <string name="people_empty_title">No groups nearby</string>
+    <string name="people_empty_body">We\'ll look again in 2 minutes.</string>
+    <string name="people_no_fix_title">We need your location</string>
+    <string name="people_no_fix_body">Move near a window and try again.</string>
+    <string name="people_refresh_failed">Couldn\'t refresh. Showing the last list.</string>
+    <string name="people_stale">These groups may be out of date.</string>
+    <string name="people_nearby_phones">Phones nearby: %1$d</string>
 </resources>
