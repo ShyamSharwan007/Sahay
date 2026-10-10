@@ -83,7 +83,7 @@ private fun permissionSpecs(): List<PermissionSpec> = buildList {
         PermissionSpec(
             Icons.Rounded.Sms, R.string.permission_sms_title, R.string.permission_sms_why,
             R.string.permission_sms_denied,
-            permissions = listOf(Manifest.permission.RECEIVE_SMS, Manifest.permission.SEND_SMS),
+            permissions = listOf(Manifest.permission.SEND_SMS),
         ),
     )
 }

@@ -129,8 +129,8 @@
     <string name="permission_notifications_why">Warns you when danger is close.</string>
     <string name="permission_notifications_denied">Without it, you won\'t see alerts while the app is closed.</string>
     <string name="permission_sms_title">Text messages</string>
-    <string name="permission_sms_why">Sends your SOS and reads official alerts with no internet.</string>
-    <string name="permission_sms_denied">Without it, SOS texts and offline alerts won\'t work.</string>
+    <string name="permission_sms_why">Sends your SOS text with no internet.</string>
+    <string name="permission_sms_denied">Without it, SOS texts are sent from your messages app instead.</string>
     <string name="permission_open_settings">Open settings</string>
 
     <!-- Placeholders -->

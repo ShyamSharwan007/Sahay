@@ -118,8 +118,8 @@
     <string name="permission_notifications_why">ينبّهك عندما يقترب الخطر.</string>
     <string name="permission_notifications_denied">بدونها لن ترى التنبيهات والتطبيق مغلق.</string>
     <string name="permission_sms_title">الرسائل النصية</string>
-    <string name="permission_sms_why">يرسل SOS ويقرأ التنبيهات الرسمية بلا إنترنت.</string>
-    <string name="permission_sms_denied">بدونها لن تعمل رسائل SOS والتنبيهات بلا إنترنت.</string>
+    <string name="permission_sms_why">يرسل رسالة SOS بلا إنترنت.</string>
+    <string name="permission_sms_denied">بدونها تُرسل رسالة SOS من تطبيق الرسائل.</string>
     <string name="permission_open_settings">فتح الإعدادات</string>
 
     <!-- Main scaffold -->

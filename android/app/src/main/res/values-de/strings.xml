@@ -118,8 +118,8 @@
     <string name="permission_notifications_why">Warnt Sie, wenn Gefahr naht.</string>
     <string name="permission_notifications_denied">Ohne sie sehen Sie keine Warnungen, solange die App geschlossen ist.</string>
     <string name="permission_sms_title">SMS</string>
-    <string name="permission_sms_why">Sendet Ihr SOS und liest offizielle Warnungen ohne Internet.</string>
-    <string name="permission_sms_denied">Ohne sie funktionieren SOS-SMS und Offline-Warnungen nicht.</string>
+    <string name="permission_sms_why">Sendet Ihre SOS-SMS ohne Internet.</string>
+    <string name="permission_sms_denied">Ohne sie senden Sie die SOS-SMS über Ihre Nachrichten-App.</string>
     <string name="permission_open_settings">Einstellungen öffnen</string>
 
     <!-- Main scaffold -->

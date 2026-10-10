@@ -118,8 +118,8 @@
     <string name="permission_notifications_why">Vous prévient quand le danger approche.</string>
     <string name="permission_notifications_denied">Sans elles, vous ne verrez pas les alertes quand l\'appli est fermée.</string>
     <string name="permission_sms_title">SMS</string>
-    <string name="permission_sms_why">Envoie votre SOS et lit les alertes officielles sans internet.</string>
-    <string name="permission_sms_denied">Sans elle, les SMS SOS et les alertes hors ligne ne fonctionneront pas.</string>
+    <string name="permission_sms_why">Envoie votre SMS SOS sans internet.</string>
+    <string name="permission_sms_denied">Sans elle, le SMS SOS s\'envoie depuis votre appli de messages.</string>
     <string name="permission_open_settings">Ouvrir les réglages</string>
 
     <!-- Main scaffold -->
