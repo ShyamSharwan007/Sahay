@@ -56,27 +56,59 @@ async def get_pack_manifest(
         start_dt = datetime.datetime.strptime(start, "%Y-%m-%d")
         end_dt = datetime.datetime.strptime(end, "%Y-%m-%d")
     except ValueError:
-        raise HTTPException(status_code=400, detail={"error": {"code": "BAD_REQUEST", "message": "Invalid date format, expected YYYY-MM-DD"}})
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "error": {
+                    "code": "BAD_REQUEST",
+                    "message": "Invalid date format, expected YYYY-MM-DD",
+                }
+            },
+        )
 
     if start_dt > end_dt:
-        raise HTTPException(status_code=400, detail={"error": {"code": "BAD_REQUEST", "message": "start must be <= end"}})
+        raise HTTPException(
+            status_code=400,
+            detail={"error": {"code": "BAD_REQUEST", "message": "start must be <= end"}},
+        )
 
     if (end_dt - start_dt).days > 30:
-        raise HTTPException(status_code=400, detail={"error": {"code": "BAD_REQUEST", "message": "Date range cannot exceed 30 days"}})
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "error": {"code": "BAD_REQUEST", "message": "Date range cannot exceed 30 days"}
+            },
+        )
 
     # 2. Read packs.json (object keyed by regionId, written by pipeline/publish.py)
     packs = _load_packs()
     if not packs:
-        raise HTTPException(status_code=404, detail={"error": {"code": "pack_not_ready", "message": "No packs available"}})
+        raise HTTPException(
+            status_code=404,
+            detail={"error": {"code": "pack_not_ready", "message": "No packs available"}},
+        )
 
     pack = packs.get(region_id)
     if not pack:
-        raise HTTPException(status_code=404, detail={"error": {"code": "pack_not_ready", "message": f"Region {region_id} not found or not built"}})
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "error": {
+                    "code": "pack_not_ready",
+                    "message": f"Region {region_id} not found or not built",
+                }
+            },
+        )
 
     # 3. Look up regionName and bbox from regions.json (not stored in packs.json)
     region = _lookup_region(region_id)
     if not region:
-        raise HTTPException(status_code=404, detail={"error": {"code": "pack_not_ready", "message": f"Region {region_id} not configured"}})
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "error": {"code": "pack_not_ready", "message": f"Region {region_id} not configured"}
+            },
+        )
 
     bbox = region["bbox"]
 
@@ -114,12 +146,14 @@ async def get_pack_manifest(
             all_prec = json.loads(precautions_file.read_text())
             for p in all_prec:
                 if p.get("trigger") in triggers:
-                    precautions_list.append({
-                        "id": p["id"],
-                        "severity": p["severity"],
-                        "title": p["title"],
-                        "body": p["body"]
-                    })
+                    precautions_list.append(
+                        {
+                            "id": p["id"],
+                            "severity": p["severity"],
+                            "title": p["title"],
+                            "body": p["body"],
+                        }
+                    )
         except Exception:
             pass
 
@@ -151,6 +185,5 @@ async def get_pack_manifest(
         forecast=forecast_data,
         history=history_data,
         incidents=incidents_list,
-        precautions=precautions_list
+        precautions=precautions_list,
     )
-

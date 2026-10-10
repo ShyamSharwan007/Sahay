@@ -10,6 +10,7 @@ logger = logging.getLogger(__name__)
 
 KEYWORDS_JSON = Path(__file__).resolve().parent.parent / "data" / "content" / "keywords.json"
 
+
 async def call_gemini_translation(text: str, target_lang: str) -> dict:
     """
     Calls Gemini API to perform translation, simplification, and template matching.
@@ -43,23 +44,21 @@ async def call_gemini_translation(text: str, target_lang: str) -> dict:
 
     payload = {
         "contents": [{"parts": [{"text": prompt}]}],
-        "generationConfig": {
-            "responseMimeType": "application/json",
-            "temperature": 0.1
-        }
+        "generationConfig": {"responseMimeType": "application/json", "temperature": 0.1},
     }
 
-    async with httpx.AsyncClient() as client:
-        resp = await client.post(url, json=payload, timeout=8.0)
-        resp.raise_for_status()
-        data = resp.json()
+    try:
+        async with httpx.AsyncClient() as client:
+            resp = await client.post(url, json=payload, timeout=10.0)
+            resp.raise_for_status()
+            data = resp.json()
 
-        try:
             content = data["candidates"][0]["content"]["parts"][0]["text"]
             return json.loads(content)
-        except (KeyError, IndexError, json.JSONDecodeError) as e:
-            logger.error(f"Failed to parse LLM response: {e}, Data: {data}")
-            raise ValueError("Invalid LLM output format")
+    except Exception as e:
+        logger.error(f"LLM API failed: {e}")
+        return fallback_keyword_match(text, target_lang)
+
 
 def fallback_keyword_match(text: str, target_lang: str) -> dict:
     """Fallback translation using keyword matching."""
@@ -84,5 +83,5 @@ def fallback_keyword_match(text: str, target_lang: str) -> dict:
         "detectedLang": "en",  # guess
         "simplifiedEn": text,
         "translated": text,
-        "matchedTemplateCode": matched_code
+        "matchedTemplateCode": matched_code,
     }

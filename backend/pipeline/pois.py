@@ -1,4 +1,5 @@
 """Points of interest: classification, ids, filtering and merging with the curated official shelters."""
+
 import json
 import re
 from collections.abc import Mapping, Sequence
@@ -18,18 +19,37 @@ HOSPITAL = "HOSPITAL"
 POLICE = "POLICE"
 
 MIN_CANDIDATE_ELEVATION_M = 2.0
-DUPLICATE_RADIUS_M = 100.0       # same-name OSM POIs closer than this are one place (e.g. a campus)
+DUPLICATE_RADIUS_M = 100.0  # same-name OSM POIs closer than this are one place (e.g. a campus)
 OFFICIAL_OVERLAP_RADIUS_M = 50.0  # a candidate this close to an official shelter is that shelter
 
-OSM_AMENITIES = ["hospital", "clinic", "police", "school", "college", "university", "community_centre", "townhall"]
+OSM_AMENITIES = [
+    "hospital",
+    "clinic",
+    "police",
+    "school",
+    "college",
+    "university",
+    "community_centre",
+    "townhall",
+]
 _AMENITY_TYPE = {
-    "hospital": HOSPITAL, "clinic": HOSPITAL, "police": POLICE,
-    "school": CANDIDATE_SHELTER, "college": CANDIDATE_SHELTER, "university": CANDIDATE_SHELTER,
-    "community_centre": CANDIDATE_SHELTER, "townhall": CANDIDATE_SHELTER,
+    "hospital": HOSPITAL,
+    "clinic": HOSPITAL,
+    "police": POLICE,
+    "school": CANDIDATE_SHELTER,
+    "college": CANDIDATE_SHELTER,
+    "university": CANDIDATE_SHELTER,
+    "community_centre": CANDIDATE_SHELTER,
+    "townhall": CANDIDATE_SHELTER,
 }
 _FALLBACK_NAME = {
-    "hospital": "Hospital", "clinic": "Clinic", "police": "Police station", "school": "School",
-    "college": "College", "university": "University", "community_centre": "Community centre",
+    "hospital": "Hospital",
+    "clinic": "Clinic",
+    "police": "Police station",
+    "school": "School",
+    "college": "College",
+    "university": "University",
+    "community_centre": "Community centre",
     "townhall": "Town hall",
 }
 _OSM_REF = re.compile(r"^(node|way|relation|n|w|r)[/ ]?(\d+)$", re.IGNORECASE)
@@ -71,7 +91,9 @@ def _parse_int(value) -> int | None:
     return number if number >= 0 else None
 
 
-def poi_from_osm(element_type: str, osm_id: int, tags: Mapping[str, str], lat: float, lon: float) -> Poi | None:
+def poi_from_osm(
+    element_type: str, osm_id: int, tags: Mapping[str, str], lat: float, lon: float
+) -> Poi | None:
     poi_type = classify_poi(tags)
     if poi_type is None:
         return None
@@ -95,7 +117,8 @@ def dedupe_nearby(pois: Sequence[Poi], radius_m: float = DUPLICATE_RADIUS_M) -> 
     for poi in sorted((p for p in pois if not p.is_official), key=lambda p: p.id):
         key = (poi.type, poi.name.casefold())
         if any(
-            (k.type, k.name.casefold()) == key and haversine_m(k.lat, k.lon, poi.lat, poi.lon) <= radius_m
+            (k.type, k.name.casefold()) == key
+            and haversine_m(k.lat, k.lon, poi.lat, poi.lon) <= radius_m
             for k in kept
         ):
             continue
@@ -103,7 +126,9 @@ def dedupe_nearby(pois: Sequence[Poi], radius_m: float = DUPLICATE_RADIUS_M) -> 
     return kept
 
 
-def drop_unsafe_candidates(pois: Sequence[Poi], high_zone: BaseGeometry | None) -> tuple[list[Poi], dict[str, int]]:
+def drop_unsafe_candidates(
+    pois: Sequence[Poi], high_zone: BaseGeometry | None
+) -> tuple[list[Poi], dict[str, int]]:
     """Remove CANDIDATE_SHELTERs inside a HIGH zone or lower than 2 m. Unknown elevation is kept (we cannot
     tell), and counted so the build log shows how much is unverified."""
     inside = contains_points(high_zone, [p.lon for p in pois], [p.lat for p in pois])
@@ -127,15 +152,23 @@ def merge_official(osm_pois: Sequence[Poi], official: Sequence[Poi]) -> list[Poi
     """Official shelters replace any OSM candidate with the same id or within 50 m."""
     official_ids = {p.id for p in official}
     merged = [
-        p for p in osm_pois
+        p
+        for p in osm_pois
         if p.id not in official_ids
-        and not (p.type == CANDIDATE_SHELTER
-                 and any(haversine_m(p.lat, p.lon, o.lat, o.lon) <= OFFICIAL_OVERLAP_RADIUS_M for o in official))
+        and not (
+            p.type == CANDIDATE_SHELTER
+            and any(
+                haversine_m(p.lat, p.lon, o.lat, o.lon) <= OFFICIAL_OVERLAP_RADIUS_M
+                for o in official
+            )
+        )
     ]
     return merged + list(official)
 
 
-def with_elevations(pois: Sequence[Poi], elevations: Mapping[tuple[float, float], float | None]) -> list[Poi]:
+def with_elevations(
+    pois: Sequence[Poi], elevations: Mapping[tuple[float, float], float | None]
+) -> list[Poi]:
     return [replace(p, elevation_m=elevations.get((p.lat, p.lon))) for p in pois]
 
 
@@ -145,7 +178,10 @@ def _official_id(props: Mapping, index: int) -> str:
         return raw
     match = _OSM_REF.match(str(props.get("osm_id") or props.get("osmId") or raw))
     if match:
-        return poi_id({"node": "n", "way": "w", "relation": "r"}.get(match[1].lower(), match[1].lower()), int(match[2]))
+        return poi_id(
+            {"node": "n", "way": "w", "relation": "r"}.get(match[1].lower(), match[1].lower()),
+            int(match[2]),
+        )
     return f"poi_s{index}"  # no stable id given: depends on file order, so prefer setting "id" in the file
 
 
@@ -171,17 +207,26 @@ def load_official_shelters(path: Path, log=print) -> list[Poi]:
         if not (-90 <= lat <= 90 and -180 <= lon <= 180):
             log(f"  WARNING: {path.name} feature {index} has invalid coordinates, skipped")
             continue
-        if "id" not in props and "poi_id" not in props and "osm_id" not in props and "osmId" not in props:
-            log(f"  WARNING: {path.name} feature {index} has no 'id'; using file order (poi_s{index})")
-        shelters.append(Poi(
-            id=_official_id(props, index),
-            type=SHELTER,
-            name=str(props.get("name") or "Relief shelter").strip(),
-            name_ta=str(props.get("name_ta") or props.get("name:ta") or "").strip() or None,
-            lat=lat,
-            lon=lon,
-            phone=str(props.get("phone") or "").strip() or None,
-            is_official=True,
-            capacity=_parse_int(props.get("capacity")),
-        ))
+        if (
+            "id" not in props
+            and "poi_id" not in props
+            and "osm_id" not in props
+            and "osmId" not in props
+        ):
+            log(
+                f"  WARNING: {path.name} feature {index} has no 'id'; using file order (poi_s{index})"
+            )
+        shelters.append(
+            Poi(
+                id=_official_id(props, index),
+                type=SHELTER,
+                name=str(props.get("name") or "Relief shelter").strip(),
+                name_ta=str(props.get("name_ta") or props.get("name:ta") or "").strip() or None,
+                lat=lat,
+                lon=lon,
+                phone=str(props.get("phone") or "").strip() or None,
+                is_official=True,
+                capacity=_parse_int(props.get("capacity")),
+            )
+        )
     return shelters

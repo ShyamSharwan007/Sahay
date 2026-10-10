@@ -37,8 +37,8 @@ import httpx
 # ---------------------------------------------------------------------------
 # Config
 # ---------------------------------------------------------------------------
-HERE = Path(__file__).parent          # backend/pipeline/
-BACKEND = HERE.parent                 # backend/
+HERE = Path(__file__).parent  # backend/pipeline/
+BACKEND = HERE.parent  # backend/
 CONTENT_DIR = BACKEND / "app" / "data" / "content"
 CACHE_DIR = BACKEND / "cache"
 CACHE_DIR.mkdir(parents=True, exist_ok=True)
@@ -49,14 +49,14 @@ PHRASE_LANGS = REQUIRED_LANGS + ["ta"]  # phrases also need Tamil
 LLM_API_KEY = os.environ.get("LLM_API_KEY", "")
 LLM_MODEL = os.environ.get("LLM_MODEL", "gemini-2.5-flash")
 GEMINI_URL = (
-    "https://generativelanguage.googleapis.com/v1beta/models/"
-    "{model}:generateContent?key={key}"
+    "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}"
 )
 
 
 # ---------------------------------------------------------------------------
 # Disk cache helpers
 # ---------------------------------------------------------------------------
+
 
 def _cache_key(prompt: str) -> str:
     """SHA-256 of the prompt -> cache filename."""
@@ -79,6 +79,7 @@ def _cache_set(prompt: str, result: str) -> None:
 # Gemini call
 # ---------------------------------------------------------------------------
 
+
 def gemini(prompt: str) -> str:
     """Call Gemini; return the text response. Uses disk cache to avoid re-hits."""
     cached = _cache_get(prompt)
@@ -86,9 +87,7 @@ def gemini(prompt: str) -> str:
         return cached
 
     if not LLM_API_KEY:
-        raise RuntimeError(
-            "LLM_API_KEY is not set. Export it before running this script."
-        )
+        raise RuntimeError("LLM_API_KEY is not set. Export it before running this script.")
 
     url = GEMINI_URL.format(model=LLM_MODEL, key=LLM_API_KEY)
     payload = {
@@ -117,6 +116,7 @@ def translate_text(text: str, target_lang: str, context: str = "") -> str:
 # ---------------------------------------------------------------------------
 # Validation helpers
 # ---------------------------------------------------------------------------
+
 
 def word_count(text: str) -> int:
     return len(text.split())
@@ -155,9 +155,7 @@ def validate_keywords(data: dict) -> list:
             else:
                 kws = langs[lang]
                 if not (5 <= len(kws) <= 10):
-                    errors.append(
-                        f"  keywords[{code}][{lang}] has {len(kws)} keywords (need 5-10)"
-                    )
+                    errors.append(f"  keywords[{code}][{lang}] has {len(kws)} keywords (need 5-10)")
     return errors
 
 
@@ -172,15 +170,21 @@ def validate_phrases(data: list) -> list:
 def validate_precautions(data: list) -> list:
     errors = []
     valid_triggers = {
-        "heavy_rain", "very_heavy_rain", "extreme_rain",
-        "cyclone_wind", "monsoon_season", "always",
+        "heavy_rain",
+        "very_heavy_rain",
+        "extreme_rain",
+        "cyclone_wind",
+        "monsoon_season",
+        "always",
     }
     for item in data:
         pid = item.get("id", "<unknown>")
         if item.get("trigger") not in valid_triggers:
             errors.append(f"  INVALID trigger in precautions[{pid}]: {item.get('trigger')!r}")
         for field in ("title", "body"):
-            validate_lang_map(item.get(field, {}), REQUIRED_LANGS, f"precautions[{pid}].{field}", errors)
+            validate_lang_map(
+                item.get(field, {}), REQUIRED_LANGS, f"precautions[{pid}].{field}", errors
+            )
             limit = 6 if field == "title" else 25
             for lang, text in item.get(field, {}).items():
                 wc = word_count(text)
@@ -198,9 +202,7 @@ def validate_history_templates(data: dict) -> list:
     for lang, template in data.items():
         for placeholder in ("{avgRain}", "{heavyDays}", "{years}"):
             if placeholder not in template:
-                errors.append(
-                    f"  history_templates[{lang}] missing placeholder {placeholder}"
-                )
+                errors.append(f"  history_templates[{lang}] missing placeholder {placeholder}")
     return errors
 
 
@@ -244,6 +246,7 @@ def validate_radio(data: list) -> list:
 # Gap-filler: add missing translations via Gemini
 # ---------------------------------------------------------------------------
 
+
 def fill_lang_gaps_in_map(lang_map: dict, required: list, context: str) -> bool:
     """Translate missing languages using Gemini. Returns True if anything was added."""
     changed = False
@@ -272,9 +275,7 @@ def fill_templates(data: dict) -> bool:
 def fill_phrases(data: list) -> bool:
     changed = False
     for item in data:
-        if fill_lang_gaps_in_map(
-            item["text"], PHRASE_LANGS, f"tourist phrase: {item['id']}"
-        ):
+        if fill_lang_gaps_in_map(item["text"], PHRASE_LANGS, f"tourist phrase: {item['id']}"):
             changed = True
     return changed
 
@@ -305,6 +306,7 @@ def fill_incidents(data: list, region: str) -> bool:
 # Load / save helpers
 # ---------------------------------------------------------------------------
 
+
 def load_json(path: Path) -> object:
     with open(path, encoding="utf-8") as f:
         return json.load(f)
@@ -319,6 +321,7 @@ def save_json(path: Path, data: object) -> None:
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
+
 
 def main() -> int:
     print("=" * 60)

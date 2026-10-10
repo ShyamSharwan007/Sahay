@@ -84,9 +84,7 @@ def packs_empty(tmp_path):
 
 def test_manifest_valid_entry(mock_open_meteo, packs_with_valid_entry):
     """A region that exists in both packs.json and regions.json returns 200."""
-    resp = client.get(
-        "/api/v1/packs/mahabalipuram/manifest?start=2026-10-10&end=2026-10-12"
-    )
+    resp = client.get("/api/v1/packs/mahabalipuram/manifest?start=2026-10-10&end=2026-10-12")
     assert resp.status_code == 200
     data = resp.json()
     assert data["regionId"] == "mahabalipuram"
@@ -103,27 +101,21 @@ def test_manifest_valid_entry(mock_open_meteo, packs_with_valid_entry):
 
 def test_manifest_missing_region(packs_with_valid_entry):
     """A regionId not present in packs.json returns 404 pack_not_ready."""
-    resp = client.get(
-        "/api/v1/packs/nonexistent_region/manifest?start=2026-10-10&end=2026-10-12"
-    )
+    resp = client.get("/api/v1/packs/nonexistent_region/manifest?start=2026-10-10&end=2026-10-12")
     assert resp.status_code == 404
     assert resp.json()["error"]["code"] == "pack_not_ready"
 
 
 def test_manifest_empty_packs(packs_empty):
     """An empty packs.json ({}) returns 404 pack_not_ready."""
-    resp = client.get(
-        "/api/v1/packs/mahabalipuram/manifest?start=2026-10-10&end=2026-10-12"
-    )
+    resp = client.get("/api/v1/packs/mahabalipuram/manifest?start=2026-10-10&end=2026-10-12")
     assert resp.status_code == 404
     assert resp.json()["error"]["code"] == "pack_not_ready"
 
 
 def test_manifest_invalid_dates():
     """Date range > 30 days returns 400."""
-    resp = client.get(
-        "/api/v1/packs/mahabalipuram/manifest?start=2026-10-10&end=2026-11-20"
-    )
+    resp = client.get("/api/v1/packs/mahabalipuram/manifest?start=2026-10-10&end=2026-11-20")
     assert resp.status_code == 400
     assert resp.json()["error"]["code"] == "BAD_REQUEST"
 
@@ -131,16 +123,15 @@ def test_manifest_invalid_dates():
 def test_manifest_10_days_ahead(mock_open_meteo, packs_with_valid_entry):
     """Test forecast for dates 10 days ahead."""
     import datetime
+
     today = datetime.datetime.now()
     start_dt = today + datetime.timedelta(days=10)
     end_dt = today + datetime.timedelta(days=11)
-    
+
     start_str = start_dt.strftime("%Y-%m-%d")
     end_str = end_dt.strftime("%Y-%m-%d")
-    
-    resp = client.get(
-        f"/api/v1/packs/mahabalipuram/manifest?start={start_str}&end={end_str}"
-    )
+
+    resp = client.get(f"/api/v1/packs/mahabalipuram/manifest?start={start_str}&end={end_str}")
     assert resp.status_code == 200
     data = resp.json()
     assert "forecast" in data
@@ -151,13 +142,14 @@ def test_manifest_10_days_ahead(mock_open_meteo, packs_with_valid_entry):
 def test_manifest_2_days_forecast(packs_with_valid_entry):
     """Test forecast for 2 days ahead returns 2 entries."""
     import datetime
+
     today = datetime.datetime.now()
     d1 = today + datetime.timedelta(days=1)
     d2 = today + datetime.timedelta(days=2)
-    
+
     start_str = d1.strftime("%Y-%m-%d")
     end_str = d2.strftime("%Y-%m-%d")
-    
+
     with respx.mock(assert_all_called=False) as respx_mock:
         respx_mock.get(url__regex=r"https://api\.open-meteo\.com/v1/forecast.*").respond(
             status_code=200,
@@ -174,26 +166,26 @@ def test_manifest_2_days_forecast(packs_with_valid_entry):
             status_code=200,
             json={"daily": {"time": [], "precipitation_sum": []}},
         )
-        
-        resp = client.get(
-            f"/api/v1/packs/mahabalipuram/manifest?start={start_str}&end={end_str}"
-        )
-        
+
+        resp = client.get(f"/api/v1/packs/mahabalipuram/manifest?start={start_str}&end={end_str}")
+
         assert resp.status_code == 200
         data = resp.json()
-        
+
         assert len(data["forecast"]) == 2
         assert data["forecast"][0]["date"] == start_str
         assert data["forecast"][0]["rainMm"] == 10.5
         assert data["forecast"][1]["riskLevel"] == "HIGH"  # 75.0 mm -> HIGH
 
+
 def test_manifest_met_norway_fallback(packs_with_valid_entry):
     """Test MET Norway provider works and Open-Meteo 429 doesn't break it."""
     import datetime
+
     today = datetime.datetime.now()
     d1 = today + datetime.timedelta(days=3)
     d2 = today + datetime.timedelta(days=4)
-    
+
     start_str = d1.strftime("%Y-%m-%d")
     end_str = d2.strftime("%Y-%m-%d")
 
@@ -201,7 +193,7 @@ def test_manifest_met_norway_fallback(packs_with_valid_entry):
     # Example: today at 12:00 UTC = 17:30 IST. Let's just use d1 00:00 UTC.
     d1_utc = f"{start_str}T00:00:00Z"
     d2_utc = f"{end_str}T00:00:00Z"
-    
+
     with respx.mock(assert_all_called=False) as respx_mock:
         # MET Norway mock
         respx_mock.get(url__regex=r"https://api\.met\.no/weatherapi/locationforecast.*").respond(
@@ -212,20 +204,24 @@ def test_manifest_met_norway_fallback(packs_with_valid_entry):
                         {
                             "time": d1_utc,
                             "data": {
-                                "instant": {"details": {"air_temperature": 32.5, "wind_speed": 4.0}},
-                                "next_1_hours": {"details": {"precipitation_amount": 12.0}}
-                            }
+                                "instant": {
+                                    "details": {"air_temperature": 32.5, "wind_speed": 4.0}
+                                },
+                                "next_1_hours": {"details": {"precipitation_amount": 12.0}},
+                            },
                         },
                         {
                             "time": d2_utc,
                             "data": {
-                                "instant": {"details": {"air_temperature": 29.0, "wind_speed": 10.0}},
-                                "next_6_hours": {"details": {"precipitation_amount": 70.0}}
-                            }
-                        }
+                                "instant": {
+                                    "details": {"air_temperature": 29.0, "wind_speed": 10.0}
+                                },
+                                "next_6_hours": {"details": {"precipitation_amount": 70.0}},
+                            },
+                        },
                     ]
                 }
-            }
+            },
         )
         # Open-Meteo mock (429)
         respx_mock.get(url__regex=r"https://api\.open-meteo\.com/v1/forecast.*").respond(
@@ -234,21 +230,19 @@ def test_manifest_met_norway_fallback(packs_with_valid_entry):
         respx_mock.get(url__regex=r"https://archive-api\.open-meteo\.com/v1/archive.*").respond(
             status_code=200, json={"daily": {"time": [], "precipitation_sum": []}}
         )
-        
-        resp = client.get(
-            f"/api/v1/packs/mahabalipuram/manifest?start={start_str}&end={end_str}"
-        )
-        
+
+        resp = client.get(f"/api/v1/packs/mahabalipuram/manifest?start={start_str}&end={end_str}")
+
         assert resp.status_code == 200
         data = resp.json()
-        
+
         assert len(data["forecast"]) == 2
         assert data["forecast"][0]["date"] == start_str
         assert data["forecast"][0]["rainMm"] == 12.0
         assert data["forecast"][0]["windKmh"] == 14.4  # 4.0 * 3.6
         assert data["forecast"][0]["maxTempC"] == 32.5
         assert data["forecast"][0]["riskLevel"] == "LOW"
-        
+
         assert data["forecast"][1]["date"] == end_str
         assert data["forecast"][1]["rainMm"] == 70.0
         assert data["forecast"][1]["windKmh"] == 36.0  # 10.0 * 3.6

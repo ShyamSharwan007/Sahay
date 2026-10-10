@@ -21,6 +21,7 @@ router = APIRouter()
 # 30s cache: dict mapping cache_key -> (timestamp, GroupsResponse)
 _groups_response_cache = {}
 
+
 @router.get("/groups", response_model=GroupsResponse)
 @limiter.limit("60/minute")
 def get_groups(
@@ -44,25 +45,43 @@ def get_groups(
     region_id = _find_region_for_coords(lat, lon)
     if not region_id:
         # Not in any region, return empty
-        return GroupsResponse(groups=[], beacons=[], min_size=int(getattr(settings, "GROUP_MIN_SIZE", 5)))
+        return GroupsResponse(
+            groups=[], beacons=[], min_size=int(getattr(settings, "GROUP_MIN_SIZE", 5))
+        )
 
     now = int(time.time())
 
+    # Delete presence rows older than 30 min
+    db.execute(
+        text("DELETE FROM presence WHERE updated_at < :cutoff_30m"), {"cutoff_30m": now - 30 * 60}
+    )
+    db.commit()
+
     # Presences from last 10 min
     cutoff_10m = now - 10 * 60
-    presences = db.execute(
-        text("SELECT uid, lat, lon, updated_at FROM presence WHERE updated_at >= :cutoff"),
-        {"cutoff": cutoff_10m}
-    ).mappings().all()
+    presences = (
+        db.execute(
+            text("SELECT uid, lat, lon, updated_at FROM presence WHERE updated_at >= :cutoff"),
+            {"cutoff": cutoff_10m},
+        )
+        .mappings()
+        .all()
+    )
 
     presences_list = [dict(p) for p in presences]
 
     # FL Reports from last 12 hours
     cutoff_12h = now - 12 * 3600
-    reports = db.execute(
-        text("SELECT * FROM reports WHERE region_id = :region_id AND type = 'FL' AND created_at >= :cutoff"),
-        {"region_id": region_id, "cutoff": cutoff_12h}
-    ).mappings().all()
+    reports = (
+        db.execute(
+            text(
+                "SELECT * FROM reports WHERE region_id = :region_id AND type = 'FL' AND created_at >= :cutoff"
+            ),
+            {"region_id": region_id, "cutoff": cutoff_12h},
+        )
+        .mappings()
+        .all()
+    )
 
     active_alerts = _get_active_alerts(db, region_id, now)
 
@@ -85,13 +104,12 @@ def get_groups(
         # CONTRACTS: "returned to everyone within radiusM." That was for Beacons.
         # But maybe Groups too? Let's check radius.
         from app.services.groups import _haversine_distance
+
         if _haversine_distance(lat, lon, g["lat"], g["lon"]) <= radius_m:
             out_groups.append(Group(**g))
 
     res = GroupsResponse(
-        groups=out_groups,
-        beacons=[],
-        min_size=int(getattr(settings, "GROUP_MIN_SIZE", 5))
+        groups=out_groups, beacons=[], min_size=int(getattr(settings, "GROUP_MIN_SIZE", 5))
     )
 
     _groups_response_cache[cache_key] = (now, res)

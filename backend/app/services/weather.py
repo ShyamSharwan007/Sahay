@@ -13,6 +13,7 @@ _HISTORY_CACHE: dict[str, dict] = {}
 
 CONTENT_DIR = Path(__file__).resolve().parent.parent / "data" / "content"
 
+
 def get_risk_level(rain_mm: float, wind_kmh: float) -> str:
     """Risk levels: LOW <20 mm, MEDIUM 20-64, HIGH >=65"""
     if rain_mm >= 65:
@@ -21,7 +22,9 @@ def get_risk_level(rain_mm: float, wind_kmh: float) -> str:
         return "MEDIUM"
     return "LOW"
 
+
 from zoneinfo import ZoneInfo
+
 
 async def fetch_forecast_met(lat: float, lon: float, start_dt, end_dt) -> list[dict] | None:
     url = f"https://api.met.no/weatherapi/locationforecast/2.0/compact?lat={lat}&lon={lon}"
@@ -66,11 +69,21 @@ async def fetch_forecast_met(lat: float, lon: float, start_dt, end_dt) -> list[d
                 if wind is not None:
                     daily_data[date_str]["max_wind"] = max(daily_data[date_str]["max_wind"], wind)
 
-                next_1 = ts.get("data", {}).get("next_1_hours", {}).get("details", {}).get("precipitation_amount")
+                next_1 = (
+                    ts.get("data", {})
+                    .get("next_1_hours", {})
+                    .get("details", {})
+                    .get("precipitation_amount")
+                )
                 if next_1 is not None:
                     daily_data[date_str]["rain_sum"] += next_1
                 else:
-                    next_6 = ts.get("data", {}).get("next_6_hours", {}).get("details", {}).get("precipitation_amount")
+                    next_6 = (
+                        ts.get("data", {})
+                        .get("next_6_hours", {})
+                        .get("details", {})
+                        .get("precipitation_amount")
+                    )
                     if next_6 is not None:
                         daily_data[date_str]["rain_sum"] += next_6
 
@@ -81,13 +94,15 @@ async def fetch_forecast_met(lat: float, lon: float, start_dt, end_dt) -> list[d
                 w = round(max(0.0, d_data["max_wind"]) * 3.6, 1) if d_data["max_wind"] >= 0 else 0.0
                 t = d_data["max_temp"] if d_data["max_temp"] > -999 else 0.0
 
-                result.append({
-                    "date": date_str,
-                    "rainMm": round(r, 1),
-                    "windKmh": w,
-                    "maxTempC": t,
-                    "riskLevel": get_risk_level(r, w)
-                })
+                result.append(
+                    {
+                        "date": date_str,
+                        "rainMm": round(r, 1),
+                        "windKmh": w,
+                        "maxTempC": t,
+                        "riskLevel": get_risk_level(r, w),
+                    }
+                )
             logger.info("Successfully fetched forecast from MET Norway")
             return result
     except Exception as e:
@@ -136,18 +151,21 @@ async def fetch_forecast_openmeteo(lat: float, lon: float, start_dt, end_dt) -> 
                 w = float(wind[i]) if wind[i] is not None else 0.0
                 t = float(temp[i]) if temp[i] is not None else 0.0
 
-                result.append({
-                    "date": d,
-                    "rainMm": r,
-                    "windKmh": w,
-                    "maxTempC": t,
-                    "riskLevel": get_risk_level(r, w)
-                })
+                result.append(
+                    {
+                        "date": d,
+                        "rainMm": r,
+                        "windKmh": w,
+                        "maxTempC": t,
+                        "riskLevel": get_risk_level(r, w),
+                    }
+                )
             logger.info("Successfully fetched forecast from Open-Meteo")
             return result
     except Exception as e:
         logger.error(f"Open-Meteo API failed: {e}", exc_info=True)
         return None
+
 
 async def fetch_forecast(lat: float, lon: float, start_date: str, end_date: str) -> list[dict]:
     cache_key = f"{lat},{lon},{start_date},{end_date}"
@@ -165,7 +183,7 @@ async def fetch_forecast(lat: float, lon: float, start_date: str, end_date: str)
     if result is None:
         logger.warning("MET Norway failed, falling back to Open-Meteo")
         result = await fetch_forecast_openmeteo(lat, lon, start_dt, end_dt)
-    
+
     if result is None:
         result = []
 
@@ -174,6 +192,7 @@ async def fetch_forecast(lat: float, lon: float, start_date: str, end_date: str)
     else:
         _FORECAST_CACHE.pop(cache_key, None)
     return result
+
 
 async def fetch_history(lat: float, lon: float, start_date: str, end_date: str) -> dict:
     cache_key = f"{lat},{lon},{start_date},{end_date}"
@@ -229,7 +248,9 @@ async def fetch_history(lat: float, lon: float, start_date: str, end_date: str) 
 
         # Load history templates
         templates_file = CONTENT_DIR / "history_templates.json"
-        summary = {"en": "Historically {avgRain} mm/day average rain, {heavyDays} heavy rain days over these dates in the past {years} years."}
+        summary = {
+            "en": "Historically {avgRain} mm/day average rain, {heavyDays} heavy rain days over these dates in the past {years} years."
+        }
         if templates_file.exists():
             try:
                 summary = json.loads(templates_file.read_text())
@@ -239,15 +260,17 @@ async def fetch_history(lat: float, lon: float, start_date: str, end_date: str) 
         # Replace placeholders
         filled_summary = {}
         for lang, text in summary.items():
-            filled_summary[lang] = text.replace("{avgRain}", str(avg_rain)) \
-                                       .replace("{heavyDays}", str(heavy_days)) \
-                                       .replace("{years}", "5")
+            filled_summary[lang] = (
+                text.replace("{avgRain}", str(avg_rain))
+                .replace("{heavyDays}", str(heavy_days))
+                .replace("{years}", "5")
+            )
 
         result = {
             "years": sorted(years),
             "avg_rain_mm": avg_rain,
             "heavy_rain_days": heavy_days,
-            "summary": filled_summary
+            "summary": filled_summary,
         }
         _HISTORY_CACHE[cache_key] = (now, result)
         return result

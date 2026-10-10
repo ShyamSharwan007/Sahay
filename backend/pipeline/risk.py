@@ -5,6 +5,7 @@
 
 A missing (NULL) elevation counts as 0 m, i.e. the cautious assumption.
 """
+
 import math
 from collections.abc import Sequence
 
@@ -24,7 +25,9 @@ def elevation_term(elevation_m: float | None) -> float:
     return 0.0
 
 
-def risk_cost(*, in_high: bool, in_medium: bool, elevation_m: float | None, near_river_or_coast: bool) -> float:
+def risk_cost(
+    *, in_high: bool, in_medium: bool, elevation_m: float | None, near_river_or_coast: bool
+) -> float:
     raw = 3.0 * in_high + 1.5 * in_medium + elevation_term(elevation_m) + 1.0 * near_river_or_coast
     return round(min(max(raw, 0.0), MAX_RISK), 2)
 
@@ -35,7 +38,9 @@ def edge_elevation(a: float | None, b: float | None) -> float | None:
     return sum(known) / len(known) if known else None
 
 
-def compute_edge_risks(edges: Sequence[Edge], node_elevation: Sequence[float | None], high, medium, near_water) -> list[float]:
+def compute_edge_risks(
+    edges: Sequence[Edge], node_elevation: Sequence[float | None], high, medium, near_water
+) -> list[float]:
     """risk_cost for each edge, from its midpoint. `high`, `medium`, `near_water` are WGS84 shapely geometries or
     None; `node_elevation` is indexed by remapped node id."""
     lons = [e.mid_lon for e in edges]

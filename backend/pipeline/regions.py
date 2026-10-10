@@ -1,11 +1,14 @@
 """Region definitions (regions.json) and the geojson.io bbox preview link."""
+
 import json
 from dataclasses import dataclass
 from urllib.parse import quote
 
 from .paths import PIPELINE_DIR
 
-BBox = tuple[float, float, float, float]  # west, south, east, north (= minLon, minLat, maxLon, maxLat)
+BBox = tuple[
+    float, float, float, float
+]  # west, south, east, north (= minLon, minLat, maxLon, maxLat)
 
 
 @dataclass(frozen=True)
@@ -36,13 +39,17 @@ def validate_bbox(bbox) -> BBox:
         raise ValueError(f"bbox must have 4 numbers, got {bbox!r}")
     west, south, east, north = (float(v) for v in bbox)
     if not (-180 <= west < east <= 180 and -90 <= south < north <= 90):
-        raise ValueError(f"bbox must be [minLon, minLat, maxLon, maxLat] with min < max, got {bbox!r}")
+        raise ValueError(
+            f"bbox must be [minLon, minLat, maxLon, maxLat] with min < max, got {bbox!r}"
+        )
     return west, south, east, north
 
 
 def load_regions() -> dict[str, Region]:
     raw = json.loads((PIPELINE_DIR / "regions.json").read_text(encoding="utf-8"))
-    return {rid: Region(rid, info["name"], validate_bbox(info["bbox"])) for rid, info in raw.items()}
+    return {
+        rid: Region(rid, info["name"], validate_bbox(info["bbox"])) for rid, info in raw.items()
+    }
 
 
 def get_region(region_id: str) -> Region:
@@ -55,7 +62,11 @@ def get_region(region_id: str) -> Region:
 def bbox_geojson(bbox: BBox) -> dict:
     west, south, east, north = bbox
     ring = [[west, south], [east, south], [east, north], [west, north], [west, south]]
-    return {"type": "Feature", "properties": {}, "geometry": {"type": "Polygon", "coordinates": [ring]}}
+    return {
+        "type": "Feature",
+        "properties": {},
+        "geometry": {"type": "Polygon", "coordinates": [ring]},
+    }
 
 
 def geojson_io_url(bbox: BBox) -> str:

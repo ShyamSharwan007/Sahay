@@ -3,7 +3,7 @@
 Uses camelCase aliases to match the JSON specification exactly.
 """
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from pydantic.alias_generators import to_camel
 
 
@@ -28,13 +28,13 @@ class AlertResponse(CamelModel):
 
 
 class AlertCreate(CamelModel):
-    region_id: str
-    template_code: str
-    severity: int
-    lat: float
-    lon: float
-    radius_m: int
-    extra_text: str | None = None
+    region_id: str = Field(..., min_length=1, max_length=50)
+    template_code: str = Field(..., min_length=1, max_length=30)
+    severity: int = Field(..., ge=0, le=3)
+    lat: float = Field(..., ge=-90.0, le=90.0)
+    lon: float = Field(..., ge=-180.0, le=180.0)
+    radius_m: int = Field(..., ge=100, le=20000)
+    extra_text: str | None = Field(None, max_length=200)
     is_simulation: bool = True
 
 
@@ -46,13 +46,13 @@ class ShelterStatusResponse(CamelModel):
 
 
 class ShelterStatusUpdate(CamelModel):
-    region_id: str
-    status: str
+    region_id: str = Field(..., min_length=1, max_length=50)
+    status: str = Field(..., pattern="^(OPEN|FULL|CLOSED)$")
 
 
 class SimulateRequest(CamelModel):
-    region_id: str
-    scenario: str
+    region_id: str = Field(..., min_length=1, max_length=50)
+    scenario: str = Field(..., min_length=1, max_length=30)
 
 
 class AdminOverview(CamelModel):
@@ -116,15 +116,15 @@ class ManifestResponse(CamelModel):
 
 
 class ReportCreate(CamelModel):
-    type: str
-    lat: float
-    lon: float
-    reporter_lat: float
-    reporter_lon: float
-    note: str | None = None
+    type: str = Field(..., min_length=1, max_length=5)
+    lat: float = Field(..., ge=-90.0, le=90.0)
+    lon: float = Field(..., ge=-180.0, le=180.0)
+    reporter_lat: float = Field(..., ge=-90.0, le=90.0)
+    reporter_lon: float = Field(..., ge=-180.0, le=180.0)
+    note: str | None = Field(None, max_length=200)
     photo_base64: str | None = None
-    created_at: int
-    channel: str
+    created_at: int = Field(..., gt=0)
+    channel: str = Field(..., pattern="^(INTERNET|SMS|MESH)$")
 
 
 class Report(CamelModel):
@@ -142,8 +142,8 @@ class Report(CamelModel):
 
 
 class PresenceCreate(CamelModel):
-    lat: float
-    lon: float
+    lat: float = Field(..., ge=-90.0, le=90.0)
+    lon: float = Field(..., ge=-180.0, le=180.0)
 
 
 class Group(CamelModel):
@@ -170,8 +170,8 @@ class GroupsResponse(CamelModel):
 
 
 class TranslateRequest(CamelModel):
-    text: str
-    target_lang: str
+    text: str = Field(..., min_length=1, max_length=500)
+    target_lang: str = Field(..., min_length=2, max_length=10)
 
 
 class TranslateResponse(CamelModel):
@@ -179,4 +179,3 @@ class TranslateResponse(CamelModel):
     simplified_en: str
     translated: str
     matched_template_code: str | None
-

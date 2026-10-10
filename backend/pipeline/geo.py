@@ -1,4 +1,5 @@
 """Small geodesy helper."""
+
 import math
 
 EARTH_RADIUS_M = 6_371_008.8

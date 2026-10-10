@@ -20,11 +20,13 @@ def test_proximity():
     # ~0.009 deg is roughly 1km
     assert calculate_proximity_score(12.0, 80.0, 12.009, 80.0) < 0.1
 
+
 def test_corroboration():
     assert calculate_corroboration_score(0) == 0.0
     assert calculate_corroboration_score(1) == 1.0 / 3.0
     assert calculate_corroboration_score(3) == 1.0
     assert calculate_corroboration_score(4) == 1.0
+
 
 def test_official_match():
     # Empty alerts
@@ -38,12 +40,22 @@ def test_official_match():
     assert calculate_official_match_score("FL", 12.0, 80.0, alerts) == 1.0
 
     # Unrelated alert
-    assert calculate_official_match_score("FL", 12.0, 80.0, [{"template_code": "SHELTER_OPEN", "lat": 12.0, "lon": 80.0, "radius_m": 500}]) == 0.0
+    assert (
+        calculate_official_match_score(
+            "FL",
+            12.0,
+            80.0,
+            [{"template_code": "SHELTER_OPEN", "lat": 12.0, "lon": 80.0, "radius_m": 500}],
+        )
+        == 0.0
+    )
+
 
 def test_history():
     assert calculate_history_score(0, 0) == 0.5
     assert calculate_history_score(10, 5) == 0.5
     assert calculate_history_score(10, 10) == 1.0
+
 
 def test_recency():
     now = 1000000
@@ -56,6 +68,7 @@ def test_recency():
 
     # Future timestamp clamped (ageMinutes=0) -> 1.0
     assert calculate_recency_score(now + 3600, now) == 1.0
+
 
 def test_overall_trust():
     trust = calculate_trust(1.0, 1.0, 1.0, 1.0, 1.0, 1.0)

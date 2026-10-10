@@ -24,5 +24,16 @@ CREATE TABLE embassy (country_code TEXT PRIMARY KEY, name TEXT NOT NULL, phone T
 CREATE TABLE radio (name TEXT NOT NULL, frequency TEXT NOT NULL, lang TEXT);
 """
 
-TABLES = ("meta", "poi", "node", "edge", "risk_zone", "alert_template", "alert_keyword", "phrase", "embassy", "radio")
+TABLES = (
+    "meta",
+    "poi",
+    "node",
+    "edge",
+    "risk_zone",
+    "alert_template",
+    "alert_keyword",
+    "phrase",
+    "embassy",
+    "radio",
+)
 META_KEYS = ("region_id", "region_name", "pack_version", "built_at", "bbox", "public_key_b64")

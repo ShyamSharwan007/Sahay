@@ -30,7 +30,10 @@ def _haversine_distance(lat1: float, lon1: float, lat2: float, lon2: float) -> f
     phi2 = math.radians(lat2)
     delta_phi = math.radians(lat2 - lat1)
     delta_lambda = math.radians(lon2 - lon1)
-    a = math.sin(delta_phi / 2.0) ** 2 + math.cos(phi1) * math.cos(phi2) * math.sin(delta_lambda / 2.0) ** 2
+    a = (
+        math.sin(delta_phi / 2.0) ** 2
+        + math.cos(phi1) * math.cos(phi2) * math.sin(delta_lambda / 2.0) ** 2
+    )
     return R * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
 
 
@@ -69,6 +72,7 @@ def point_in_polygon(lat: float, lon: float, geojson_str: str) -> bool:
         # Simplified point in polygon for HIGH risk zones (assuming single polygon for simplicity or handle multipolygon)
         # However, a proper implementation requires ray casting.
         from shapely.geometry import Point, shape
+
         pt = Point(lon, lat)
         poly = shape(geo)
         return poly.contains(pt)
@@ -87,7 +91,7 @@ def point_in_polygon(lat: float, lon: float, geojson_str: str) -> bool:
             n = len(poly)
             inside = False
             p1x, p1y = poly[0]
-            for i in range(n+1):
+            for i in range(n + 1):
                 p2x, p2y = poly[i % n]
                 if y > min(p1y, p2y):
                     if y <= max(p1y, p2y):
@@ -109,9 +113,8 @@ def point_in_polygon(lat: float, lon: float, geojson_str: str) -> bool:
         logger.warning(f"Error in pure python ray cast: {e}")
     return False
 
-def determine_group_status(
-    lat: float, lon: float, region_id: str, fl_reports: list[dict]
-) -> str:
+
+def determine_group_status(lat: float, lon: float, region_id: str, fl_reports: list[dict]) -> str:
     # 1. AT_SHELTER if within 150m of a SHELTER/CANDIDATE_SHELTER
     conn = _get_sqlite_conn(region_id)
     if conn:
@@ -144,9 +147,7 @@ def determine_group_status(
     return "SAFE_AREA"
 
 
-def calculate_groups(
-    presences: list[dict], region_id: str, fl_reports: list[dict]
-) -> list[dict]:
+def calculate_groups(presences: list[dict], region_id: str, fl_reports: list[dict]) -> list[dict]:
     if not presences:
         return []
 
@@ -155,7 +156,9 @@ def calculate_groups(
     coords = np.array([[math.radians(p["lat"]), math.radians(p["lon"])] for p in presences])
 
     eps = 100 / 6371000.0
-    db = DBSCAN(eps=eps, min_samples=min_size, metric="haversine", algorithm="ball_tree").fit(coords)
+    db = DBSCAN(eps=eps, min_samples=min_size, metric="haversine", algorithm="ball_tree").fit(
+        coords
+    )
 
     labels = db.labels_
 
@@ -165,7 +168,7 @@ def calculate_groups(
         if k == -1:
             continue
 
-        class_member_mask = (labels == k)
+        class_member_mask = labels == k
         cluster_presences = [p for p, m in zip(presences, class_member_mask) if m]
 
         # mean rounded to 3 decimals
@@ -177,13 +180,15 @@ def calculate_groups(
         # latest last_seen
         last_seen = max(p["updated_at"] for p in cluster_presences)
 
-        groups_out.append({
-            "id": f"g_{k}_{last_seen}",  # generate an ID
-            "lat": mean_lat,
-            "lon": mean_lon,
-            "size": len(cluster_presences),
-            "status": status,
-            "last_seen": last_seen
-        })
+        groups_out.append(
+            {
+                "id": f"g_{k}_{last_seen}",  # generate an ID
+                "lat": mean_lat,
+                "lon": mean_lon,
+                "size": len(cluster_presences),
+                "status": status,
+                "last_seen": last_seen,
+            }
+        )
 
     return groups_out

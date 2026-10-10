@@ -84,7 +84,7 @@ def create_app() -> FastAPI:
             return JSONResponse(status_code=exc.status_code, content=exc.detail)
         return JSONResponse(
             status_code=exc.status_code,
-            content={"error": {"code": "HTTP_ERROR", "message": str(exc.detail)}}
+            content={"error": {"code": "HTTP_ERROR", "message": str(exc.detail)}},
         )
 
     # --- Global error handler ---
@@ -99,6 +99,27 @@ def create_app() -> FastAPI:
             },
         )
 
+    from fastapi.exceptions import RequestValidationError
+
+    @application.exception_handler(RequestValidationError)
+    async def validation_exception_handler(request: Request, exc: RequestValidationError):
+        return JSONResponse(
+            status_code=400,
+            content={
+                "error": {"code": "BAD_REQUEST", "message": "Invalid input format or out of bounds"}
+            },
+        )
+
+    from fastapi.responses import PlainTextResponse, RedirectResponse
+
+    @application.get("/", include_in_schema=False)
+    def redirect_to_admin():
+        return RedirectResponse(url="/admin")
+
+    @application.head("/", include_in_schema=False)
+    def head_root():
+        return PlainTextResponse("")
+
     # --- Routers under /api/v1 ---
     application.include_router(health.router, prefix="/api/v1")
     application.include_router(alerts.router, prefix="/api/v1")
@@ -107,6 +128,7 @@ def create_app() -> FastAPI:
     application.include_router(packs.router, prefix="/api/v1")
 
     from app.routers import groups, presence, reports, translate
+
     application.include_router(reports.router, prefix="/api/v1")
     application.include_router(presence.router, prefix="/api/v1")
     application.include_router(groups.router, prefix="/api/v1")
@@ -116,7 +138,6 @@ def create_app() -> FastAPI:
     application.include_router(admin_ui.router)
 
     return application
-
 
 
 # The ASGI app Uvicorn imports

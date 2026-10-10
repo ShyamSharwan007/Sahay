@@ -3,6 +3,7 @@
 A coordinate that cannot be resolved after all retries is returned as None (stored as NULL in the pack and
 treated as 0 m by the risk formula). Failures are never written to the cache, so a re-run retries them.
 """
+
 import math
 import random
 import sqlite3
@@ -17,9 +18,11 @@ from .geo import haversine_m
 API_URL = "https://api.open-meteo.com/v1/elevation"
 BATCH_SIZE = 100
 KEY_DECIMALS = 4  # ~11 m; the DEM is 90 m resolution, so finer keys only cost extra requests
-_SCALE = 10 ** KEY_DECIMALS
+_SCALE = 10**KEY_DECIMALS
 
-DEM_RESOLUTION_M = 90.0  # source DEM cell size: points closer than this usually share one elevation value
+DEM_RESOLUTION_M = (
+    90.0  # source DEM cell size: points closer than this usually share one elevation value
+)
 _GRID_DEG = 0.001  # ~110 m buckets for the neighbour search
 
 Point = tuple[float, float]  # (lat, lon)
@@ -91,14 +94,18 @@ class ElevationClient:
         keys = {cache_key(lat, lon) for lat, lon in points}
         resolved = self._cache.get_many(keys)
         missing = sorted(keys - resolved.keys())
-        self._log(f"  elevation: {len(keys)} unique points, {len(resolved)} cached, {len(missing)} to fetch")
+        self._log(
+            f"  elevation: {len(keys)} unique points, {len(resolved)} cached, {len(missing)} to fetch"
+        )
 
         failed_in_a_row = 0
-        batches = [missing[i:i + BATCH_SIZE] for i in range(0, len(missing), BATCH_SIZE)]
+        batches = [missing[i : i + BATCH_SIZE] for i in range(0, len(missing), BATCH_SIZE)]
         for n, batch in enumerate(batches, start=1):
             if failed_in_a_row >= self._max_failed_batches:
-                self._log("  elevation: too many failed batches in a row (rate limit?), giving up; "
-                          "re-run later, cached answers are kept")
+                self._log(
+                    "  elevation: too many failed batches in a row (rate limit?), giving up; "
+                    "re-run later, cached answers are kept"
+                )
                 break
             values = self._fetch_batch(batch)
             if values is None:
@@ -125,7 +132,9 @@ class ElevationClient:
             try:
                 response = self._session.get(API_URL, params=params, timeout=30)
             except requests.RequestException as exc:
-                self._log(f"  elevation: network error ({type(exc).__name__}), attempt {attempt + 1}")
+                self._log(
+                    f"  elevation: network error ({type(exc).__name__}), attempt {attempt + 1}"
+                )
             else:
                 if response.status_code == 200:
                     values = _parse_elevations(response, len(keys))
@@ -167,6 +176,7 @@ def fill_from_neighbours(
 
     Used when the API quota ran out: the DEM is max_m coarse, so a close neighbour is the same DEM cell.
     Points with no neighbour stay None. Returns (new mapping, number of points filled)."""
+
     def cell(point: Point) -> tuple[int, int]:
         return math.floor(point[0] / _GRID_DEG), math.floor(point[1] / _GRID_DEG)
 
@@ -181,8 +191,12 @@ def fill_from_neighbours(
         if value is not None:
             continue
         row, col = cell(point)
-        candidates = [q for dr in (-1, 0, 1) for dc in (-1, 0, 1) for q in known.get((row + dr, col + dc), [])]
-        best = min(candidates, key=lambda q: haversine_m(point[0], point[1], q[0], q[1]), default=None)
+        candidates = [
+            q for dr in (-1, 0, 1) for dc in (-1, 0, 1) for q in known.get((row + dr, col + dc), [])
+        ]
+        best = min(
+            candidates, key=lambda q: haversine_m(point[0], point[1], q[0], q[1]), default=None
+        )
         if best is not None and haversine_m(point[0], point[1], best[0], best[1]) <= max_m:
             filled[point] = elevations[best]
             count += 1

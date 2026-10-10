@@ -1,4 +1,5 @@
 """OpenStreetMap access through osmnx 2.x (the only module that imports osmnx/geopandas/pandas)."""
+
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -9,7 +10,9 @@ from .graph import RawEdge, normalize_highway
 from .pois import OSM_AMENITIES
 from .regions import BBox
 
-WATER_PAD_DEG = 0.003  # ~330 m: also fetch water just outside the bbox, its 150 m buffer can reach inside
+WATER_PAD_DEG = (
+    0.003  # ~330 m: also fetch water just outside the bbox, its 150 m buffer can reach inside
+)
 WATER_TAGS = {
     "natural": ["coastline", "water"],
     "waterway": ["river", "canal", "stream", "drain"],
@@ -36,6 +39,7 @@ class OsmElement:
 
 def configure_osmnx(cache_dir: Path):
     import osmnx as ox
+
     ox.settings.use_cache = True
     ox.settings.cache_folder = str(cache_dir / "osmnx")
     ox.settings.log_console = False
@@ -53,10 +57,14 @@ def fetch_walk_graph(ox, bbox: BBox) -> tuple[dict[int, tuple[float, float]], li
     removes campus roads and gated-estate streets a tourist can actually walk. The download keeps every
     component (retain_all) and the largest one is kept afterwards, so we control and can log what is dropped.
     """
-    full = ox.graph.graph_from_bbox(bbox, custom_filter=WALK_FILTER, simplify=False, retain_all=True)
+    full = ox.graph.graph_from_bbox(
+        bbox, custom_filter=WALK_FILTER, simplify=False, retain_all=True
+    )
     graph = ox.truncate.largest_component(full, strongly=False)
-    print(f"  OSM walkable graph: {full.number_of_nodes()} nodes / {full.number_of_edges()} edges; "
-          f"largest connected component: {graph.number_of_nodes()} / {graph.number_of_edges()}")
+    print(
+        f"  OSM walkable graph: {full.number_of_nodes()} nodes / {full.number_of_edges()} edges; "
+        f"largest connected component: {graph.number_of_nodes()} / {graph.number_of_edges()}"
+    )
     nodes = {int(n): (float(d["y"]), float(d["x"])) for n, d in graph.nodes(data=True)}
 
     edges: list[RawEdge] = []
@@ -71,13 +79,27 @@ def fetch_walk_graph(ox, bbox: BBox) -> tuple[dict[int, tuple[float, float]], li
             mid_lon, mid_lat = mid.x, mid.y
         else:
             mid_lon, mid_lat = (lon_u + lon_v) / 2, (lat_u + lat_v) / 2
-        edges.append(RawEdge(int(u), int(v), float(length), normalize_highway(data.get("highway")), mid_lon, mid_lat))
+        edges.append(
+            RawEdge(
+                int(u),
+                int(v),
+                float(length),
+                normalize_highway(data.get("highway")),
+                mid_lon,
+                mid_lat,
+            )
+        )
     return nodes, edges
 
 
 def fetch_water(ox, bbox: BBox) -> list[OsmElement]:
     west, south, east, north = bbox
-    padded = (west - WATER_PAD_DEG, south - WATER_PAD_DEG, east + WATER_PAD_DEG, north + WATER_PAD_DEG)
+    padded = (
+        west - WATER_PAD_DEG,
+        south - WATER_PAD_DEG,
+        east + WATER_PAD_DEG,
+        north + WATER_PAD_DEG,
+    )
     return _fetch_features(ox, padded, WATER_TAGS)
 
 
@@ -101,7 +123,9 @@ def _fetch_features(ox, bbox: BBox, tags: dict) -> list[OsmElement]:
         row_tags = {
             str(key): str(value)
             for key, value in row.items()
-            if key != "geometry" and not isinstance(value, (list, tuple, dict, set)) and pd.notna(value)
+            if key != "geometry"
+            and not isinstance(value, (list, tuple, dict, set))
+            and pd.notna(value)
         }
         elements.append(OsmElement(str(element_type), int(osm_id), row_tags, geometry))
     return elements

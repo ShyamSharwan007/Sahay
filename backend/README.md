@@ -1,59 +1,48 @@
 # Sahay Backend
 
-FastAPI backend for the Sahay disaster-safety app.
+The FastAPI backend for the Sahay disaster-safety app. It serves regional configuration (packs), alerts, shelter statuses, and processes crowdsourced reports and presence data.
 
-## Prerequisites
+## Architecture
+- **Framework**: FastAPI (Python 3.12+)
+- **Database**: PostgreSQL (Supabase) accessed synchronously via `psycopg` and `SQLAlchemy`. DB schema is auto-initialised.
+- **Auth**: Firebase Admin SDK for JWT verification.
+- **Caching & Rate Limiting**: In-memory caching for API responses; `slowapi` for rate limiting.
+- **External Integrations**:
+  - MET Norway / Open-Meteo (Weather forecasts)
+  - Open-Meteo Archive (Weather history)
+  - Google Gemini (Translation and template matching)
 
-- Python 3.12+
-- [uv](https://docs.astral.sh/uv/) package manager
-- PostgreSQL (or a Supabase project)
+## Environment Variables
+- `DATABASE_URL`
+- `FIREBASE_SERVICE_ACCOUNT_B64`
+- `LLM_API_KEY`
+- `CORS_ORIGINS`
+- `ADMIN_EMAILS`
+- `GROUP_MIN_SIZE`
 
-## Local Setup
+## Local Run
+1. Install dependencies: `uv pip install -r pyproject.toml` (or use `uv sync`)
+2. Run the server: `uv run uvicorn app.main:app --reload`
+3. Run tests: `uv run pytest`
 
-```bash
-# 1. Install dependencies
-uv sync
+## Deployment on Render
+Deploy as a Web Service on Render:
+1. **Build Command**: `pip install uv && uv sync`
+2. **Start Command**: `uv run uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+3. Set the required Environment Variables in the Render dashboard.
 
-# 2. Copy and fill environment variables
-cp .env.example .env
-# Edit .env with your real values
+## API Endpoints
+All main endpoints are under `/api/v1`. For request/response schemas, refer to the [API Contract](../docs/CONTRACTS.md).
 
-# 3. Generate Ed25519 signing keys
-uv run python scripts/gen_keys.py
-# Copy the output into .env
+- **Packs**: `GET /packs/{regionId}/manifest`
+- **Groups**: `GET /groups`
+- **Presence**: `POST /presence`
+- **Reports**: `GET /reports`, `POST /reports`
+- **Alerts**: `GET /alerts`, `GET /alert-templates`
+- **Admin**: `GET /admin/overview`, `POST /admin/simulate`, `POST /alerts`, `POST /admin/shelters/{shelterId}/status`
+- **Translation**: `POST /translate`
 
-# 4. Generate wire test vectors
-uv run python scripts/make_test_vectors.py
-
-# 5. Run the dev server
-uv run uvicorn app.main:app --reload --port 8000
-
-# 6. Run tests
-uv run pytest
-
-# 7. Run linter
-uv run ruff check .
-```
-
-## API
-
-All endpoints are under `/api/v1`. See `docs/CONTRACTS.md` §3 for the full spec.
-
-| Endpoint | Auth | Description |
-|---|---|---|
-| `GET /health` | – | Liveness check |
-| `GET /regions` | – | List supported regions |
-
-## Deployment (Render)
-
-1. Connect your GitHub repo to Render
-2. Create a **Web Service** and point it at this repo
-3. Set **Root Directory** to `backend`
-4. Set **Build Command**: `pip install uv && uv sync --frozen`
-5. Set **Start Command**: `uv run uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-6. Set **Health Check Path**: `/api/v1/health`
-7. Set **Region**: Singapore
-8. Add all env vars from `.env.example` in the Render dashboard
-9. Deploy — Render will build and start the service
-
-Or use `render.yaml` for infrastructure-as-code (Blueprint) deployment.
+## Data Credits
+- **Weather Forecasts**: [MET Norway](https://api.met.no/) (Licensed under CC BY 4.0)
+- **Weather Fallback & History**: [Open-Meteo](https://open-meteo.com/) (Licensed under CC BY 4.0)
+- **Map Data**: [OpenStreetMap](https://www.openstreetmap.org/) contributors (ODbL)

@@ -1,4 +1,5 @@
 """End-to-end run of build_pack.build() with OpenStreetMap and Open-Meteo replaced by small synthetic data."""
+
 import json
 import sqlite3
 
@@ -24,21 +25,44 @@ class FakeElevation:
 
 @pytest.fixture
 def sandbox(tmp_path, monkeypatch):
-    nodes = {1000 + r * 5 + c: (CENTRE_LAT + (r - 2) * 0.002, CENTRE_LON + (c - 2) * 0.002) for r in range(5) for c in range(5)}
+    nodes = {
+        1000 + r * 5 + c: (CENTRE_LAT + (r - 2) * 0.002, CENTRE_LON + (c - 2) * 0.002)
+        for r in range(5)
+        for c in range(5)
+    }
     edges = []
     for r in range(5):
         for c in range(5):
             here = 1000 + r * 5 + c
             if c < 4:
-                edges.append(RawEdge(here, here + 1, 210.0, "residential", nodes[here][1] + 0.001, nodes[here][0]))
+                edges.append(
+                    RawEdge(
+                        here, here + 1, 210.0, "residential", nodes[here][1] + 0.001, nodes[here][0]
+                    )
+                )
             if r < 4:
-                edges.append(RawEdge(here, here + 5, 220.0, "footway", nodes[here][1], nodes[here][0] + 0.001))
+                edges.append(
+                    RawEdge(
+                        here, here + 5, 220.0, "footway", nodes[here][1], nodes[here][0] + 0.001
+                    )
+                )
 
-    water = [OsmElement("way", 1, {"natural": "coastline"}, LineString([(80.17, 12.58), (80.17, 12.66)]))]
+    water = [
+        OsmElement("way", 1, {"natural": "coastline"}, LineString([(80.17, 12.58), (80.17, 12.66)]))
+    ]
     pois = [
-        OsmElement("way", 11, {"amenity": "school", "name": "Govt School"}, box(80.186, 12.619, 80.187, 12.620)),
-        OsmElement("node", 12, {"amenity": "hospital", "name": "PHC", "phone": "044"}, Point(80.19, 12.62)),
-        OsmElement("node", 13, {"amenity": "police"}, Point(80.1, 12.0)),  # outside the bbox: ignored
+        OsmElement(
+            "way",
+            11,
+            {"amenity": "school", "name": "Govt School"},
+            box(80.186, 12.619, 80.187, 12.620),
+        ),
+        OsmElement(
+            "node", 12, {"amenity": "hospital", "name": "PHC", "phone": "044"}, Point(80.19, 12.62)
+        ),
+        OsmElement(
+            "node", 13, {"amenity": "police"}, Point(80.1, 12.0)
+        ),  # outside the bbox: ignored
     ]
     monkeypatch.setattr(build_pack.osm_source, "configure_osmnx", lambda cache_dir: object())
     monkeypatch.setattr(build_pack.osm_source, "fetch_walk_graph", lambda ox, bbox: (nodes, edges))
@@ -60,18 +84,46 @@ def run(argv):
 
 def test_full_build_writes_a_valid_pack_and_the_sample(sandbox, capsys):
     (sandbox / "curated" / "risk_zones").mkdir(parents=True)
-    (sandbox / "curated" / "risk_zones" / "mahabalipuram.geojson").write_text(json.dumps({
-        "type": "FeatureCollection", "features": [{"type": "Feature", "properties": {"name": "Low colony", "source": "test"},
-            "geometry": {"type": "Polygon", "coordinates": [[[80.17, 12.61], [80.18, 12.61], [80.18, 12.63], [80.17, 12.63], [80.17, 12.61]]]}}]}))
+    (sandbox / "curated" / "risk_zones" / "mahabalipuram.geojson").write_text(
+        json.dumps(
+            {
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "type": "Feature",
+                        "properties": {"name": "Low colony", "source": "test"},
+                        "geometry": {
+                            "type": "Polygon",
+                            "coordinates": [
+                                [
+                                    [80.17, 12.61],
+                                    [80.18, 12.61],
+                                    [80.18, 12.63],
+                                    [80.17, 12.63],
+                                    [80.17, 12.61],
+                                ]
+                            ],
+                        },
+                    }
+                ],
+            }
+        )
+    )
     (sandbox / "content").mkdir()
-    (sandbox / "content" / "phrases.json").write_text(json.dumps(
-        [{"id": "yes", "lang": "ta", "category": "basic", "text": "ஆம்"}], ensure_ascii=False), encoding="utf-8")
+    (sandbox / "content" / "phrases.json").write_text(
+        json.dumps(
+            [{"id": "yes", "lang": "ta", "category": "basic", "text": "ஆம்"}], ensure_ascii=False
+        ),
+        encoding="utf-8",
+    )
 
     out = run(["--region", "mahabalipuram"])
     printed = capsys.readouterr().out
 
     assert out == sandbox / "packs" / "mahabalipuram" / "mahabalipuram.sqlite"
-    assert "geojson.io" in printed and "risk_cost  edges" in printed  # bbox link and histogram were printed
+    assert (
+        "geojson.io" in printed and "risk_cost  edges" in printed
+    )  # bbox link and histogram were printed
 
     db = sqlite3.connect(out)
     assert dict(db.execute("SELECT key, value FROM meta"))["public_key_b64"] == "KEY123=="
@@ -90,13 +142,21 @@ def test_full_build_writes_a_valid_pack_and_the_sample(sandbox, capsys):
 
     sample = sqlite3.connect(sandbox / "samples" / "mahabalipuram-sample.sqlite")
     assert 0 < sample.execute("SELECT COUNT(*) FROM node").fetchone()[0] <= 25
-    assert dict(sample.execute("SELECT key, value FROM meta"))["pack_version"] == dict(db.execute("SELECT key, value FROM meta"))["pack_version"]
+    assert (
+        dict(sample.execute("SELECT key, value FROM meta"))["pack_version"]
+        == dict(db.execute("SELECT key, value FROM meta"))["pack_version"]
+    )
 
 
 def test_rebuild_on_the_same_day_bumps_the_version(sandbox):
     first = run(["--region", "mahabalipuram", "--no-sample"])
     second = run(["--region", "mahabalipuram", "--no-sample"])
-    versions = {sqlite3.connect(p).execute("SELECT value FROM meta WHERE key = 'pack_version'").fetchone()[0] for p in (second,)}
+    versions = {
+        sqlite3.connect(p)
+        .execute("SELECT value FROM meta WHERE key = 'pack_version'")
+        .fetchone()[0]
+        for p in (second,)
+    }
     assert first == second and versions.pop().endswith(".2")
     assert not (sandbox / "samples").exists()
 
@@ -107,7 +167,9 @@ def test_other_regions_do_not_write_a_sample(sandbox):
 
 
 def test_bbox_only_stops_before_any_download(sandbox, monkeypatch, capsys):
-    monkeypatch.setattr(build_pack.osm_source, "fetch_walk_graph", lambda *a: pytest.fail("must not download"))
+    monkeypatch.setattr(
+        build_pack.osm_source, "fetch_walk_graph", lambda *a: pytest.fail("must not download")
+    )
     run(["--region", "mahabalipuram", "--bbox-only"])
     assert "geojson.io" in capsys.readouterr().out
 
