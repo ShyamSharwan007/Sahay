@@ -158,6 +158,47 @@ class ProfileWizardViewModel @Inject constructor(
 
     fun retrySave() = save()
 
+    /**
+     * Edit screens: writes only the section being edited into the saved profile, so nothing else is touched.
+     * [WizardState.finished] tells the screen to go back.
+     */
+    fun saveSection() {
+        val s = _state.value
+        if (s.saving) return
+        if (!s.canProceed) {
+            edit { copy(showErrors = true) }
+            return
+        }
+        val base = profiles.profile.value
+        if (base == null) {
+            edit { copy(saveFailed = true) }
+            return
+        }
+        val edited = s.toProfile(base.uid, base.isGuest, base.email, base.photoUrl, base.language)
+        val merged = when (s.step) {
+            WizardStep.ESSENTIALS -> base.copy(displayName = edited.displayName, nationality = edited.nationality, phone = edited.phone)
+            WizardStep.MEDICAL -> base.copy(
+                bloodGroup = edited.bloodGroup, allergies = edited.allergies,
+                medications = edited.medications, conditions = edited.conditions,
+            )
+            WizardStep.CONTACTS -> base.copy(contacts = edited.contacts)
+            WizardStep.STAY -> base.copy(hotelName = edited.hotelName, hotelAddress = edited.hotelAddress)
+            WizardStep.PRIVACY -> base.copy(groupFinderOptIn = edited.groupFinderOptIn)
+            WizardStep.PERMISSIONS -> base
+        }
+        edit { copy(saving = true, saveFailed = false) }
+        viewModelScope.launch {
+            try {
+                profiles.save(merged)
+                edit { copy(saving = false, finished = true) }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (_: Exception) {
+                edit { copy(saving = false, saveFailed = true) }
+            }
+        }
+    }
+
     /** Leaving the first step. During first-run setup this also drops the half-created session, so Sign in starts clean. */
     fun leave() {
         if (!editing) auth.signOut()

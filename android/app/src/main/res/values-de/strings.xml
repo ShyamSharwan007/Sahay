@@ -492,4 +492,6 @@
     <string name="update_available">Neue Version verfügbar</string>
     <string name="update_action">Aktualisieren</string>
     <string name="update_dismiss">Schließen</string>
+    <string name="action_save">Speichern</string>
+    <string name="me_saved">Gespeichert</string>
 </resources>

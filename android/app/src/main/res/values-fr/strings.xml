@@ -498,4 +498,6 @@
     <string name="update_available">Nouvelle version disponible</string>
     <string name="update_action">Mettre à jour</string>
     <string name="update_dismiss">Fermer</string>
+    <string name="action_save">Enregistrer</string>
+    <string name="me_saved">Enregistré</string>
 </resources>

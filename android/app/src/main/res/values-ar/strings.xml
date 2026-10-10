@@ -516,4 +516,6 @@
     <string name="update_available">يتوفر إصدار جديد</string>
     <string name="update_action">تحديث</string>
     <string name="update_dismiss">إغلاق</string>
+    <string name="action_save">حفظ</string>
+    <string name="me_saved">تم الحفظ</string>
 </resources>

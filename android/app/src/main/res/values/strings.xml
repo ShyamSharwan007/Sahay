@@ -508,4 +508,6 @@
     <string name="update_available">New version available</string>
     <string name="update_action">Update</string>
     <string name="update_dismiss">Dismiss</string>
+    <string name="action_save">Save</string>
+    <string name="me_saved">Saved</string>
 </resources>

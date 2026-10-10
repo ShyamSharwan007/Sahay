@@ -443,4 +443,6 @@
     <string name="update_available">Nueva versión disponible</string>
     <string name="update_action">Actualizar</string>
     <string name="update_dismiss">Descartar</string>
+    <string name="action_save">Guardar</string>
+    <string name="me_saved">Guardado</string>
 </resources>

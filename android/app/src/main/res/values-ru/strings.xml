@@ -449,4 +449,6 @@
     <string name="update_available">Доступна новая версия</string>
     <string name="update_action">Обновить</string>
     <string name="update_dismiss">Закрыть</string>
+    <string name="action_save">Сохранить</string>
+    <string name="me_saved">Сохранено</string>
 </resources>

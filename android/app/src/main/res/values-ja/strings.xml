@@ -431,4 +431,6 @@
     <string name="update_available">新しいバージョンがあります</string>
     <string name="update_action">更新</string>
     <string name="update_dismiss">閉じる</string>
+    <string name="action_save">保存</string>
+    <string name="me_saved">保存しました</string>
 </resources>

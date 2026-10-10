@@ -431,4 +431,6 @@
     <string name="update_available">有新版本</string>
     <string name="update_action">更新</string>
     <string name="update_dismiss">关闭</string>
+    <string name="action_save">保存</string>
+    <string name="me_saved">已保存</string>
 </resources>

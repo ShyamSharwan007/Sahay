@@ -2,6 +2,11 @@ package com.sahay.app.profile
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
+import com.sahay.designsystem.SahayMotion
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -53,6 +58,7 @@ fun ProfileWizardScreen(
         AnimatedContent(
             targetState = state.step,
             modifier = Modifier.weight(1f),
+            transitionSpec = { fadeIn(tween(SahayMotion.DURATION_MS)) togetherWith fadeOut(tween(SahayMotion.DURATION_MS)) },
             label = "wizardStep",
         ) { step ->
             Column(
@@ -87,7 +93,7 @@ private fun leave(viewModel: ProfileWizardViewModel, onExit: () -> Unit) {
 }
 
 @Composable
-private fun StepContent(step: WizardStep, state: WizardState, vm: ProfileWizardViewModel) {
+internal fun StepContent(step: WizardStep, state: WizardState, vm: ProfileWizardViewModel) {
     when (step) {
         WizardStep.ESSENTIALS -> EssentialsStep(state, vm::setName, vm::setNationality, vm::setPhoneValue)
         WizardStep.MEDICAL -> MedicalStep(

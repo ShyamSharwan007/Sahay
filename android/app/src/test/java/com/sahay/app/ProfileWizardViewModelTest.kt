@@ -281,4 +281,22 @@ class ProfileWizardViewModelTest {
         assertTrue(vm.state.value.saveFailed)
         assertNull(store.saved)
     }
+
+    @Test fun `saving a section changes only that section`() {
+        val saved = completeProfile().copy(hotelName = "Sea View", phone = "+4915112345678")
+        val store = FakeProfileStore(initial = saved)
+        val handle = androidx.lifecycle.SavedStateHandle(mapOf("step" to WizardStep.MEDICAL.ordinal))
+        val vm = ProfileWizardViewModel(FakeAuth(currentUser = googleUser), store, FakeLocales("de"), handle)
+        assertEquals(WizardStep.MEDICAL, vm.step())
+        vm.setBloodGroup("B+")
+        vm.setAllergies("Nuts")
+        vm.setHotelName("ignored here")
+        vm.saveSection()
+        val after = store.saved!!
+        assertEquals("B+", after.bloodGroup)
+        assertEquals("Nuts", after.allergies)
+        assertEquals("Sea View", after.hotelName) // other sections stay as saved
+        assertEquals(saved.phone, after.phone)
+        assertTrue(vm.state.value.finished)
+    }
 }
