@@ -9,12 +9,37 @@ from pathlib import Path
 from fastapi import APIRouter, HTTPException, Query, Request
 
 from app.models import ManifestResponse
+from app.routers.health import _REGIONS
 from app.services.weather import CONTENT_DIR, fetch_forecast, fetch_history
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
 
 PACKS_JSON = Path(__file__).resolve().parent.parent / "data" / "packs.json"
+
+
+def _lookup_region(region_id: str) -> dict | None:
+    """Find a region entry in regions.json by id."""
+    for r in _REGIONS:
+        if r["id"] == region_id:
+            return r
+    return None
+
+
+def _load_packs() -> dict:
+    """Load packs.json as a dict keyed by regionId.
+
+    Returns an empty dict on missing / invalid file.
+    """
+    if not PACKS_JSON.exists():
+        return {}
+    try:
+        data = json.loads(PACKS_JSON.read_text())
+        if isinstance(data, dict):
+            return data
+    except Exception:
+        pass
+    return {}
 
 
 @router.get("/packs/{region_id}/manifest", response_model=ManifestResponse)
@@ -39,22 +64,21 @@ async def get_pack_manifest(
     if (end_dt - start_dt).days > 30:
         raise HTTPException(status_code=400, detail={"error": {"code": "BAD_REQUEST", "message": "Date range cannot exceed 30 days"}})
 
-    # 2. Read packs.json
-    if not PACKS_JSON.exists():
+    # 2. Read packs.json (object keyed by regionId, written by pipeline/publish.py)
+    packs = _load_packs()
+    if not packs:
         raise HTTPException(status_code=404, detail={"error": {"code": "pack_not_ready", "message": "No packs available"}})
 
-    try:
-        packs = json.loads(PACKS_JSON.read_text())
-    except Exception:
-        raise HTTPException(status_code=404, detail={"error": {"code": "pack_not_ready", "message": "Invalid packs.json"}})
-
-    pack = next((p for p in packs if p.get("regionId") == region_id), None)
+    pack = packs.get(region_id)
     if not pack:
         raise HTTPException(status_code=404, detail={"error": {"code": "pack_not_ready", "message": f"Region {region_id} not found or not built"}})
 
-    bbox = pack.get("bbox", [])
-    if not bbox or len(bbox) != 4:
-        raise HTTPException(status_code=500, detail={"error": {"code": "INTERNAL_ERROR", "message": "Invalid bbox in pack"}})
+    # 3. Look up regionName and bbox from regions.json (not stored in packs.json)
+    region = _lookup_region(region_id)
+    if not region:
+        raise HTTPException(status_code=404, detail={"error": {"code": "pack_not_ready", "message": f"Region {region_id} not configured"}})
+
+    bbox = region["bbox"]
 
     center_lon = (bbox[0] + bbox[2]) / 2.0
     center_lat = (bbox[1] + bbox[3]) / 2.0
@@ -111,21 +135,22 @@ async def get_pack_manifest(
     # 6. Build Manifest
     return ManifestResponse(
         region_id=region_id,
-        region_name=pack.get("regionName", region_id),
+        region_name=region["name"],
         pack_version=pack.get("packVersion", "unknown"),
         bbox=bbox,
         sqlite_url=pack.get("sqliteUrl"),
         sqlite_bytes=pack.get("sqliteBytes"),
         sqlite_sha256=pack.get("sqliteSha256"),
-        pmtiles_url=None,
-        pmtiles_bytes=None,
-        style_light_url=None,
-        style_dark_url=None,
-        assets_zip_url=None,
-        assets_zip_bytes=None,
+        pmtiles_url=pack.get("pmtilesUrl"),
+        pmtiles_bytes=pack.get("pmtilesBytes"),
+        style_light_url=pack.get("styleLightUrl"),
+        style_dark_url=pack.get("styleDarkUrl"),
+        assets_zip_url=pack.get("assetsZipUrl"),
+        assets_zip_bytes=pack.get("assetsZipBytes"),
         public_key_b64=os.environ.get("SIGNING_PUBLIC_KEY_B64", ""),
         forecast=forecast_data,
         history=history_data,
         incidents=incidents_list,
         precautions=precautions_list
     )
+
