@@ -29,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalConfiguration
@@ -128,6 +129,8 @@ fun PhoneNumberField(
                 label = { Text(label) },
                 isError = problem != null,
                 singleLine = true,
+                // Digits always read left to right, also in Arabic.
+                textStyle = MaterialTheme.typography.bodyLarge.copy(textDirection = TextDirection.Ltr),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                 visualTransformation = if (pending == null) NationalFormat(value.region) else VisualTransformation.None,
                 modifier = Modifier.weight(1f).onFocusChanged { focus ->

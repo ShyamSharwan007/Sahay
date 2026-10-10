@@ -6,7 +6,7 @@ import androidx.compose.material.icons.rounded.Block
 import androidx.compose.material.icons.rounded.Group
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.HomeWork
-import androidx.compose.material.icons.rounded.HelpOutline
+import androidx.compose.material.icons.automirrored.rounded.HelpOutline
 import androidx.compose.material.icons.rounded.LocalHospital
 import androidx.compose.material.icons.rounded.LocalPolice
 import androidx.compose.material.icons.rounded.MoreHoriz
@@ -57,7 +57,7 @@ fun ShelterStatusChip(status: ShelterStatus, modifier: Modifier = Modifier) {
         ShelterStatus.FULL -> StatusChip(StatusKind.Danger, stringResource(R.string.shelter_full), modifier)
         ShelterStatus.CLOSED -> StatusChip(StatusKind.Danger, stringResource(R.string.shelter_closed), modifier)
         ShelterStatus.UNKNOWN -> StatusChip(
-            StatusKind.Offline, stringResource(R.string.shelter_unknown), modifier, icon = Icons.Rounded.HelpOutline,
+            StatusKind.Offline, stringResource(R.string.shelter_unknown), modifier, icon = Icons.AutoMirrored.Rounded.HelpOutline,
         )
     }
 }

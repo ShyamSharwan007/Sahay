@@ -13,7 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowForward
+import androidx.compose.material.icons.automirrored.rounded.ArrowForward
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.RadioButtonUnchecked
 import androidx.compose.material3.Icon
@@ -73,7 +73,7 @@ private fun LanguageContent(selected: String, onSelect: (String) -> Unit, onCont
         SahayButton(
             text = stringResource(com.sahay.R.string.action_continue),
             onClick = onContinue,
-            icon = Icons.Rounded.ArrowForward,
+            icon = Icons.AutoMirrored.Rounded.ArrowForward,
             modifier = Modifier.padding(bottom = SahaySpacing.md),
         )
     }
