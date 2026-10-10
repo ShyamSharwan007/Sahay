@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="local_speak">Escuchar</string>
+    <string name="local_phrase_expand">Mostrar la frase completa</string>
+    <string name="local_phrase_collapse">Mostrar menos</string>
+    <string name="local_voice_missing_title">Voz en tamil no instalada</string>
+    <string name="local_voice_missing_body">Instala una voz en tamil para oír las frases.</string>
+    <string name="local_voice_open_settings">Abrir ajustes de voz</string>
+    <string name="local_voice_settings_failed">No se pudieron abrir los ajustes de voz. Abre Ajustes y busca texto a voz.</string>
+    <string name="local_translate_title">Di otra cosa</string>
+    <string name="local_translate_hint">Escribe en tu idioma</string>
+    <string name="local_translate_action">Traducir al tamil</string>
+    <string name="local_translate_error">La traducción necesita internet. Usa las frases de abajo.</string>
+    <string name="engine_map_waiting_location">Esperando tu ubicación…</string>
+</resources>

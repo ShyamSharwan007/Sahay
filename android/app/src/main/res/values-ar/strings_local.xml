@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="local_speak">انطق</string>
+    <string name="local_phrase_expand">عرض العبارة كاملة</string>
+    <string name="local_phrase_collapse">عرض أقل</string>
+    <string name="local_voice_missing_title">الصوت التاميلي غير مثبّت</string>
+    <string name="local_voice_missing_body">ثبّت صوتًا تاميليًا لسماع العبارات.</string>
+    <string name="local_voice_open_settings">فتح إعدادات الصوت</string>
+    <string name="local_voice_settings_failed">تعذّر فتح إعدادات الصوت. افتح الإعدادات وابحث عن تحويل النص إلى كلام.</string>
+    <string name="local_translate_title">قل شيئًا آخر</string>
+    <string name="local_translate_hint">اكتب بلغتك</string>
+    <string name="local_translate_action">ترجم إلى التاميلية</string>
+    <string name="local_translate_error">الترجمة تحتاج إلى الإنترنت. استخدم دليل العبارات أدناه.</string>
+    <string name="engine_map_waiting_location">في انتظار موقعك…</string>
+</resources>

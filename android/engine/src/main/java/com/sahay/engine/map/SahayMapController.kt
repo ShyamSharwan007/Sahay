@@ -157,6 +157,16 @@ internal class SahayMapController(
         hasPositionedCamera = true
     }
 
+    /** Eases to [fix] at [zoom] and holds off [follow] for a moment so it cannot cut the animation short. */
+    fun recenter(fix: LocationFix, zoom: Double) {
+        val currentMap = map ?: return
+        throttle.tryAcquire(SystemClock.elapsedRealtime())
+        val update = CameraUpdateFactory.newLatLngZoom(LatLng(fix.point.lat, fix.point.lon), zoom)
+        if (hasPositionedCamera) currentMap.easeCamera(update, EASE_MS) else currentMap.moveCamera(update)
+        hasFollowedOnce = true
+        hasPositionedCamera = true
+    }
+
     /** Lets the next [follow] through immediately (called when following resumes). */
     fun resetFollowThrottle() = throttle.reset()
 

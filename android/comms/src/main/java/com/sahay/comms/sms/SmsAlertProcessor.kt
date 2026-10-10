@@ -1,6 +1,7 @@
 package com.sahay.comms.sms
 
 import android.util.Log
+import com.sahay.comms.alerts.IngestResult
 import com.sahay.comms.alerts.OfficialAlertDetector
 import com.sahay.comms.alerts.RealAlertRepository
 import com.sahay.comms.wire.WireMessage
@@ -41,8 +42,11 @@ class SmsAlertProcessor @Inject constructor(
 
     private suspend fun handleWire(wire: String): SmsOutcome =
         when (val message = reader.read(wire)) {
-            is WireMessage.Alert ->
-                if (alerts.ingestSignedAlert(message, wire, AlertSource.SMS_SERVER)) SmsOutcome.SERVER_ALERT else SmsOutcome.DUPLICATE
+            is WireMessage.Alert -> when (alerts.ingestSignedAlert(message, wire, AlertSource.SMS_SERVER)) {
+                IngestResult.NEW -> SmsOutcome.SERVER_ALERT
+                IngestResult.DUPLICATE -> SmsOutcome.DUPLICATE
+                IngestResult.OUT_OF_SCOPE -> SmsOutcome.DROPPED     // not for this trip's region or dates
+            }
             is WireMessage.ShelterStatusUpdate -> {
                 packRepository.updateShelterStatus(message.shelterId, message.status, message.timestamp)
                 SmsOutcome.SHELTER_STATUS

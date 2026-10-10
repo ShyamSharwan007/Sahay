@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="local_speak">朗读</string>
+    <string name="local_phrase_expand">显示完整短语</string>
+    <string name="local_phrase_collapse">收起</string>
+    <string name="local_voice_missing_title">未安装泰米尔语语音</string>
+    <string name="local_voice_missing_body">请安装泰米尔语语音，以便听到短语朗读。</string>
+    <string name="local_voice_open_settings">打开语音设置</string>
+    <string name="local_voice_settings_failed">无法打开语音设置。请打开设置并搜索文字转语音。</string>
+    <string name="local_translate_title">说点别的</string>
+    <string name="local_translate_hint">用你的语言输入</string>
+    <string name="local_translate_action">翻译成泰米尔语</string>
+    <string name="local_translate_error">翻译需要联网。请使用下面的常用语。</string>
+    <string name="engine_map_waiting_location">正在等待你的位置…</string>
+</resources>

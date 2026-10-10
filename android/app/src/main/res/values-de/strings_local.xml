@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="local_speak">Vorlesen</string>
+    <string name="local_phrase_expand">Ganzen Satz anzeigen</string>
+    <string name="local_phrase_collapse">Weniger anzeigen</string>
+    <string name="local_voice_missing_title">Tamil-Stimme nicht installiert</string>
+    <string name="local_voice_missing_body">Installiere eine Tamil-Stimme, um Sätze vorlesen zu lassen.</string>
+    <string name="local_voice_open_settings">Spracheinstellungen öffnen</string>
+    <string name="local_voice_settings_failed">Die Spracheinstellungen ließen sich nicht öffnen. Öffne die Einstellungen und suche nach Sprachausgabe.</string>
+    <string name="local_translate_title">Etwas anderes sagen</string>
+    <string name="local_translate_hint">In deiner Sprache eingeben</string>
+    <string name="local_translate_action">Ins Tamil übersetzen</string>
+    <string name="local_translate_error">Die Übersetzung braucht Internet. Nutze das Sprachbuch unten.</string>
+    <string name="engine_map_waiting_location">Warte auf Ihren Standort…</string>
+</resources>

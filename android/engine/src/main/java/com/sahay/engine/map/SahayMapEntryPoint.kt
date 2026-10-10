@@ -2,6 +2,7 @@ package com.sahay.engine.map
 
 import android.content.Context
 import com.sahay.core.contracts.EmergencyModeController
+import com.sahay.core.contracts.LocationProvider
 import com.sahay.core.contracts.PackRepository
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
@@ -17,6 +18,7 @@ import dagger.hilt.components.SingletonComponent
 interface SahayMapEntryPoint {
     fun packRepository(): PackRepository
     fun emergencyModeController(): EmergencyModeController
+    fun locationProvider(): LocationProvider
 
     companion object {
         /** Null where there is no Hilt application (previews, plain tests): the map then shows a plain background. */

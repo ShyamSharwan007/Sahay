@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="local_speak">읽어주기</string>
+    <string name="local_phrase_expand">문구 전체 보기</string>
+    <string name="local_phrase_collapse">접기</string>
+    <string name="local_voice_missing_title">타밀어 음성이 설치되지 않았어요</string>
+    <string name="local_voice_missing_body">문구를 소리로 들으려면 타밀어 음성을 설치하세요.</string>
+    <string name="local_voice_open_settings">음성 설정 열기</string>
+    <string name="local_voice_settings_failed">음성 설정을 열지 못했어요. 설정을 열고 텍스트 음성 변환을 검색하세요.</string>
+    <string name="local_translate_title">다른 말 하기</string>
+    <string name="local_translate_hint">내 언어로 입력하세요</string>
+    <string name="local_translate_action">타밀어로 번역</string>
+    <string name="local_translate_error">번역에는 인터넷이 필요해요. 아래 회화집을 사용하세요.</string>
+    <string name="engine_map_waiting_location">내 위치를 기다리는 중…</string>
+</resources>

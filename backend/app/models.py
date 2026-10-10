@@ -22,6 +22,7 @@ class AlertResponse(CamelModel):
     lon: float
     radius_m: int
     issued_at: int
+    expires_at: int
     extra_text: str | None = None
     is_simulation: bool
     wire: str
@@ -34,6 +35,7 @@ class AlertCreate(CamelModel):
     lat: float = Field(..., ge=-90.0, le=90.0)
     lon: float = Field(..., ge=-180.0, le=180.0)
     radius_m: int = Field(..., ge=100, le=20000)
+    expires_at: int | None = None
     extra_text: str | None = Field(None, max_length=200)
     is_simulation: bool = True
 
@@ -172,6 +174,7 @@ class GroupsResponse(CamelModel):
 class TranslateRequest(CamelModel):
     text: str = Field(..., min_length=1, max_length=500)
     target_lang: str = Field(..., min_length=2, max_length=10)
+    target: str | None = Field(None, min_length=2, max_length=10)
 
 
 class TranslateResponse(CamelModel):

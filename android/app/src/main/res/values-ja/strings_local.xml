@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="local_speak">読み上げ</string>
+    <string name="local_phrase_expand">フレーズ全体を表示</string>
+    <string name="local_phrase_collapse">閉じる</string>
+    <string name="local_voice_missing_title">タミル語の音声がインストールされていません</string>
+    <string name="local_voice_missing_body">フレーズを音声で聞くには、タミル語の音声をインストールしてください。</string>
+    <string name="local_voice_open_settings">音声設定を開く</string>
+    <string name="local_voice_settings_failed">音声設定を開けませんでした。設定を開いて「テキスト読み上げ」を検索してください。</string>
+    <string name="local_translate_title">別の言葉を伝える</string>
+    <string name="local_translate_hint">あなたの言語で入力</string>
+    <string name="local_translate_action">タミル語に翻訳</string>
+    <string name="local_translate_error">翻訳にはインターネットが必要です。下の会話集をお使いください。</string>
+    <string name="engine_map_waiting_location">現在地を待っています…</string>
+</resources>

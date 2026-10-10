@@ -2,11 +2,12 @@ package com.sahay.comms.net
 
 import kotlinx.serialization.Serializable
 import java.io.IOException
+import java.time.LocalDate
 
 /** The part of the REST API (docs/CONTRACTS.md §3) that the alert code needs. Every call may throw [IOException]. */
 interface CommsApi {
-    /** `GET /alerts?regionId=&since=` */
-    suspend fun alerts(regionId: String, sinceEpochSec: Long): List<AlertDto>
+    /** `GET /alerts?region=&from=&to=&since=`: alerts for [regionId] that overlap the dates [from]..[to] (inclusive). */
+    suspend fun alerts(regionId: String, sinceEpochSec: Long, from: LocalDate, to: LocalDate): List<AlertDto>
 
     /** `GET /alert-templates?lang=` */
     suspend fun alertTemplates(lang: String): List<TemplateDto>
@@ -21,9 +22,17 @@ interface CommsApi {
 /** Non-2xx answer, or a body we cannot read. */
 class ApiException(message: String, val httpCode: Int? = null) : IOException(message)
 
-/** Only [wire] is trusted (docs/CONTRACTS.md §3.1); the other JSON fields are ignored. */
+/**
+ * Only [wire] is trusted for the alert's content (docs/CONTRACTS.md §3.1). [regionId] and [expiresAt] (epoch seconds)
+ * are not signed, so they are used only to decide whether to show the alert, never what it says.
+ */
 @Serializable
-data class AlertDto(val id: String? = null, val wire: String? = null)
+data class AlertDto(
+    val id: String? = null,
+    val wire: String? = null,
+    val regionId: String? = null,
+    val expiresAt: Long? = null,
+)
 
 /** Only [wire] is trusted, like [AlertDto]. */
 @Serializable

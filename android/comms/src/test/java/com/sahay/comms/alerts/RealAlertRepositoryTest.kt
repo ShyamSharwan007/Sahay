@@ -7,8 +7,11 @@ import com.sahay.comms.sms.IncomingSms
 import com.sahay.comms.wire.TestVectors
 import com.sahay.core.contracts.AlertSource
 import com.sahay.core.contracts.Verification
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
+import java.time.LocalDate
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -126,9 +129,120 @@ class RealAlertRepositoryTest {
     @Test fun `alerts are listed newest first`() = runBlocking {
         val dao = harness.db.alertDao()
         suspend fun add(key: String, issuedAt: Long) = dao.insertIfNew(entity(key, issuedAt))
-        add("old", 100); add("new", 300); add("mid", 200)
+        val now = TestVectors.NOW_SEC
+        add("old", now - 300); add("new", now - 100); add("mid", now - 200)
 
         assertEquals(listOf("new", "mid", "old"), harness.repository.alerts.await { it.size == 3 }.map { it.id })
+    }
+
+    // ------------------------------------------------------------------ trip region and dates
+
+    @Test fun `stored alerts are hidden while there is no trip pack`() = runBlocking {
+        newHarness(hasPack = false)
+        harness.db.alertDao().insertIfNew(entity("sim", TestVectors.NOW_SEC - 60))
+        delay(300)                                      // let the repository see the row
+
+        assertTrue(harness.repository.alerts.value.isEmpty())
+        assertEquals(0, harness.repository.unreadCount.value)
+        assertTrue(harness.repository.refresh().isSuccess)
+        assertTrue(harness.api.alertRequests.isEmpty())
+
+        harness.activePack.value = harness.packInfo()   // proves it was the missing pack that hid it
+        assertEquals(listOf("sim"), harness.repository.alerts.await { it.isNotEmpty() }.map { it.id })
+    }
+
+    @Test fun `deleting the pack hides the alerts, removes them and cancels their notifications`() = runBlocking {
+        harness.api.alertWires = listOf(validAlert)
+        harness.repository.refresh()
+        harness.repository.alerts.await { it.size == 1 }
+
+        harness.activePack.value = null
+
+        harness.repository.alerts.await { it.isEmpty() }
+        assertEquals(0, harness.repository.unreadCount.await { it == 0 })
+        awaitTrue { harness.db.alertDao().observeAll().first().isEmpty() }
+        awaitTrue { harness.notifier.cancelled.contains("a1b2c3") }
+    }
+
+    @Test fun `switching region removes the old region's alerts only`() = runBlocking {
+        newHarness(hasPack = false)
+        val dao = harness.db.alertDao()
+        dao.insertIfNew(entity("mine", TestVectors.NOW_SEC - 60, regionId = "iiitdm-kancheepuram"))
+        dao.insertIfNew(entity("pasted", TestVectors.NOW_SEC - 60, regionId = null, source = AlertSource.PASTED))
+
+        harness.activePack.value = harness.packInfo(regionId = "iiitdm-kancheepuram")
+        harness.repository.alerts.await { list -> list.map { it.id }.toSet() == setOf("mine", "pasted") }
+        harness.activePack.value = harness.packInfo(regionId = "mahabalipuram")
+
+        awaitTrue { dao.observeAll().first().map { it.alertId } == listOf("pasted") }
+        assertEquals(listOf("mine"), harness.notifier.cancelled)
+    }
+
+    @Test fun `an alert saved for the region is kept when the pack is restored after startup`() = runBlocking {
+        newHarness(hasPack = false)                     // the pack flow is null until the saved pack has loaded
+        val dao = harness.db.alertDao()
+        dao.insertIfNew(entity("kept", TestVectors.NOW_SEC - 60))
+
+        harness.activePack.value = harness.packInfo()
+
+        assertEquals(listOf("kept"), harness.repository.alerts.await { it.isNotEmpty() }.map { it.id })
+        assertEquals(1, dao.observeAll().first().size)
+        assertTrue(harness.notifier.cancelled.isEmpty())
+    }
+
+    @Test fun `refresh asks only for the region and the dates from today to the trip end`() = runBlocking {
+        harness.repository.refresh()
+
+        assertEquals(listOf(LocalDate.of(2025, 10, 9) to LocalDate.of(2025, 10, 10)), harness.api.alertDates)
+    }
+
+    @Test fun `refresh does nothing once the trip is over`() = runBlocking {
+        harness.activePack.value = harness.packInfo(tripEnd = LocalDate.of(2025, 10, 8))
+
+        assertTrue(harness.repository.refresh().isSuccess)
+        assertTrue(harness.api.alertRequests.isEmpty())
+        assertTrue(harness.repository.alerts.value.isEmpty())
+    }
+
+    @Test fun `refresh skips alerts the server tags with another region`() = runBlocking {
+        harness.api.alertWires = listOf(validAlert)
+        harness.api.serverRegionId = "chennai-central"
+
+        harness.repository.refresh()
+
+        assertTrue(harness.db.alertDao().observeAll().first().isEmpty())
+        assertTrue(harness.notifier.shown.isEmpty())
+    }
+
+    @Test fun `refresh does not show or notify an alert whose expiry has passed`() = runBlocking {
+        harness.api.alertWires = listOf(validAlert)
+        harness.api.serverExpiresAt = TestVectors.NOW_SEC - 1
+
+        harness.repository.refresh()
+
+        assertTrue(harness.db.alertDao().observeAll().first().isEmpty())
+        assertTrue(harness.notifier.shown.isEmpty())
+    }
+
+    @Test fun `a signed SMS alert is dropped when there is no pack`() = runBlocking {
+        newHarness(hasPack = false)
+
+        assertEquals(SmsOutcome.DROPPED, harness.processor.handle(IncomingSms("+911234567890", validAlert)))
+        assertTrue(harness.db.alertDao().observeAll().first().isEmpty())
+        assertTrue(harness.notifier.shown.isEmpty())
+    }
+
+    @Test fun `a signed SMS alert far from the pack's region is dropped`() = runBlocking {
+        harness.activePack.value = harness.packInfo(regionId = "iiitdm-kancheepuram", bbox = listOf(80.13, 12.82, 80.18, 12.86))
+
+        assertEquals(SmsOutcome.DROPPED, harness.processor.handle(IncomingSms("+911234567890", validAlert)))
+        assertTrue(harness.db.alertDao().observeAll().first().isEmpty())
+    }
+
+    @Test fun `a signed SMS alert inside the pack's region is stored under that region`() = runBlocking {
+        assertEquals(SmsOutcome.SERVER_ALERT, harness.processor.handle(IncomingSms("+911234567890", validAlert)))
+
+        assertEquals("mahabalipuram", harness.db.alertDao().observeAll().first().single().regionId)
     }
 
     // ------------------------------------------------------------------ read state
@@ -222,10 +336,20 @@ class RealAlertRepositoryTest {
 
     private suspend fun AlertDao.observeUnreadCountOnce(): Int = observeUnreadCount().first()
 
-    private fun entity(key: String, issuedAt: Long) = AlertEntity(
+    /** The observers run on the repository's own scope, so wait (real time) for their effect. */
+    private suspend fun awaitTrue(condition: suspend () -> Boolean) = withTimeout(5_000) {
+        while (!condition()) delay(20)
+    }
+
+    private fun entity(
+        key: String,
+        issuedAt: Long,
+        regionId: String? = "mahabalipuram",
+        source: AlertSource = AlertSource.INTERNET,
+    ) = AlertEntity(
         dedupeKey = key, alertId = key, templateCode = null, severity = 1, lat = null, lon = null, radiusM = null,
         issuedAtEpochSec = issuedAt, isSimulation = false, title = key, body = key, titleEn = key, bodyEn = key,
-        originalText = null, source = AlertSource.INTERNET.name, verification = Verification.UNVERIFIED.name,
-        receivedAtEpochSec = issuedAt, read = false,
+        originalText = null, source = source.name, verification = Verification.UNVERIFIED.name,
+        receivedAtEpochSec = issuedAt, read = false, regionId = regionId,
     )
 }

@@ -12,6 +12,7 @@ import com.sahay.core.contracts.AlertRepository
 import com.sahay.core.contracts.AlertSource
 import com.sahay.core.contracts.ConnectivityMonitor
 import com.sahay.core.contracts.GeoPoint
+import com.sahay.core.contracts.PackInfo
 import com.sahay.core.contracts.PackRepository
 import com.sahay.core.contracts.ProfileStore
 import com.sahay.core.contracts.SahayAlert
@@ -22,8 +23,12 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -31,6 +36,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.io.IOException
 import java.time.Clock
+import java.time.LocalDate
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -74,44 +80,58 @@ class RealAlertRepository internal constructor(
         pollWhileVisible = true,
     )
 
-    override val alerts: StateFlow<List<SahayAlert>> = dao.observeAll()
+    /** Stored alerts the user may see now: this trip's region and dates, not expired (see [AlertScope]). */
+    private val visibleRows: Flow<List<AlertEntity>> =
+        combine(dao.observeAll(), packRepository.activePack, minuteTicks()) { rows, pack, _ ->
+            val alertScope = AlertScope.forPack(pack, clock)
+            val now = nowSec()
+            rows.filter { AlertScope.shows(alertScope, it.scoped(), now) }
+        }
+
+    override val alerts: StateFlow<List<SahayAlert>> = visibleRows
         .map { rows -> rows.map { it.toAlert() } }
         .stateIn(scope, SharingStarted.Eagerly, emptyList())
 
-    override val unreadCount: StateFlow<Int> = dao.observeUnreadCount()
+    override val unreadCount: StateFlow<Int> = visibleRows
+        .map { rows -> rows.count { !it.read } }
         .stateIn(scope, SharingStarted.Eagerly, 0)
 
     private val shelterSync = ShelterStatusSync(api, reader, packRepository)
     private val refreshLock = Mutex()
     @Volatile private var lastRefreshSec: Long? = null
+    @Volatile private var knownRegionId: String? = null
 
     private val poller = ForegroundPoller(scope, POLL_INTERVAL_MS, ::canPoll) { refresh() }
 
     init {
+        scope.launch { packRepository.activePack.collect { onPackChanged(it) } }
         if (pollWhileVisible) poller.attachToProcess()
     }
 
     // ------------------------------------------------------------------ AlertRepository
 
     /**
-     * `GET /alerts?regionId&since`, each wire verified before it is stored. Then the signed shelter statuses are
-     * refreshed in the same cycle (only if the alerts call worked, so an offline phone waits for one timeout, not two).
-     * Nothing to do without a trip pack.
+     * `GET /alerts?region&from&to&since` (today .. trip end), each wire verified before it is stored. Then the signed
+     * shelter statuses are refreshed in the same cycle (only if the alerts call worked, so an offline phone waits
+     * for one timeout, not two). Nothing to do without a trip pack, or after the trip has ended.
      */
     override suspend fun refresh(): Result<Unit> = refreshLock.withLock {
-        val regionId = packRepository.activePack.value?.regionId ?: return Result.success(Unit)
-        refreshAlerts(regionId).also { if (it.isSuccess) shelterSync.sync(regionId) }
+        val pack = packRepository.activePack.value ?: return Result.success(Unit)
+        val alertScope = AlertScope.forPack(pack, clock) ?: return Result.success(Unit)
+        refreshAlerts(alertScope, pack.tripEnd).also { if (it.isSuccess) shelterSync.sync(pack.regionId) }
     }
 
-    private suspend fun refreshAlerts(regionId: String): Result<Unit> {
+    private suspend fun refreshAlerts(alertScope: AlertScope, tripEnd: LocalDate): Result<Unit> {
         return try {
+            val regionId = alertScope.regionId
             val startedAt = nowSec()
             val oldest = startedAt - WireCodec.MAX_AGE_SEC
             val since = maxOf(oldest, (lastRefreshSec ?: oldest) - REFRESH_OVERLAP_SEC)
-            for (dto in api.alerts(regionId, since)) {
+            for (dto in api.alerts(regionId, since, LocalDate.now(clock), tripEnd)) {
+                if (dto.regionId != null && dto.regionId != regionId) continue   // server ignored the filter
                 val wire = dto.wire ?: continue
                 val alert = reader.read(wire) as? WireMessage.Alert ?: continue
-                ingestSignedAlert(alert, wire, AlertSource.INTERNET)
+                ingestSignedAlert(alert, wire, AlertSource.INTERNET, regionId, dto.expiresAt)
             }
             lastRefreshSec = startedAt
             Result.success(Unit)
@@ -143,13 +163,28 @@ class RealAlertRepository internal constructor(
 
     // ------------------------------------------------------------------ used by SmsAlertProcessor
 
-    /** Stores a verified alert wire. True if it is new (not seen before on any channel). */
-    internal suspend fun ingestSignedAlert(alert: WireMessage.Alert, wire: String, source: AlertSource): Boolean {
+    /**
+     * Stores a verified alert wire unless it was seen before on any channel ([IngestResult.DUPLICATE]) or is not for
+     * this trip ([IngestResult.OUT_OF_SCOPE]: no pack, another region, outside the trip dates, or expired).
+     * [regionId] is known when the alert came from the region-filtered API call; for SMS it is worked out from the
+     * alert's circle and the pack's bounding box.
+     */
+    internal suspend fun ingestSignedAlert(
+        alert: WireMessage.Alert,
+        wire: String,
+        source: AlertSource,
+        regionId: String? = null,
+        expiresAtSec: Long? = null,
+    ): IngestResult {
         val key = sha256Hex(wire.trim())
-        if (dao.exists(key)) return false
+        if (dao.exists(key)) return IngestResult.DUPLICATE
+        val pack = packRepository.activePack.value
+        val resolvedRegion = regionId
+            ?: pack?.takeIf { AlertScope.circleTouchesBbox(alert.lat, alert.lon, alert.radiusM, it.bbox) }?.regionId
+            ?: return IngestResult.OUT_OF_SCOPE
         val lang = userLanguage()
         val texts = templates.texts(alert.templateCode, lang) ?: fallbackTexts()
-        return storeAndNotify(
+        val entity =
             AlertEntity(
                 dedupeKey = key,
                 alertId = alert.id,
@@ -169,8 +204,12 @@ class RealAlertRepository internal constructor(
                 verification = Verification.VERIFIED_OFFICIAL.name,
                 receivedAtEpochSec = nowSec(),
                 read = false,
-            ),
-        )
+                regionId = resolvedRegion,
+                expiresAtEpochSec = expiresAtSec?.takeIf { it > alert.timestamp },
+            )
+        val alertScope = AlertScope.forPack(pack, clock)
+        if (!AlertScope.shows(alertScope, entity.scoped(), nowSec())) return IngestResult.OUT_OF_SCOPE
+        return if (storeAndNotify(entity)) IngestResult.NEW else IngestResult.DUPLICATE
     }
 
     /**
@@ -211,6 +250,28 @@ class RealAlertRepository internal constructor(
     }
 
     // ------------------------------------------------------------------ internals
+
+    /**
+     * When the pack is deleted or the region changes, the old region's alerts are deleted and their notifications
+     * removed. The very first emission (null while the saved pack is still being restored) is not a deletion.
+     */
+    private suspend fun onPackChanged(pack: PackInfo?) = refreshLock.withLock {
+        val newRegion = pack?.regionId
+        if (newRegion == knownRegionId) return@withLock
+        knownRegionId = newRegion
+        lastRefreshSec = null                                    // the next refresh fetches the whole window again
+        val stale = dao.regionalAlertIdsOutside(newRegion)
+        dao.deleteRegionalOutside(newRegion)
+        stale.forEach(notifier::cancel)
+    }
+
+    /** Emits now and then every minute, so alerts disappear when they expire without any other change. */
+    private fun minuteTicks(): Flow<Unit> = flow {
+        while (true) {
+            emit(Unit)
+            delay(EXPIRY_CHECK_INTERVAL_MS)
+        }
+    }
 
     private suspend fun storeAndNotify(entity: AlertEntity): Boolean {
         val isNew = dao.insertIfNew(entity) != INSERT_IGNORED
@@ -341,6 +402,7 @@ class RealAlertRepository internal constructor(
     private companion object {
         const val TAG = "AlertRepository"
         const val POLL_INTERVAL_MS = 2 * 60_000L
+        const val EXPIRY_CHECK_INTERVAL_MS = 60_000L
         const val REFRESH_OVERLAP_SEC = 5 * 60L
         const val NOTIFY_MAX_AGE_SEC = 6 * 3600L      // do not buzz for a backlog the user was offline for
         const val MAX_PASTED_CHARS = 2_000
@@ -351,6 +413,9 @@ class RealAlertRepository internal constructor(
         val TEMPLATE_CODE = Regex("[A-Z0-9_]{1,24}")
     }
 }
+
+/** What [RealAlertRepository.ingestSignedAlert] did with a verified alert. */
+internal enum class IngestResult { NEW, DUPLICATE, OUT_OF_SCOPE }
 
 private fun AlertEntity.toAlert() = SahayAlert(
     id = alertId,

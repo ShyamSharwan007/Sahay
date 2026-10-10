@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="local_speak">Озвучить</string>
+    <string name="local_phrase_expand">Показать фразу целиком</string>
+    <string name="local_phrase_collapse">Свернуть</string>
+    <string name="local_voice_missing_title">Тамильский голос не установлен</string>
+    <string name="local_voice_missing_body">Установите тамильский голос, чтобы слышать фразы.</string>
+    <string name="local_voice_open_settings">Открыть настройки голоса</string>
+    <string name="local_voice_settings_failed">Не удалось открыть настройки голоса. Откройте Настройки и найдите синтез речи.</string>
+    <string name="local_translate_title">Сказать что-то другое</string>
+    <string name="local_translate_hint">Введите текст на своём языке</string>
+    <string name="local_translate_action">Перевести на тамильский</string>
+    <string name="local_translate_error">Для перевода нужен интернет. Используйте разговорник ниже.</string>
+    <string name="engine_map_waiting_location">Ожидание вашего местоположения…</string>
+</resources>

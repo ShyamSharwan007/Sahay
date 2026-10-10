@@ -139,7 +139,13 @@ fun SahayMap(
     }
     LaunchedEffect(map, state.center, state.zoom) {
         val center = state.center
-        if (center != null && !following) controller.showCenter(center, state.zoom)
+        // A centre equal to the user's own position means "follow me", not "show this place": don't undo a pan for it.
+        if (center != null && !following && center != state.myLocation?.point) controller.showCenter(center, state.zoom)
+    }
+    // "Centre on me": declared last so its animation wins over the follow animation started in the same frame.
+    val recenterRequest = cameraState.recenterRequest
+    LaunchedEffect(map, recenterRequest) {
+        if (recenterRequest != null) controller.recenter(recenterRequest.fix, MapCameraState.RECENTER_ZOOM)
     }
 
     val mapDescription = stringResource(R.string.engine_map_content_description)
