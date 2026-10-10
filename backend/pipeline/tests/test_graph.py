@@ -1,4 +1,5 @@
 """Node id remapping and two-direction edges."""
+
 from pipeline.graph import RawEdge, build_edges, normalize_highway, remap_node_ids
 
 
@@ -49,7 +50,14 @@ def test_parallel_edges_keep_the_shortest():
 def test_loops_unknown_nodes_and_bad_lengths_are_dropped():
     id_map = remap_node_ids([1, 2])
     edges = build_edges(
-        [raw(1, 1), raw(1, 99), raw(1, 2, float("nan")), raw(1, 2, -4.0), raw(1, 2, float("inf")), raw(1, 2, 8.0)],
+        [
+            raw(1, 1),
+            raw(1, 99),
+            raw(1, 2, float("nan")),
+            raw(1, 2, -4.0),
+            raw(1, 2, float("inf")),
+            raw(1, 2, 8.0),
+        ],
         id_map,
     )
     assert [(e.from_id, e.to_id, e.length_m) for e in edges] == [(0, 1, 8.0), (1, 0, 8.0)]
@@ -73,8 +81,8 @@ def test_pois_far_from_graph_flags_only_pois_beyond_the_limit():
     from pipeline.graph import pois_far_from_graph
 
     nodes = [(12.8400, 80.1500), (12.8410, 80.1500)]
-    near = ("near", "Near", 12.84003, 80.1500)    # ~3 m from a node
-    far = ("far", "Far", 12.8500, 80.1600)        # >1 km away
+    near = ("near", "Near", 12.84003, 80.1500)  # ~3 m from a node
+    far = ("far", "Far", 12.8500, 80.1600)  # >1 km away
     result = pois_far_from_graph([near, far], nodes, 50.0)
     assert [r[0] for r in result] == ["far"]
     assert result[0][2] > 1000

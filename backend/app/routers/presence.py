@@ -7,11 +7,14 @@ from sqlalchemy.orm import Session
 
 from app.auth import current_user
 from app.db.session import get_db
+from app.limiter import limiter
 from app.models import PresenceCreate
 
 router = APIRouter()
 
+
 @router.post("/presence", status_code=204)
+@limiter.limit("30/minute")
 def post_presence(
     req: PresenceCreate,
     request: Request,
@@ -37,15 +40,12 @@ def post_presence(
                 lon = EXCLUDED.lon,
                 updated_at = EXCLUDED.updated_at
         """),
-        {"uid": uid, "lat": lat, "lon": lon, "now": now}
+        {"uid": uid, "lat": lat, "lon": lon, "now": now},
     )
 
     # Delete older than 30 min
     cutoff = now - 30 * 60
-    db.execute(
-        text("DELETE FROM presence WHERE updated_at < :cutoff"),
-        {"cutoff": cutoff}
-    )
+    db.execute(text("DELETE FROM presence WHERE updated_at < :cutoff"), {"cutoff": cutoff})
 
     db.commit()
     return Response(status_code=204)

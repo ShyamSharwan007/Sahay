@@ -1,4 +1,5 @@
 """Shared test builders."""
+
 from pipeline.content import ContentRows
 from pipeline.graph import Edge
 from pipeline.pack_writer import PackData, ZoneRow
@@ -32,9 +33,11 @@ def grid_pack_data(size: int = 5, step: float = 0.002) -> PackData:
                     edges.append(Edge(there, here, 220.0, "residential", mid_lon, mid_lat))
     pois = [
         Poi("poi_w1", CANDIDATE_SHELTER, "School", 12.004, 80.004, elevation_m=9.0),
-        Poi("poi_n2", HOSPITAL, "Clinic", 12.05, 80.05, elevation_m=9.0),  # outside a small trim square
+        Poi(
+            "poi_n2", HOSPITAL, "Clinic", 12.05, 80.05, elevation_m=9.0
+        ),  # outside a small trim square
     ]
-    zone = ('{"type":"Polygon","coordinates":[[[80.0,12.0],[80.05,12.0],[80.05,12.05],[80.0,12.05],[80.0,12.0]]]}')
+    zone = '{"type":"Polygon","coordinates":[[[80.0,12.0],[80.05,12.0],[80.05,12.05],[80.0,12.05],[80.0,12.0]]]}'
     content = ContentRows(
         alert_templates=[("TEST", "en", 0, "Test", "This is a test.")],
         alert_keywords=[("TEST", "en", "test")],
@@ -42,4 +45,12 @@ def grid_pack_data(size: int = 5, step: float = 0.002) -> PackData:
         embassies=[("DE", "German Embassy", None, None, None, None, None)],
         radio=[("AIR Chennai", "101.4 MHz", "ta")],
     )
-    return PackData(dict(META), nodes, edges, [0.5] * len(edges), pois, [ZoneRow("testland_medium", "Water", "MEDIUM", zone)], content)
+    return PackData(
+        dict(META),
+        nodes,
+        edges,
+        [0.5] * len(edges),
+        pois,
+        [ZoneRow("testland_medium", "Water", "MEDIUM", zone)],
+        content,
+    )

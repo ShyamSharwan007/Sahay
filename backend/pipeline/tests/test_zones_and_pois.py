@@ -1,4 +1,5 @@
 """Water/risk zones and POI handling."""
+
 import json
 
 import pytest
@@ -33,6 +34,7 @@ BBOX = (80.16, 12.59, 80.21, 12.65)
 
 # ---- zones -------------------------------------------------------------------------------------------------------
 
+
 def test_classify_water():
     assert classify_water({"natural": "coastline"}) == RIVER_OR_COAST
     assert classify_water({"waterway": "drain"}) == RIVER_OR_COAST
@@ -56,7 +58,9 @@ def test_medium_zone_is_150m_around_water_and_clipped_to_the_bbox():
 
 
 def test_water_outside_the_bbox_can_still_reach_in_but_is_clipped():
-    coast = LineString([(80.2095, 12.58), (80.2095, 12.66)])  # just east of the bbox, buffer reaches in
+    coast = LineString(
+        [(80.2095, 12.58), (80.2095, 12.66)]
+    )  # just east of the bbox, buffer reaches in
     zone = build_medium_zone([coast], BBOX)
     assert zone is not None and zone.bounds[2] <= BBOX[2]
     assert contains_points(zone, [80.2090], [12.62])[0]
@@ -81,15 +85,43 @@ def test_contains_points_with_no_zone_or_no_points():
 def test_load_high_zones(tmp_path):
     path = tmp_path / "risk_zones" / "r.geojson"
     path.parent.mkdir()
-    path.write_text(json.dumps({"type": "FeatureCollection", "features": [
-        {"type": "Feature", "properties": {"name": "Low colony", "source": "NDMA"},
-         "geometry": {"type": "Polygon", "coordinates": [[[80.17, 12.6], [80.18, 12.6], [80.18, 12.61], [80.17, 12.61], [80.17, 12.6]]]}},
-        {"type": "Feature", "properties": {}, "geometry": {"type": "Point", "coordinates": [80.1, 12.6]}},
-    ]}), encoding="utf-8")
+    path.write_text(
+        json.dumps(
+            {
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "type": "Feature",
+                        "properties": {"name": "Low colony", "source": "NDMA"},
+                        "geometry": {
+                            "type": "Polygon",
+                            "coordinates": [
+                                [
+                                    [80.17, 12.6],
+                                    [80.18, 12.6],
+                                    [80.18, 12.61],
+                                    [80.17, 12.61],
+                                    [80.17, 12.6],
+                                ]
+                            ],
+                        },
+                    },
+                    {
+                        "type": "Feature",
+                        "properties": {},
+                        "geometry": {"type": "Point", "coordinates": [80.1, 12.6]},
+                    },
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
     messages = []
     zones = load_high_zones(path, "r", log=messages.append)
 
-    assert [(z.id, z.name, z.level, z.source) for z in zones] == [("r_high_1", "Low colony", "HIGH", "NDMA")]
+    assert [(z.id, z.name, z.level, z.source) for z in zones] == [
+        ("r_high_1", "Low colony", "HIGH", "NDMA")
+    ]
     assert len(messages) == 1 and "feature 2" in messages[0]
 
 
@@ -102,6 +134,7 @@ def test_missing_high_zone_file_is_fine_and_corrupt_file_is_an_error(tmp_path):
 
 
 # ---- POIs --------------------------------------------------------------------------------------------------------
+
 
 def test_classify_poi():
     assert classify_poi({"amenity": "hospital"}) == HOSPITAL
@@ -121,16 +154,36 @@ def test_poi_ids_follow_the_osm_type_letter():
 
 
 def test_poi_from_osm_keeps_names_phone_and_falls_back_politely():
-    poi = poi_from_osm("way", 7, {"amenity": "hospital", "name": "GH Chengalpattu", "name:ta": "அரசு மருத்துவமனை",
-                                  "contact:phone": "+91 44 1234", "capacity": "120"}, 12.6, 80.19)
+    poi = poi_from_osm(
+        "way",
+        7,
+        {
+            "amenity": "hospital",
+            "name": "GH Chengalpattu",
+            "name:ta": "அரசு மருத்துவமனை",
+            "contact:phone": "+91 44 1234",
+            "capacity": "120",
+        },
+        12.6,
+        80.19,
+    )
     assert (poi.id, poi.type, poi.name, poi.name_ta, poi.phone, poi.capacity) == (
-        "poi_w7", HOSPITAL, "GH Chengalpattu", "அரசு மருத்துவமனை", "+91 44 1234", 120)
+        "poi_w7",
+        HOSPITAL,
+        "GH Chengalpattu",
+        "அரசு மருத்துவமனை",
+        "+91 44 1234",
+        120,
+    )
 
     unnamed = poi_from_osm("node", 8, {"amenity": "police"}, 12.6, 80.19)
     assert unnamed.name == "Police station" and unnamed.name_ta is None and unnamed.phone is None
     assert poi_from_osm("node", 9, {"building": "school"}, 12.6, 80.19).name == "School"
     assert poi_from_osm("node", 10, {"shop": "bakery"}, 12.6, 80.19) is None
-    assert poi_from_osm("node", 11, {"amenity": "school", "capacity": "many"}, 12.6, 80.19).capacity is None
+    assert (
+        poi_from_osm("node", 11, {"amenity": "school", "capacity": "many"}, 12.6, 80.19).capacity
+        is None
+    )
 
 
 def candidate(pid, lat=12.62, lon=80.19, elevation=10.0, name="School"):
@@ -144,7 +197,9 @@ def test_candidates_in_high_zones_or_below_2m_are_dropped():
         candidate("low", lat=12.70, elevation=1.9),
         candidate("ok", lat=12.70, elevation=2.0),
         candidate("unknown", lat=12.70, elevation=None),
-        Poi("hospital_in_zone", HOSPITAL, "H", 12.62, 80.19, elevation_m=0.0),  # only candidates are filtered
+        Poi(
+            "hospital_in_zone", HOSPITAL, "H", 12.62, 80.19, elevation_m=0.0
+        ),  # only candidates are filtered
     ]
     kept, stats = drop_unsafe_candidates(pois, high)
 
@@ -160,10 +215,10 @@ def test_drop_candidates_without_any_high_zone():
 def test_official_shelters_replace_nearby_candidates():
     official = Poi("poi_w1", SHELTER, "Cyclone Shelter", 12.62, 80.19, is_official=True)
     osm = [
-        candidate("poi_w1", lat=12.7),                # same id
+        candidate("poi_w1", lat=12.7),  # same id
         candidate("poi_w2", lat=12.62, lon=80.1902),  # ~20 m away
-        candidate("poi_w3", lat=12.64),               # far: stays
-        Poi("poi_n4", HOSPITAL, "H", 12.62, 80.19),   # not a candidate: stays even when close
+        candidate("poi_w3", lat=12.64),  # far: stays
+        Poi("poi_n4", HOSPITAL, "H", 12.62, 80.19),  # not a candidate: stays even when close
     ]
     assert [p.id for p in merge_official(osm, [official])] == ["poi_w3", "poi_n4", "poi_w1"]
 
@@ -171,8 +226,8 @@ def test_official_shelters_replace_nearby_candidates():
 def test_dedupe_merges_same_name_buildings_of_one_campus_but_not_distant_ones():
     pois = [
         candidate("poi_w1", name="St Joseph School"),
-        candidate("poi_w2", lat=12.6203, name="St Joseph School"),   # ~33 m away
-        candidate("poi_w3", lat=12.64, name="St Joseph School"),     # 2 km away: a different school
+        candidate("poi_w2", lat=12.6203, name="St Joseph School"),  # ~33 m away
+        candidate("poi_w3", lat=12.64, name="St Joseph School"),  # 2 km away: a different school
         candidate("poi_w4", lat=12.6203, name="Other School"),
     ]
     kept = dedupe_nearby(pois)
@@ -188,15 +243,49 @@ def test_dedupe_never_touches_official_shelters():
 
 def test_load_official_shelters(tmp_path):
     path = tmp_path / "shelters.geojson"
-    path.write_text(json.dumps({"type": "FeatureCollection", "features": [
-        {"type": "Feature", "properties": {"id": "poi_w42", "name": "Cyclone Shelter", "name_ta": "புயல் காப்பகம்",
-                                           "phone": "044-123", "capacity": 300},
-         "geometry": {"type": "Point", "coordinates": [80.19, 12.62]}},
-        {"type": "Feature", "properties": {"osm_id": "way/77", "name": "Community Hall"},
-         "geometry": {"type": "Polygon", "coordinates": [[[80.19, 12.62], [80.1904, 12.62], [80.1904, 12.6204], [80.19, 12.6204], [80.19, 12.62]]]}},
-        {"type": "Feature", "properties": {"name": "No id"}, "geometry": {"type": "Point", "coordinates": [80.2, 12.63]}},
-        {"type": "Feature", "properties": {"name": "Broken"}, "geometry": None},
-    ]}), encoding="utf-8")
+    path.write_text(
+        json.dumps(
+            {
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "type": "Feature",
+                        "properties": {
+                            "id": "poi_w42",
+                            "name": "Cyclone Shelter",
+                            "name_ta": "புயல் காப்பகம்",
+                            "phone": "044-123",
+                            "capacity": 300,
+                        },
+                        "geometry": {"type": "Point", "coordinates": [80.19, 12.62]},
+                    },
+                    {
+                        "type": "Feature",
+                        "properties": {"osm_id": "way/77", "name": "Community Hall"},
+                        "geometry": {
+                            "type": "Polygon",
+                            "coordinates": [
+                                [
+                                    [80.19, 12.62],
+                                    [80.1904, 12.62],
+                                    [80.1904, 12.6204],
+                                    [80.19, 12.6204],
+                                    [80.19, 12.62],
+                                ]
+                            ],
+                        },
+                    },
+                    {
+                        "type": "Feature",
+                        "properties": {"name": "No id"},
+                        "geometry": {"type": "Point", "coordinates": [80.2, 12.63]},
+                    },
+                    {"type": "Feature", "properties": {"name": "Broken"}, "geometry": None},
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
     messages = []
     shelters = load_official_shelters(path, log=messages.append)
 

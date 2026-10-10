@@ -1,4 +1,5 @@
 """Risk zones: curated HIGH polygons, and MEDIUM = union of 150 m buffers around water features."""
+
 import json
 from dataclasses import dataclass
 from pathlib import Path
@@ -51,7 +52,9 @@ def _polygonal(geom: BaseGeometry) -> BaseGeometry | None:
     if geom.geom_type in ("Polygon", "MultiPolygon"):
         return geom
     if geom.geom_type == "GeometryCollection":
-        parts = [g for g in geom.geoms if g.geom_type in ("Polygon", "MultiPolygon") and not g.is_empty]
+        parts = [
+            g for g in geom.geoms if g.geom_type in ("Polygon", "MultiPolygon") and not g.is_empty
+        ]
         return unary_union(parts) if parts else None
     return None
 
@@ -64,7 +67,10 @@ def _finalize(geom: BaseGeometry) -> BaseGeometry | None:
 
 
 def buffered_union(
-    geoms: list[BaseGeometry], buffer_m: float = BUFFER_M, simplify_m: float = 0.0, clip_bbox: BBox | None = None
+    geoms: list[BaseGeometry],
+    buffer_m: float = BUFFER_M,
+    simplify_m: float = 0.0,
+    clip_bbox: BBox | None = None,
 ) -> BaseGeometry | None:
     """Union of `buffer_m` buffers (metres, via UTM) around WGS84 geometries; WGS84 Polygon/MultiPolygon or None."""
     usable = [make_valid(g) for g in geoms if g is not None and not g.is_empty]
@@ -121,15 +127,19 @@ def load_high_zones(path: Path, region_id: str, log=print) -> list[RiskZone]:
         except (KeyError, ValueError, TypeError, AttributeError):
             geom = None
         if geom is None:
-            log(f"  WARNING: {path.name} feature {index} is not a usable Polygon/MultiPolygon, skipped")
+            log(
+                f"  WARNING: {path.name} feature {index} is not a usable Polygon/MultiPolygon, skipped"
+            )
             continue
-        zones.append(RiskZone(
-            id=f"{region_id}_high_{index}",
-            name=props.get("name") or "High-risk area",
-            level="HIGH",
-            geometry=geom,
-            source=props.get("source"),
-        ))
+        zones.append(
+            RiskZone(
+                id=f"{region_id}_high_{index}",
+                name=props.get("name") or "High-risk area",
+                level="HIGH",
+                geometry=geom,
+                source=props.get("source"),
+            )
+        )
     return zones
 
 

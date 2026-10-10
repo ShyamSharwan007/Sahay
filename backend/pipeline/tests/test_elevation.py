@@ -1,4 +1,5 @@
 """Open-Meteo client: batching, cache, retry/backoff, NULL on permanent failure. No network is used."""
+
 import requests
 
 from pipeline.elevation import BATCH_SIZE, ElevationCache, ElevationClient, cache_key
@@ -31,13 +32,17 @@ class FakeSession:
                 raise item
             return item
         count = len(params["latitude"].split(","))
-        return FakeResponse(200, {"elevation": [float(lat) * 10 for lat in params["latitude"].split(",")][:count]})
+        return FakeResponse(
+            200, {"elevation": [float(lat) * 10 for lat in params["latitude"].split(",")][:count]}
+        )
 
 
 def make_client(tmp_path, session, **kwargs):
     sleeps = []
     cache = ElevationCache(tmp_path / "cache" / "elevation.sqlite")
-    client = ElevationClient(cache, session=session, sleep=sleeps.append, log=lambda _: None, **kwargs)
+    client = ElevationClient(
+        cache, session=session, sleep=sleeps.append, log=lambda _: None, **kwargs
+    )
     return client, cache, sleeps
 
 
@@ -73,7 +78,13 @@ def test_polite_delay_between_batches(tmp_path):
 
 
 def test_retries_with_backoff_then_succeeds(tmp_path):
-    session = FakeSession([FakeResponse(429, headers={"Retry-After": "7"}), requests.ConnectionError(), FakeResponse(503)])
+    session = FakeSession(
+        [
+            FakeResponse(429, headers={"Retry-After": "7"}),
+            requests.ConnectionError(),
+            FakeResponse(503),
+        ]
+    )
     client, _, sleeps = make_client(tmp_path, session)
     result = client.lookup(points(3))
 
@@ -127,10 +138,12 @@ def test_gives_up_after_consecutive_failed_batches(tmp_path):
 def test_fill_from_neighbours_uses_nearest_known_point_within_range():
     from pipeline.elevation import fill_from_neighbours
 
-    known_a, known_b = (12.8400, 80.1500), (12.8420, 80.1500)   # b is ~220 m from the gap
-    gap_near = (12.84030, 80.1500)                                # ~33 m from a
-    gap_far = (12.8450, 80.1600)                                  # nothing within 90 m
-    filled, count = fill_from_neighbours({known_a: 7.0, known_b: 9.0, gap_near: None, gap_far: None})
+    known_a, known_b = (12.8400, 80.1500), (12.8420, 80.1500)  # b is ~220 m from the gap
+    gap_near = (12.84030, 80.1500)  # ~33 m from a
+    gap_far = (12.8450, 80.1600)  # nothing within 90 m
+    filled, count = fill_from_neighbours(
+        {known_a: 7.0, known_b: 9.0, gap_near: None, gap_far: None}
+    )
     assert count == 1
     assert filled[gap_near] == 7.0
     assert filled[gap_far] is None

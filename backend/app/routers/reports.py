@@ -28,10 +28,14 @@ VALID_REPORT_TYPES = {"FL", "RB", "SF", "SO", "PL", "LS", "OT"}
 def _get_active_alerts(db: Session, region_id: str, now: int) -> list[dict[str, Any]]:
     # Active alerts: issued in the last 48 hours
     cutoff = now - 48 * 3600
-    rows = db.execute(
-        text("SELECT * FROM alerts WHERE region_id = :region_id AND issued_at >= :cutoff"),
-        {"region_id": region_id, "cutoff": cutoff},
-    ).mappings().all()
+    rows = (
+        db.execute(
+            text("SELECT * FROM alerts WHERE region_id = :region_id AND issued_at >= :cutoff"),
+            {"region_id": region_id, "cutoff": cutoff},
+        )
+        .mappings()
+        .all()
+    )
     return [dict(r) for r in rows]
 
 
@@ -66,27 +70,35 @@ def _compute_trust_for_report(
           AND uid != :uid
           AND created_at BETWEEN :t_start AND :t_end
     """
-    c_rows = db.execute(
-        text(c_query),
-        {
-            "region_id": report["region_id"],
-            "type": report["type"],
-            "id": report["id"],
-            "uid": report["uid"],
-            "t_start": report["created_at"] - 30 * 60,
-            "t_end": report["created_at"] + 30 * 60,
-        },
-    ).mappings().all()
+    c_rows = (
+        db.execute(
+            text(c_query),
+            {
+                "region_id": report["region_id"],
+                "type": report["type"],
+                "id": report["id"],
+                "uid": report["uid"],
+                "t_start": report["created_at"] - 30 * 60,
+                "t_end": report["created_at"] + 30 * 60,
+            },
+        )
+        .mappings()
+        .all()
+    )
 
     c_uids = set()
     for row in c_rows:
-        if calculate_proximity_score(report["lat"], report["lon"], row["lat"], row["lon"]) >= 0.7:  # 300m = 1 - 300/1000 = 0.7
+        if (
+            calculate_proximity_score(report["lat"], report["lon"], row["lat"], row["lon"]) >= 0.7
+        ):  # 300m = 1 - 300/1000 = 0.7
             c_uids.add(row["uid"])
 
     c_score = calculate_corroboration_score(len(c_uids))
 
     # O
-    o_score = calculate_official_match_score(report["type"], report["lat"], report["lon"], active_alerts)
+    o_score = calculate_official_match_score(
+        report["type"], report["lat"], report["lon"], active_alerts
+    )
 
     # E
     e_score = 0.0  # Evidence always 0 as per prompt (photoUrl null)
@@ -99,7 +111,11 @@ def _compute_trust_for_report(
         WHERE uid = :uid
           AND created_at < :created_at
     """
-    past_rows = db.execute(text(past_query), {"uid": report["uid"], "created_at": report["created_at"]}).mappings().all()
+    past_rows = (
+        db.execute(text(past_query), {"uid": report["uid"], "created_at": report["created_at"]})
+        .mappings()
+        .all()
+    )
 
     likely_or_verified = 0
     for past_r in past_rows:
@@ -110,34 +126,43 @@ def _compute_trust_for_report(
             past_r["lon"],
         )
 
-        c_count_past_rows = db.execute(
-            text("""
+        c_count_past_rows = (
+            db.execute(
+                text("""
                 SELECT uid, lat, lon FROM reports
                 WHERE region_id = :region_id AND type = :type AND id != :id AND uid != :uid
                   AND created_at BETWEEN :t_start AND :t_end
             """),
-            {
-                "region_id": past_r["region_id"],
-                "type": past_r["type"],
-                "id": past_r["id"],
-                "uid": past_r["uid"],
-                "t_start": past_r["created_at"] - 30 * 60,
-                "t_end": past_r["created_at"] + 30 * 60,
-            }
-        ).mappings().all()
+                {
+                    "region_id": past_r["region_id"],
+                    "type": past_r["type"],
+                    "id": past_r["id"],
+                    "uid": past_r["uid"],
+                    "t_start": past_r["created_at"] - 30 * 60,
+                    "t_end": past_r["created_at"] + 30 * 60,
+                },
+            )
+            .mappings()
+            .all()
+        )
 
         c_uids_past = set()
         for row in c_count_past_rows:
-            if calculate_proximity_score(past_r["lat"], past_r["lon"], row["lat"], row["lon"]) >= 0.7:
+            if (
+                calculate_proximity_score(past_r["lat"], past_r["lon"], row["lat"], row["lon"])
+                >= 0.7
+            ):
                 c_uids_past.add(row["uid"])
 
         c_past = calculate_corroboration_score(len(c_uids_past))
 
         # O for past report
         past_alerts = _get_active_alerts(db, past_r["region_id"], past_r["created_at"])
-        o_past = calculate_official_match_score(past_r["type"], past_r["lat"], past_r["lon"], past_alerts)
+        o_past = calculate_official_match_score(
+            past_r["type"], past_r["lat"], past_r["lon"], past_alerts
+        )
 
-        trust_past = calculate_trust(p_past, c_past, o_past, 0.0, 0.5, 1.0) # D=1 at creation time
+        trust_past = calculate_trust(p_past, c_past, o_past, 0.0, 0.5, 1.0)  # D=1 at creation time
         if get_trust_label(trust_past) in ("VERIFIED", "LIKELY"):
             likely_or_verified += 1
 
@@ -160,9 +185,13 @@ def _find_region_for_coords(lat: float, lon: float) -> str | None:
     for r in _REGIONS:
         bbox = r["bbox"]
         min_lon, min_lat, max_lon, max_lat = bbox
-        if min_lat - buffer <= lat <= max_lat + buffer and min_lon - buffer <= lon <= max_lon + buffer:
+        if (
+            min_lat - buffer <= lat <= max_lat + buffer
+            and min_lon - buffer <= lon <= max_lon + buffer
+        ):
             return r["id"]
     return None
+
 
 @router.post("/reports", response_model=Report)
 @limiter.limit("10/minute")
@@ -174,14 +203,25 @@ def post_report(
 ):
     """POST /reports (user, 10/min per uid)"""
     if req.type not in VALID_REPORT_TYPES:
-        raise HTTPException(status_code=400, detail={"error": {"code": "BAD_REQUEST", "message": "Invalid type code"}})
+        raise HTTPException(
+            status_code=400,
+            detail={"error": {"code": "BAD_REQUEST", "message": "Invalid type code"}},
+        )
 
     if req.note and len(req.note) > 140:
-        raise HTTPException(status_code=400, detail={"error": {"code": "BAD_REQUEST", "message": "Note must be <= 140 chars"}})
+        raise HTTPException(
+            status_code=400,
+            detail={"error": {"code": "BAD_REQUEST", "message": "Note must be <= 140 chars"}},
+        )
 
     region_id = _find_region_for_coords(req.lat, req.lon)
     if not region_id:
-        raise HTTPException(status_code=400, detail={"error": {"code": "BAD_REQUEST", "message": "Coordinates outside known regions"}})
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "error": {"code": "BAD_REQUEST", "message": "Coordinates outside known regions"}
+            },
+        )
 
     report_id = _generate_id()
     now = int(time.time())
@@ -203,10 +243,10 @@ def post_report(
             "reporter_lat": req.reporter_lat,
             "reporter_lon": req.reporter_lon,
             "note": req.note,
-            "photo_url": None, # photoBase64 ignored
+            "photo_url": None,  # photoBase64 ignored
             "created_at": req.created_at,
             "channel": req.channel,
-        }
+        },
     )
     db.commit()
 

@@ -1,4 +1,5 @@
 """The pack schema must match CONTRACTS.md section 5.2 exactly."""
+
 import re
 import sqlite3
 
@@ -24,10 +25,18 @@ def _normalise(sql: str) -> str:
 
 
 def _describe(db: sqlite3.Connection) -> dict:
-    tables = [r[0] for r in db.execute("SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name")]
+    tables = [
+        r[0]
+        for r in db.execute("SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name")
+    ]
     return {
         "tables": {t: db.execute(f"PRAGMA table_info({t})").fetchall() for t in tables},
-        "indexes": sorted(r[0] for r in db.execute("SELECT name FROM sqlite_master WHERE type = 'index' AND sql IS NOT NULL")),
+        "indexes": sorted(
+            r[0]
+            for r in db.execute(
+                "SELECT name FROM sqlite_master WHERE type = 'index' AND sql IS NOT NULL"
+            )
+        ),
     }
 
 
@@ -55,15 +64,34 @@ def test_expected_columns_written_out(tmp_path):
     db = sqlite3.connect(path)
 
     def columns(table):
-        return [(r[1], r[2], bool(r[3])) for r in db.execute(f"PRAGMA table_info({table})")]  # name, type, notnull
+        return [
+            (r[1], r[2], bool(r[3])) for r in db.execute(f"PRAGMA table_info({table})")
+        ]  # name, type, notnull
 
-    assert columns("edge") == [("from_id", "INTEGER", True), ("to_id", "INTEGER", True), ("length_m", "REAL", True),
-                               ("risk_cost", "REAL", True), ("road_class", "TEXT", False)]
-    assert [c[0] for c in columns("poi")] == ["id", "type", "name", "name_ta", "lat", "lon", "phone",
-                                              "is_official", "elevation_m", "capacity"]
+    assert columns("edge") == [
+        ("from_id", "INTEGER", True),
+        ("to_id", "INTEGER", True),
+        ("length_m", "REAL", True),
+        ("risk_cost", "REAL", True),
+        ("road_class", "TEXT", False),
+    ]
+    assert [c[0] for c in columns("poi")] == [
+        "id",
+        "type",
+        "name",
+        "name_ta",
+        "lat",
+        "lon",
+        "phone",
+        "is_official",
+        "elevation_m",
+        "capacity",
+    ]
     assert [c[0] for c in columns("node")] == ["id", "lat", "lon", "elevation_m"]
     assert [c[0] for c in columns("risk_zone")] == ["id", "name", "level", "geojson"]
-    assert sorted(r[0] for r in db.execute("SELECT name FROM sqlite_master WHERE type = 'table'")) == sorted(TABLES)
+    assert sorted(
+        r[0] for r in db.execute("SELECT name FROM sqlite_master WHERE type = 'table'")
+    ) == sorted(TABLES)
 
 
 def test_meta_has_all_contract_keys(tmp_path):

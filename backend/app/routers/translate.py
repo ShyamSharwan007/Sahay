@@ -9,6 +9,7 @@ from app.services.llm import call_gemini_translation, fallback_keyword_match
 logger = logging.getLogger(__name__)
 router = APIRouter()
 
+
 @router.post("/translate", response_model=TranslateResponse)
 @limiter.limit("20/minute")
 async def post_translate(req: TranslateRequest, request: Request):
@@ -22,7 +23,7 @@ async def post_translate(req: TranslateRequest, request: Request):
             detected_lang=result.get("detectedLang", "en"),
             simplified_en=result.get("simplifiedEn", req.text),
             translated=result.get("translated", req.text),
-            matched_template_code=result.get("matchedTemplateCode")
+            matched_template_code=result.get("matchedTemplateCode"),
         )
     except Exception as e:
         logger.warning(f"Translation LLM failed, falling back to keyword match. Error: {e}")
@@ -31,5 +32,5 @@ async def post_translate(req: TranslateRequest, request: Request):
             detected_lang=fallback["detectedLang"],
             simplified_en=fallback["simplifiedEn"],
             translated=fallback["translated"],
-            matched_template_code=fallback["matchedTemplateCode"]
+            matched_template_code=fallback["matchedTemplateCode"],
         )

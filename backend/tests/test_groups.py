@@ -5,6 +5,7 @@ from app.main import app
 
 client = TestClient(app, raise_server_exceptions=False)
 
+
 def test_get_groups():
     # Since DBSCAN and sqlite downloading happens, we should mock calculate_groups for quick testing
     # or just let it run. Let's mock calculate_groups to just return a dummy group.

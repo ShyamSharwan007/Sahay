@@ -1,4 +1,5 @@
 """Pack writing, versioning and the 1 km sample trim."""
+
 import json
 import sqlite3
 from datetime import date
@@ -24,7 +25,10 @@ def test_write_pack_round_trip(tmp_path):
 
 def test_edges_in_pack_are_symmetric_with_risk(grid_pack):
     db = sqlite3.connect(grid_pack)
-    forward = {(a, b): (length, risk) for a, b, length, risk in db.execute("SELECT from_id, to_id, length_m, risk_cost FROM edge")}
+    forward = {
+        (a, b): (length, risk)
+        for a, b, length, risk in db.execute("SELECT from_id, to_id, length_m, risk_cost FROM edge")
+    }
     assert all((b, a) in forward and forward[(b, a)] == value for (a, b), value in forward.items())
     assert all(0 <= risk <= 5 for _, risk in forward.values())
 
@@ -68,7 +72,9 @@ def test_trim_keeps_a_consistent_renumbered_sub_pack(grid_pack, tmp_path):
     pois = [r[0] for r in db.execute("SELECT id FROM poi")]
     assert pois == ["poi_w1"], "the far hospital is outside the square"
     assert json.loads(read_meta(out)["bbox"]) == [round(v, 6) for v in square]
-    assert db.execute("SELECT COUNT(*) FROM alert_template").fetchone()[0] == 1, "content tables are kept"
+    assert db.execute("SELECT COUNT(*) FROM alert_template").fetchone()[0] == 1, (
+        "content tables are kept"
+    )
     assert db.execute("SELECT COUNT(*) FROM risk_zone").fetchone()[0] == 1
     geometry = json.loads(db.execute("SELECT geojson FROM risk_zone").fetchone()[0])
     assert geometry["type"] in ("Polygon", "MultiPolygon")

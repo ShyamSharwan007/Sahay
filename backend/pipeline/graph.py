@@ -1,4 +1,5 @@
 """Walking-graph post-processing: id remapping and two-direction edges (pure Python, no OSM access)."""
+
 import math
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
@@ -9,6 +10,7 @@ from .geo import haversine_m
 @dataclass(frozen=True)
 class RawEdge:
     """An edge as extracted from OSM, still using OSM node ids. The midpoint follows the real geometry."""
+
     u: int
     v: int
     length_m: float
@@ -20,6 +22,7 @@ class RawEdge:
 @dataclass(frozen=True)
 class Edge:
     """A pack edge using remapped node ids (0..N-1)."""
+
     from_id: int
     to_id: int
     length_m: float
@@ -44,14 +47,18 @@ def normalize_highway(value) -> str | None:
 
 
 def pois_far_from_graph(
-    pois: Iterable[tuple[str, str, float, float]], node_points: Iterable[tuple[float, float]], max_m: float
+    pois: Iterable[tuple[str, str, float, float]],
+    node_points: Iterable[tuple[float, float]],
+    max_m: float,
 ) -> list[tuple[str, str, float | None]]:
     """POIs given as (id, name, lat, lon) whose nearest graph node is more than max_m away.
     Returns (id, name, distance in m) for each; distance is None when the graph has no nodes."""
     points = list(node_points)
     far = []
     for poi_id, name, lat, lon in pois:
-        nearest = min((haversine_m(lat, lon, n_lat, n_lon) for n_lat, n_lon in points), default=None)
+        nearest = min(
+            (haversine_m(lat, lon, n_lat, n_lon) for n_lat, n_lon in points), default=None
+        )
         if nearest is None or nearest > max_m:
             far.append((poi_id, name, nearest))
     return far

@@ -1,4 +1,5 @@
 """WGS84 <-> UTM 44N (EPSG:32644) helpers. Metre-based work (buffers, centroids) happens in UTM."""
+
 from functools import lru_cache
 
 import numpy as np
@@ -16,7 +17,9 @@ def _transformer(src: int, dst: int) -> Transformer:
 
 def _reproject(geom: BaseGeometry, src: int, dst: int) -> BaseGeometry:
     transformer = _transformer(src, dst)
-    return shapely.transform(geom, lambda xy: np.column_stack(transformer.transform(xy[:, 0], xy[:, 1])))
+    return shapely.transform(
+        geom, lambda xy: np.column_stack(transformer.transform(xy[:, 0], xy[:, 1]))
+    )
 
 
 def to_utm(geom: BaseGeometry) -> BaseGeometry:

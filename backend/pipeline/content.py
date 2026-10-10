@@ -15,6 +15,7 @@ Accepted shapes (lang codes are the 9 user languages, plus 'ta' for phrases, 'hi
   radio     : [{name, frequency, lang}]
 A list may also be wrapped in a single-key object such as {"templates": [...]}.
 """
+
 import json
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -23,10 +24,12 @@ from pathlib import Path
 @dataclass
 class ContentRows:
     alert_templates: list[tuple] = field(default_factory=list)  # code, lang, severity, title, body
-    alert_keywords: list[tuple] = field(default_factory=list)   # code, lang, keyword
-    phrases: list[tuple] = field(default_factory=list)          # id, lang, category, text, icon
-    embassies: list[tuple] = field(default_factory=list)        # country_code, name, phone, address, lat, lon, url
-    radio: list[tuple] = field(default_factory=list)            # name, frequency, lang
+    alert_keywords: list[tuple] = field(default_factory=list)  # code, lang, keyword
+    phrases: list[tuple] = field(default_factory=list)  # id, lang, category, text, icon
+    embassies: list[tuple] = field(
+        default_factory=list
+    )  # country_code, name, phone, address, lat, lon, url
+    radio: list[tuple] = field(default_factory=list)  # name, frequency, lang
     warnings: list[str] = field(default_factory=list)
 
 
@@ -36,8 +39,11 @@ def load_content(content_dir: Path) -> ContentRows:
         rows.warnings.append(f"{content_dir} not found: content tables will be empty")
         return rows
     for token, parser in (
-        ("template", _parse_templates), ("keyword", _parse_keywords), ("phrase", _parse_phrases),
-        ("embass", _parse_embassies), ("radio", _parse_radio),
+        ("template", _parse_templates),
+        ("keyword", _parse_keywords),
+        ("phrase", _parse_phrases),
+        ("embass", _parse_embassies),
+        ("radio", _parse_radio),
     ):
         for path in sorted(p for p in content_dir.glob("*.json") if token in p.stem.lower()):
             try:
@@ -49,10 +55,17 @@ def load_content(content_dir: Path) -> ContentRows:
     return rows
 
 
-_KEY_FIELD = {"template": "code", "keyword": "code", "phrase": "id", "embass": "country_code", "radio": "name"}
+_KEY_FIELD = {
+    "template": "code",
+    "keyword": "code",
+    "phrase": "id",
+    "embass": "country_code",
+    "radio": "name",
+}
 
 
 # ---- generic helpers -------------------------------------------------------------------------------------------
+
 
 def _records(data, key_field: str) -> list[dict]:
     """Normalise list / {"wrapper": [...]} / {key: {...}} into a list of dicts (the key goes into `key_field`)."""
@@ -61,7 +74,9 @@ def _records(data, key_field: str) -> list[dict]:
         if len(lists) == 1 and not any(isinstance(v, dict) for v in data.values()):
             data = lists[0]  # {"templates": [...]} (other keys such as "version" are scalars)
         else:
-            return [{key_field: key, **value} for key, value in data.items() if isinstance(value, dict)]
+            return [
+                {key_field: key, **value} for key, value in data.items() if isinstance(value, dict)
+            ]
     return [item for item in data if isinstance(item, dict)] if isinstance(data, list) else []
 
 
@@ -112,6 +127,7 @@ def _dedupe(rows: list[tuple], key_len: int) -> list[tuple]:
 
 # ---- per-table parsers -----------------------------------------------------------------------------------------
 
+
 def _parse_templates(records: list[dict], rows: ContentRows, source: str) -> None:
     parsed = []
     for rec in records:
@@ -141,7 +157,11 @@ def _parse_keywords(records: list[dict], rows: ContentRows, source: str) -> None
         elif _text(rec.get("lang")):
             by_lang = {_text(rec["lang"]): keywords}
         else:  # {CODE: {lang: [..]}} keyed form
-            by_lang = {k: v for k, v in rec.items() if k not in ("code", "keywords", "keyword") and isinstance(v, (list, str))}
+            by_lang = {
+                k: v
+                for k, v in rec.items()
+                if k not in ("code", "keywords", "keyword") and isinstance(v, (list, str))
+            }
         if not by_lang:
             rows.warnings.append(f"{source}: keywords for {code} have no language, skipped")
         for lang, values in by_lang.items():
@@ -155,7 +175,10 @@ def _parse_keywords(records: list[dict], rows: ContentRows, source: str) -> None
 def _parse_phrases(records: list[dict], rows: ContentRows, source: str) -> None:
     parsed = []
     for rec in records:
-        phrase_id, category = _text(_first(rec, "id", "phrase_id", "phraseId")), _text(rec.get("category"))
+        phrase_id, category = (
+            _text(_first(rec, "id", "phrase_id", "phraseId")),
+            _text(rec.get("category")),
+        )
         if not phrase_id or not category:
             rows.warnings.append(f"{source}: phrase without id/category skipped")
             continue
@@ -174,8 +197,17 @@ def _parse_embassies(records: list[dict], rows: ContentRows, source: str) -> Non
         if not country or not name:
             rows.warnings.append(f"{source}: embassy without country code/name skipped")
             continue
-        parsed.append((country.upper(), name, _text(rec.get("phone")), _text(rec.get("address")),
-                       _float(rec.get("lat")), _float(rec.get("lon")), _text(rec.get("url"))))
+        parsed.append(
+            (
+                country.upper(),
+                name,
+                _text(rec.get("phone")),
+                _text(rec.get("address")),
+                _float(rec.get("lat")),
+                _float(rec.get("lon")),
+                _text(rec.get("url")),
+            )
+        )
     rows.embassies = _dedupe(rows.embassies + parsed, 1)
 
 

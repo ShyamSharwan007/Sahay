@@ -1,4 +1,5 @@
 """Writes a pack SQLite file with the exact CONTRACTS 5.2 schema."""
+
 import os
 import re
 import sqlite3
@@ -84,13 +85,29 @@ def _insert_all(db: sqlite3.Connection, data: PackData) -> None:
     db.executemany("INSERT INTO node (id, lat, lon, elevation_m) VALUES (?, ?, ?, ?)", data.nodes)
     db.executemany(
         "INSERT INTO edge (from_id, to_id, length_m, risk_cost, road_class) VALUES (?, ?, ?, ?, ?)",
-        [(e.from_id, e.to_id, round(e.length_m, 2), risk, e.road_class) for e, risk in zip(data.edges, data.risk_costs)],
+        [
+            (e.from_id, e.to_id, round(e.length_m, 2), risk, e.road_class)
+            for e, risk in zip(data.edges, data.risk_costs)
+        ],
     )
     db.executemany(
         "INSERT INTO poi (id, type, name, name_ta, lat, lon, phone, is_official, elevation_m, capacity) "
         "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        [(p.id, p.type, p.name, p.name_ta, p.lat, p.lon, p.phone, int(p.is_official), p.elevation_m, p.capacity)
-         for p in data.pois],
+        [
+            (
+                p.id,
+                p.type,
+                p.name,
+                p.name_ta,
+                p.lat,
+                p.lon,
+                p.phone,
+                int(p.is_official),
+                p.elevation_m,
+                p.capacity,
+            )
+            for p in data.pois
+        ],
     )
     db.executemany(
         "INSERT INTO risk_zone (id, name, level, geojson) VALUES (?, ?, ?, ?)",
