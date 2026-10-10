@@ -17,6 +17,7 @@ import com.sahay.core.contracts.SahayConfig
 import com.sahay.core.contracts.ShelterStatus
 import com.sahay.core.contracts.UserProfile
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -45,6 +46,9 @@ data class LocalCardUi(
     val phrases: List<PhraseRow> = emptyList(),
 )
 
+/** State of the "Say something else" box. All false/null = nothing asked yet. */
+data class TranslateUi(val loading: Boolean = false, val tamil: String? = null, val failed: Boolean = false)
+
 /** Joins the Tamil phrases with the user's language by id. A phrase missing in the user's language keeps an empty line. */
 fun joinPhrases(tamil: List<Phrase>, own: List<Phrase>): List<PhraseRow> {
     val ownById = own.associateBy { it.id }
@@ -64,6 +68,23 @@ class ShowLocalViewModel @Inject constructor(
 
     private val _state = MutableStateFlow(LocalCardUi())
     val state: StateFlow<LocalCardUi> = _state.asStateFlow()
+
+    private val _translation = MutableStateFlow(TranslateUi())
+    val translation: StateFlow<TranslateUi> = _translation.asStateFlow()
+    private var translateJob: Job? = null
+
+    /** Asks the server for a Tamil version of [text]. A new request replaces one still running. */
+    fun translate(text: String) {
+        if (text.isBlank()) return
+        translateJob?.cancel()
+        _translation.value = TranslateUi(loading = true)
+        translateJob = viewModelScope.launch {
+            _translation.value = when (val result = translateToTamil(text)) {
+                is TranslationResult.Success -> TranslateUi(tamil = result.tamil)
+                TranslationResult.Unavailable -> TranslateUi(failed = true)
+            }
+        }
+    }
 
     init {
         viewModelScope.launch {

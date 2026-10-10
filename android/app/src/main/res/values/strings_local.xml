@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="local_speak">Speak</string>
+    <string name="local_phrase_expand">Show full phrase</string>
+    <string name="local_phrase_collapse">Show less</string>
+    <string name="local_voice_missing_title">Tamil voice not installed</string>
+    <string name="local_voice_missing_body">Install a Tamil voice to hear phrases spoken.</string>
+    <string name="local_voice_open_settings">Open voice settings</string>
+    <string name="local_voice_settings_failed">Couldn\'t open voice settings. Open Settings and search for text-to-speech.</string>
+    <string name="local_translate_title">Say something else</string>
+    <string name="local_translate_hint">Type in your language</string>
+    <string name="local_translate_action">Translate to Tamil</string>
+    <string name="local_translate_error">Translation needs internet. Use the phrasebook below.</string>
+</resources>

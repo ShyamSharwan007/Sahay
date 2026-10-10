@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="local_speak">Lire à voix haute</string>
+    <string name="local_phrase_expand">Afficher la phrase entière</string>
+    <string name="local_phrase_collapse">Afficher moins</string>
+    <string name="local_voice_missing_title">Voix tamoule non installée</string>
+    <string name="local_voice_missing_body">Installez une voix tamoule pour entendre les phrases.</string>
+    <string name="local_voice_open_settings">Ouvrir les réglages vocaux</string>
+    <string name="local_voice_settings_failed">Impossible d\'ouvrir les réglages vocaux. Ouvrez Réglages et cherchez la synthèse vocale.</string>
+    <string name="local_translate_title">Dire autre chose</string>
+    <string name="local_translate_hint">Écrivez dans votre langue</string>
+    <string name="local_translate_action">Traduire en tamoul</string>
+    <string name="local_translate_error">La traduction nécessite Internet. Utilisez le guide de conversation ci-dessous.</string>
+</resources>
