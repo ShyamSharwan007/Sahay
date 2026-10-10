@@ -48,6 +48,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sahay.R
 import com.sahay.app.common.PrecautionCards
 import com.sahay.core.contracts.ForecastDay
+import com.sahay.app.common.riskPresentation
+import com.sahay.app.common.forecastNote
+import com.sahay.app.common.forecastLine
+import com.sahay.app.common.ForecastNote
+import com.sahay.app.common.ForecastCaption
 import com.sahay.core.contracts.Incident
 import com.sahay.core.contracts.PackDownloadState
 import com.sahay.core.contracts.PackInfo
@@ -362,12 +367,17 @@ private fun ReadyStep(pack: PackInfo, language: String, onDone: () -> Unit) {
                 )
             }
             item { SectionHeader(stringResource(R.string.trip_forecast)) }
-            if (pack.forecast.isEmpty()) {
-                item {
+            when (forecastNote(pack.forecast, pack.tripStart, LocalDate.now())) {
+                ForecastNote.SHOWN -> {
+                    items(pack.forecast, key = { it.date.toString() }) { day -> ForecastRow(day, dayFormat) }
+                    item { ForecastCaption() }
+                }
+                ForecastNote.UNAVAILABLE_PAST_PATTERNS -> item {
+                    Text(stringResource(R.string.home_weather_none), style = MaterialTheme.typography.bodyMedium)
+                }
+                ForecastNote.BEYOND_RANGE -> item {
                     Text(stringResource(R.string.trip_forecast_empty), style = MaterialTheme.typography.bodyMedium)
                 }
-            } else {
-                items(pack.forecast, key = { it.date.toString() }) { day -> ForecastRow(day, dayFormat) }
             }
 
             val history = pack.historySummary.pick(language)
@@ -406,15 +416,7 @@ private fun ForecastRow(day: ForecastDay, dayFormat: DateTimeFormatter) {
             horizontalArrangement = Arrangement.spacedBy(SahaySpacing.sm),
         ) {
             Icon(day.icon(), contentDescription = null, tint = MaterialTheme.colorScheme.primary)
-            Column(Modifier.weight(1f)) {
-                Text(day.date.format(dayFormat), style = MaterialTheme.typography.titleSmall)
-                Text(
-                    stringResource(R.string.trip_forecast_rain, formatOneDecimal(day.rainMm)) + " · " +
-                        stringResource(R.string.trip_forecast_wind, formatOneDecimal(day.windKmh)),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
+            Text(forecastLine(day, dayFormat), style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
             val (kind, label) = riskPresentation(day.riskLevel)
             StatusChip(kind, stringResource(label))
         }
@@ -443,8 +445,6 @@ private fun IncidentCard(incident: Incident, language: String, dateFormat: DateT
     }
 }
 
-private fun formatOneDecimal(value: Double): String = String.format(java.util.Locale.getDefault(), "%.1f", value)
-
 private fun ForecastDay.icon(): ImageVector = when {
     rainMm >= 64.5 -> Icons.Rounded.Thunderstorm      // IMD "heavy rain" threshold (CONTRACTS §8.3)
     rainMm >= 1.0 -> Icons.Rounded.WaterDrop
@@ -452,10 +452,3 @@ private fun ForecastDay.icon(): ImageVector = when {
 }
 
 /** Risk level text from the pack → status color + word. Unknown values show a neutral "Unknown". */
-private fun riskPresentation(riskLevel: String): Pair<StatusKind, Int> = when (riskLevel.uppercase()) {
-    "LOW" -> StatusKind.Safe to R.string.risk_low
-    "MODERATE" -> StatusKind.Watch to R.string.risk_moderate
-    "HIGH" -> StatusKind.Warning to R.string.risk_high
-    "SEVERE" -> StatusKind.Danger to R.string.risk_severe
-    else -> StatusKind.Info to R.string.risk_unknown
-}

@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sahay.core.contracts.AlertRepository
 import com.sahay.core.contracts.ForecastDay
+import com.sahay.app.common.forecastNote
+import com.sahay.app.common.ForecastNote
 import com.sahay.core.contracts.LocationProvider
 import com.sahay.core.contracts.PackRepository
 import com.sahay.core.contracts.Precaution
@@ -25,6 +27,7 @@ data class HomeUiState(
     val hasPack: Boolean = false,
     /** Null when there is no pack or the pack has no entry for today. */
     val todayForecast: ForecastDay? = null,
+    val forecastNote: ForecastNote = ForecastNote.UNAVAILABLE_PAST_PATTERNS,
     val precautions: List<Precaution> = emptyList(),
 )
 
@@ -51,6 +54,8 @@ class HomeViewModel @Inject constructor(
             language = profile?.language ?: "en",
             hasPack = pack != null,
             todayForecast = todaysForecast(pack, LocalDate.now(clock)),
+            forecastNote = pack?.let { forecastNote(it.forecast, it.tripStart, LocalDate.now(clock)) }
+                ?: ForecastNote.UNAVAILABLE_PAST_PATTERNS,
             precautions = pack?.precautions.orEmpty(),
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), HomeUiState())

@@ -471,4 +471,6 @@
     <string name="about_manrope">Schriftart (SIL Open Font License)</string>
     <string name="about_openmeteo">Wettervorhersagen (CC BY 4.0)</string>
     <string name="about_open_link">Website öffnen</string>
+    <string name="forecast_line">%1$s · %2$s mm Regen · %3$s °C · Wind %4$s km/h</string>
+    <string name="forecast_source">Vorhersage: MET Norway</string>
 </resources>

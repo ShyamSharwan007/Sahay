@@ -204,7 +204,7 @@
     <string name="trip_forecast_rain">%1$s mm</string>
     <string name="trip_forecast_wind">%1$s km/h</string>
     <string name="risk_low">Faible</string>
-    <string name="risk_moderate">Modéré</string>
+    <string name="risk_moderate">Moyen</string>
     <string name="risk_high">Élevé</string>
     <string name="risk_severe">Très élevé</string>
     <string name="risk_unknown">Inconnu</string>
@@ -471,4 +471,6 @@
     <string name="about_manrope">Police (SIL Open Font License)</string>
     <string name="about_openmeteo">Prévisions météo (CC BY 4.0)</string>
     <string name="about_open_link">Ouvrir le site</string>
+    <string name="forecast_line">%1$s · %2$s mm de pluie · %3$s °C · vent %4$s km/h</string>
+    <string name="forecast_source">Prévisions : MET Norway</string>
 </resources>

@@ -218,7 +218,7 @@
     <string name="trip_forecast_rain">%1$s mm</string>
     <string name="trip_forecast_wind">%1$s km/h</string>
     <string name="risk_low">Low</string>
-    <string name="risk_moderate">Moderate</string>
+    <string name="risk_moderate">Medium</string>
     <string name="risk_high">High</string>
     <string name="risk_severe">Severe</string>
     <string name="risk_unknown">Unknown</string>
@@ -485,4 +485,6 @@
     <string name="about_manrope">Font (SIL Open Font License)</string>
     <string name="about_openmeteo">Weather forecasts (CC BY 4.0)</string>
     <string name="about_open_link">Open website</string>
+    <string name="forecast_line">%1$s · %2$s mm rain · %3$s°C · wind %4$s km/h</string>
+    <string name="forecast_source">Forecast: MET Norway</string>
 </resources>

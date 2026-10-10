@@ -31,6 +31,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sahay.R
 import com.sahay.app.common.PrecautionCards
 import com.sahay.core.contracts.ForecastDay
+import androidx.compose.ui.Alignment
+import java.time.format.DateTimeFormatter
+import androidx.compose.runtime.remember
+import com.sahay.designsystem.components.StatusChip
+import com.sahay.app.common.riskPresentation
+import com.sahay.app.common.forecastLine
+import com.sahay.app.common.ForecastNote
+import com.sahay.app.common.ForecastCaption
 import com.sahay.designsystem.SahaySpacing
 import com.sahay.designsystem.components.BigActionTile
 import com.sahay.designsystem.components.ButtonVariant
@@ -86,7 +94,7 @@ private fun HomeContent(
         if (!state.hasPack) {
             NoPackCard(onDownloadPack)
         } else {
-            WeatherLine(state.todayForecast)
+            WeatherLine(state.todayForecast, state.forecastNote)
         }
 
         homeActions.chunked(2).forEach { row ->
@@ -149,18 +157,26 @@ private fun StatusSection(status: HomeStatus, onGoToSafety: () -> Unit) {
 }
 
 @Composable
-private fun WeatherLine(day: ForecastDay?) {
-    val text = if (day == null) {
-        stringResource(R.string.home_weather_none)
-    } else {
-        stringResource(
-            R.string.home_weather,
-            String.format(Locale.getDefault(), "%.1f", day.rainMm),
-            String.format(Locale.getDefault(), "%.0f", day.windKmh),
-            String.format(Locale.getDefault(), "%.0f", day.maxTempC),
-        )
+private fun WeatherLine(day: ForecastDay?, note: ForecastNote) {
+    val dayFormat = remember { DateTimeFormatter.ofPattern("EEE d MMM", Locale.getDefault()) }
+    Column(verticalArrangement = Arrangement.spacedBy(SahaySpacing.xxs)) {
+        if (day == null) {
+            val text = if (note == ForecastNote.BEYOND_RANGE) R.string.trip_forecast_empty else R.string.home_weather_none
+            Text(stringResource(text), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        } else {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(SahaySpacing.sm)) {
+                Text(
+                    forecastLine(day, dayFormat),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.weight(1f),
+                )
+                val (kind, label) = riskPresentation(day.riskLevel)
+                StatusChip(kind, stringResource(label))
+            }
+            ForecastCaption()
+        }
     }
-    Text(text, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
 }
 
 @Composable

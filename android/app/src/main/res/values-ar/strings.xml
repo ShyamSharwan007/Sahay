@@ -495,4 +495,6 @@
     <string name="about_manrope">الخط (SIL Open Font License)</string>
     <string name="about_openmeteo">توقعات الطقس (CC BY 4.0)</string>
     <string name="about_open_link">فتح الموقع</string>
+    <string name="forecast_line">%1$s · مطر %2$s مم · %3$s°م · رياح %4$s كم/س</string>
+    <string name="forecast_source">التوقعات: MET Norway</string>
 </resources>
