@@ -59,6 +59,9 @@ import com.sahay.app.local.ShowLocalScreen
 import com.sahay.app.map.MapScreen
 import com.sahay.app.me.AboutRoute
 import com.sahay.app.me.AboutScreen
+import com.sahay.app.me.GalleryRoute
+import com.sahay.designsystem.DesignGalleryScreen
+import com.sahay.app.common.SubScreenHeader
 import com.sahay.app.me.EditProfileRoute
 import com.sahay.app.me.MeScreen
 import com.sahay.app.me.MedicalCardRoute
@@ -283,7 +286,16 @@ fun MainScaffold(
                 TripPackScreen(onBack = { navController.popBackStack() }, onUpdate = onOpenTripSetup)
             }
             composable<PrivacyRoute> { PrivacyScreen(onBack = { navController.popBackStack() }) }
-            composable<AboutRoute> { AboutScreen(onBack = { navController.popBackStack() }) }
+            composable<AboutRoute> {
+                AboutScreen(onBack = { navController.popBackStack() }, onOpenGallery = { navController.navigate(GalleryRoute) })
+            }
+            // Hidden developer screen, reached by tapping the version in About 7 times.
+            composable<GalleryRoute> {
+                Column(Modifier.fillMaxSize()) {
+                    SubScreenHeader("Design gallery", onBack = { navController.popBackStack() })
+                    DesignGalleryScreen(Modifier.weight(1f))
+                }
+            }
         }
 
         if (!selfInsets) {

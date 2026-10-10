@@ -23,6 +23,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.clickable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -64,6 +67,7 @@ import java.util.Date
 @Serializable data object TripPackRoute
 @Serializable data object PrivacyRoute
 @Serializable data object AboutRoute
+@Serializable data object GalleryRoute
 
 // ---------------------------------------------------------------- medical card (read only)
 
@@ -277,10 +281,14 @@ private val licenses = listOf(
     License("Open-Meteo", R.string.about_openmeteo, "https://open-meteo.com"),
 )
 
+private const val GALLERY_TAPS = 7
+
 @Composable
-fun AboutScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
+fun AboutScreen(onBack: () -> Unit, modifier: Modifier = Modifier, onOpenGallery: () -> Unit = {}) {
     val context = LocalContext.current
     val version = remember { appVersion(context) }
+    // Hidden developer screen: tap the version line 7 times.
+    var versionTaps by remember { mutableIntStateOf(0) }
     Column(modifier.fillMaxSize()) {
         SubScreenHeader(stringResource(R.string.me_about), onBack)
         Column(
@@ -288,7 +296,17 @@ fun AboutScreen(onBack: () -> Unit, modifier: Modifier = Modifier) {
                 .padding(horizontal = SahaySpacing.screenPadding, vertical = SahaySpacing.xs),
             verticalArrangement = Arrangement.spacedBy(SahaySpacing.cardGap),
         ) {
-            Text(stringResource(R.string.about_app_line, version), style = MaterialTheme.typography.bodyLarge)
+            Text(
+                stringResource(R.string.about_app_line, version),
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) {
+                    versionTaps += 1
+                    if (versionTaps >= GALLERY_TAPS) {
+                        versionTaps = 0
+                        onOpenGallery()
+                    }
+                },
+            )
             SectionHeader(stringResource(R.string.about_licenses))
             licenses.forEach { LicenseCard(it) }
         }
