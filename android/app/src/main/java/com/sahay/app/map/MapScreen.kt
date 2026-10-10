@@ -25,7 +25,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -41,7 +43,10 @@ import com.sahay.designsystem.SahaySpacing
 import com.sahay.designsystem.components.EmptyState
 import com.sahay.designsystem.components.ErrorState
 import com.sahay.designsystem.components.LoadingState
+import com.sahay.engine.map.LocalMapCameraState
 import com.sahay.engine.map.SahayMap
+import com.sahay.engine.map.rememberMapCameraState
+import kotlinx.coroutines.launch
 
 /** Full-screen map with filter chips, a details sheet and "Go to safety" (DESIGN §6). */
 @Composable
@@ -76,14 +81,18 @@ fun MapScreen(
 @Composable
 private fun MapContent(state: MapUiState, viewModel: MapViewModel, onGoTo: (NavTarget) -> Unit, modifier: Modifier) {
     val myPoint = state.view.myLocation?.point
+    val cameraState = rememberMapCameraState()
+    val scope = rememberCoroutineScope()
     Box(modifier.fillMaxSize()) {
-        SahayMap(
-            state = state.view.copy(darkStyle = LocalSahayDark.current),
-            modifier = Modifier.fillMaxSize(),
-            onPoiClick = { viewModel.select(MapSelection.PoiSelection(it)) },
-            onReportClick = { viewModel.select(MapSelection.ReportSelection(it)) },
-            onGroupClick = { viewModel.select(MapSelection.GroupSelection(it)) },
-        )
+        CompositionLocalProvider(LocalMapCameraState provides cameraState) {
+            SahayMap(
+                state = state.view.copy(darkStyle = LocalSahayDark.current),
+                modifier = Modifier.fillMaxSize(),
+                onPoiClick = { viewModel.select(MapSelection.PoiSelection(it)) },
+                onReportClick = { viewModel.select(MapSelection.ReportSelection(it)) },
+                onGroupClick = { viewModel.select(MapSelection.GroupSelection(it)) },
+            )
+        }
         FilterRow(state.filters, viewModel::toggleFilter, Modifier.align(Alignment.TopStart))
         Column(
             Modifier.align(Alignment.BottomEnd).padding(SahaySpacing.md),
@@ -91,9 +100,16 @@ private fun MapContent(state: MapUiState, viewModel: MapViewModel, onGoTo: (NavT
             horizontalAlignment = Alignment.End,
         ) {
             ExtendedFloatingActionButton(
-                onClick = viewModel::recenter,
+                onClick = { scope.launch { cameraState.recenter() } },
                 icon = { Icon(Icons.Rounded.MyLocation, contentDescription = null) },
-                text = { Text(stringResource(R.string.action_recenter)) },
+                text = {
+                    Text(
+                        stringResource(
+                            if (cameraState.isWaitingForFix) com.sahay.engine.R.string.engine_map_waiting_location
+                            else R.string.action_recenter,
+                        ),
+                    )
+                },
                 containerColor = MaterialTheme.colorScheme.surface,
                 contentColor = MaterialTheme.colorScheme.onSurface,
             )

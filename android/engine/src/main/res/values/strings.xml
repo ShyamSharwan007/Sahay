@@ -3,6 +3,7 @@
     <!-- Shown on the map; required by the OpenStreetMap and OpenFreeMap licences. Keep it untranslated. -->
     <string name="engine_map_attribution" translatable="false">© OpenStreetMap contributors · OpenFreeMap</string>
     <string name="engine_map_content_description">Map</string>
+    <string name="engine_map_waiting_location">Waiting for your location…</string>
 
     <string name="engine_risk_channel_name">Flood-risk areas</string>
     <string name="engine_risk_notification_title">You\'re entering a flood-prone area</string>
