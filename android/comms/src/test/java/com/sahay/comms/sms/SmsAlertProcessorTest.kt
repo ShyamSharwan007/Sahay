@@ -121,13 +121,14 @@ class SmsAlertProcessorTest {
         assertTrue(harness.repository.alerts.value.isEmpty())
     }
 
-    @Test fun `without a trip pack plain SMS cannot be matched but nothing crashes`() = runBlocking {
+    @Test fun `without a trip pack plain SMS cannot be matched and signed alerts are dropped, nothing crashes`() = runBlocking {
         harness.close()
         harness = AlertHarness(RuntimeEnvironment.getApplication(), hasPack = false)
         io.mockk.coEvery { harness.pack.alertKeywords() } returns emptyList()
 
         assertEquals(SmsOutcome.IGNORED, receive(official, sender = "VM-NDMAEW"))
-        assertEquals(SmsOutcome.SERVER_ALERT, receive(TestVectors.firstValid("A")))     // signed wires need no pack text
+        assertEquals(SmsOutcome.DROPPED, receive(TestVectors.firstValid("A")))          // regional alerts need a trip pack
+        assertTrue(harness.repository.alerts.value.isEmpty())
     }
 
     @Test fun `when online the server improves the wording in the background`() = runBlocking {

@@ -35,6 +35,10 @@ data class AlertEntity(
     val verification: String,
     val receivedAtEpochSec: Long,
     val read: Boolean,
+    /** Region the alert was issued for; null for alerts that are not tied to one (official SMS, pasted text). */
+    val regionId: String? = null,
+    /** Null = no expiry known, see [AlertScope.DEFAULT_LIFETIME_SEC]. */
+    val expiresAtEpochSec: Long? = null,
 )
 
 @Dao
@@ -54,6 +58,13 @@ interface AlertDao {
 
     @Query("UPDATE alerts SET `read` = 1 WHERE alertId = :alertId")
     suspend fun markRead(alertId: String)
+
+    /** Ids of regional alerts that do not belong to [keepRegionId] (null = keep none). */
+    @Query("SELECT alertId FROM alerts WHERE regionId IS NOT NULL AND (:keepRegionId IS NULL OR regionId != :keepRegionId)")
+    suspend fun regionalAlertIdsOutside(keepRegionId: String?): List<String>
+
+    @Query("DELETE FROM alerts WHERE regionId IS NOT NULL AND (:keepRegionId IS NULL OR regionId != :keepRegionId)")
+    suspend fun deleteRegionalOutside(keepRegionId: String?)
 
     @Query("SELECT EXISTS(SELECT 1 FROM alerts WHERE dedupeKey = :dedupeKey)")
     suspend fun exists(dedupeKey: String): Boolean
@@ -82,7 +93,7 @@ interface TemplateCacheDao {
     suspend fun putAll(templates: List<TemplateEntity>)
 }
 
-@Database(entities = [AlertEntity::class, TemplateEntity::class], version = 1, exportSchema = false)
+@Database(entities = [AlertEntity::class, TemplateEntity::class], version = 2, exportSchema = false)
 abstract class CommsDatabase : RoomDatabase() {
     abstract fun alertDao(): AlertDao
     abstract fun templateCacheDao(): TemplateCacheDao

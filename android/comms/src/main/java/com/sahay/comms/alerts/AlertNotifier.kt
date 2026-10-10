@@ -18,6 +18,9 @@ import javax.inject.Singleton
 /** Shows a system notification for a freshly received alert. */
 interface AlertNotifier {
     fun notify(alert: SahayAlert)
+
+    /** Removes the notification for [alertId], if it is still showing. */
+    fun cancel(alertId: String)
 }
 
 /**
@@ -56,6 +59,10 @@ class SystemAlertNotifier @Inject constructor(
         } catch (e: SecurityException) {
             Log.w(TAG, "Notification not allowed: ${e.message}")
         }
+    }
+
+    override fun cancel(alertId: String) {
+        NotificationManagerCompat.from(context).cancel(alertId.hashCode())
     }
 
     private fun openAppIntent(alertId: String): PendingIntent? {

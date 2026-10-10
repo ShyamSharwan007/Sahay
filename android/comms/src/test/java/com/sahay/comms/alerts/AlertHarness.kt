@@ -36,7 +36,9 @@ import java.time.LocalDate
 /** Records what the app would show as a notification. */
 class RecordingNotifier : AlertNotifier {
     val shown = mutableListOf<SahayAlert>()
+    val cancelled = mutableListOf<String>()
     override fun notify(alert: SahayAlert) { synchronized(shown) { shown += alert } }
+    override fun cancel(alertId: String) { synchronized(cancelled) { cancelled += alertId } }
 }
 
 /** In-memory stand-in for the backend. */
@@ -48,12 +50,17 @@ class FakeCommsApi : CommsApi {
     var failShelters = false
     val shelterRequests = mutableListOf<String>()
     val alertRequests = mutableListOf<Pair<String, Long>>()
+    val alertDates = mutableListOf<Pair<LocalDate, LocalDate>>()
     val translateRequests = mutableListOf<Pair<String, String>>()
+    /** Region and expiry the fake server attaches to every alert it returns. */
+    var serverRegionId: String? = null
+    var serverExpiresAt: Long? = null
 
-    override suspend fun alerts(regionId: String, sinceEpochSec: Long): List<AlertDto> {
+    override suspend fun alerts(regionId: String, sinceEpochSec: Long, from: LocalDate, to: LocalDate): List<AlertDto> {
         alertRequests += regionId to sinceEpochSec
+        alertDates += from to to
         if (failAlerts) throw ApiException("HTTP 503", 503)
-        return alertWires.map { AlertDto(id = "x", wire = it) }
+        return alertWires.map { AlertDto(id = "x", wire = it, regionId = serverRegionId, expiresAt = serverExpiresAt) }
     }
 
     override suspend fun alertTemplates(lang: String): List<TemplateDto> = throw ApiException("not used")
@@ -94,8 +101,11 @@ class AlertHarness(
         ("CYC_WARN" to "en") to AlertTemplate("CYC_WARN", "en", 2, "Cyclone warning", "Stay indoors. Secure your belongings."),
     )
 
+    /** Change this to install, delete or switch the trip pack. */
+    val activePack = MutableStateFlow(if (hasPack) packInfo() else null)
+
     val pack: PackRepository = mockk {
-        every { activePack } returns MutableStateFlow(if (hasPack) packInfo() else null)
+        every { activePack } returns this@AlertHarness.activePack
         coEvery { alertTemplate(any(), any()) } answers {
             val code = firstArg<String>()
             val lang = secondArg<String>()
@@ -133,9 +143,13 @@ class AlertHarness(
         db.close()
     }
 
-    private fun packInfo() = PackInfo(
-        regionId = "mahabalipuram", regionName = "Mahabalipuram", packVersion = "test", bbox = listOf(80.16, 12.59, 80.21, 12.65),
-        tripStart = LocalDate.of(2025, 10, 1), tripEnd = LocalDate.of(2025, 10, 10), downloadedAtEpochSec = 0,
+    fun packInfo(
+        regionId: String = "mahabalipuram",
+        bbox: List<Double> = listOf(80.16, 12.59, 80.21, 12.65),
+        tripEnd: LocalDate = LocalDate.of(2025, 10, 10),
+    ) = PackInfo(
+        regionId = regionId, regionName = regionId, packVersion = "test", bbox = bbox,
+        tripStart = LocalDate.of(2025, 10, 1), tripEnd = tripEnd, downloadedAtEpochSec = 0,
         forecast = emptyList(), historySummary = emptyMap(), incidents = emptyList(), precautions = emptyList(),
         publicKeyB64 = TestVectors.publicKeyB64, sizeBytes = 0,
     )

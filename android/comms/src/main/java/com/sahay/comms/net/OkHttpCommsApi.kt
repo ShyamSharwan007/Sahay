@@ -19,6 +19,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
+import java.time.LocalDate
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -41,10 +42,13 @@ class OkHttpCommsApi internal constructor(
         coerceInputValues = true
     }
 
-    override suspend fun alerts(regionId: String, sinceEpochSec: Long): List<AlertDto> {
+    override suspend fun alerts(regionId: String, sinceEpochSec: Long, from: LocalDate, to: LocalDate): List<AlertDto> {
         val url = baseUrl.newBuilder()
             .addPathSegment("alerts")
-            .addQueryParameter("regionId", regionId)
+            .addQueryParameter("region", regionId)
+            .addQueryParameter("regionId", regionId)    // older servers only know this spelling
+            .addQueryParameter("from", from.toString())
+            .addQueryParameter("to", to.toString())
             .addQueryParameter("since", sinceEpochSec.toString())
             .build()
         return decode(ListSerializer(AlertDto.serializer()), getWithRetry(url))
