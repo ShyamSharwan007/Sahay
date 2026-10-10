@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
@@ -47,7 +48,7 @@ fun ProfileAvatar(photoUrl: String?, name: String, modifier: Modifier = Modifier
             Image(image, contentDescription = null, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
         } else {
             Text(
-                name.trim().firstOrNull()?.uppercase(Locale.getDefault()).orEmpty(),
+                name.trim().firstOrNull()?.uppercase(LocalConfiguration.current.locales[0]).orEmpty(),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
             )

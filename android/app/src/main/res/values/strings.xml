@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Language names are shown in their own language, never translated. -->
+    <string name="app_name" translatable="false">Sahay</string>
+    <string name="gallery_title" translatable="false">Design gallery</string>
     <string name="lang_en" translatable="false">English</string>
     <string name="lang_de" translatable="false">Deutsch</string>
     <string name="lang_fr" translatable="false">Français</string>

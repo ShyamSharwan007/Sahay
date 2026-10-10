@@ -31,6 +31,7 @@ import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -209,8 +210,10 @@ private fun PhrasebookTab(phrases: List<PhraseRow>, onDownloadPack: () -> Unit) 
 }
 
 @Composable
-private fun categoryName(category: String): String =
-    categoryLabel(category)?.let { stringResource(it) } ?: category.replaceFirstChar { it.titlecase(Locale.getDefault()) }
+private fun categoryName(category: String): String {
+    val locale = LocalConfiguration.current.locales[0]
+    return categoryLabel(category)?.let { stringResource(it) } ?: category.replaceFirstChar { it.titlecase(locale) }
+}
 
 /** Icon, then the Tamil text large (to show) and the user's own language small (to read). */
 @Composable

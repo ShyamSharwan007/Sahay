@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
@@ -24,11 +25,12 @@ private const val NOW_TICK_MS = 30_000L
 @Composable
 fun distanceText(meters: Double): String {
     val m = meters.coerceAtLeast(0.0)
+    val locale = LocalConfiguration.current.locales[0]
     return if (m < KM_THRESHOLD_M) {
         val rounded = if (m < 100) m.roundToInt() else (m / 10).roundToInt() * 10
         stringResource(R.string.distance_m, rounded)
     } else {
-        stringResource(R.string.distance_km, String.format(Locale.getDefault(), "%.1f", m / KM_THRESHOLD_M))
+        stringResource(R.string.distance_km, String.format(locale, "%.1f", m / KM_THRESHOLD_M))
     }
 }
 

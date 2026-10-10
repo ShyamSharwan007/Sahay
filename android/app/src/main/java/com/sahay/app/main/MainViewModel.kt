@@ -9,6 +9,7 @@ import com.sahay.core.contracts.ConnectivityMonitor
 import com.sahay.core.contracts.ConnectivityState
 import com.sahay.core.contracts.EmergencyModeController
 import com.sahay.core.contracts.PackRepository
+import com.sahay.core.contracts.ProfileStore
 import com.sahay.core.contracts.RiskMonitor
 import com.sahay.core.contracts.SahayAlert
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -38,12 +39,24 @@ class MainViewModel @Inject constructor(
     private val riskMonitor: RiskMonitor,
     private val clock: Clock,
     private val deepLinks: DeepLinkRouter,
+    private val profiles: ProfileStore,
 ) : ViewModel() {
 
     /** A notification link waiting to be opened by the main screens. */
     val pendingLink: StateFlow<DeepLinkTarget?> = deepLinks.pending
 
     fun consumeLink() = deepLinks.consume()
+
+    /**
+     * Keeps the saved language equal to the app language, also when it was changed in Android's own
+     * per-app language settings. Alerts, pack text and phrases all follow the saved language.
+     */
+    fun syncLanguage(appLanguage: String) {
+        viewModelScope.launch {
+            val profile = profiles.profile.value ?: return@launch
+            if (profile.language != appLanguage) profiles.save(profile.copy(language = appLanguage))
+        }
+    }
 
     fun activateEmergency() = emergencyMode.activate()
 

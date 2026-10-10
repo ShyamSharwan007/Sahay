@@ -48,6 +48,8 @@ import androidx.navigation.compose.rememberNavController
 import com.sahay.R
 import com.sahay.app.alerts.AlertDetailRoute
 import com.sahay.app.home.PrecautionsRoute
+import com.sahay.app.onboarding.supportedLanguageOrEnglish
+import androidx.compose.ui.platform.LocalConfiguration
 import com.sahay.app.home.PrecautionsScreen
 import com.sahay.app.alerts.AlertDetailScreen
 import com.sahay.app.alerts.AlertsScreen
@@ -119,6 +121,10 @@ fun MainScaffold(
     val destination = navController.currentBackStackEntryAsState().value?.destination
     var showSheet by rememberSaveable { mutableStateOf(false) }
     val pendingLink by viewModel.pendingLink.collectAsStateWithLifecycle()
+
+    // The app language (per-app setting) decides the language of alerts and pack text.
+    val appLanguage = supportedLanguageOrEnglish(LocalConfiguration.current.locales[0]?.language)
+    LaunchedEffect(appLanguage) { viewModel.syncLanguage(appLanguage) }
 
     // Emergency Mode on (from a tile, the top bar or a notification) shows its screen; off removes it.
     LaunchedEffect(state.emergency) {
@@ -296,7 +302,7 @@ fun MainScaffold(
             // Hidden developer screen, reached by tapping the version in About 7 times.
             composable<GalleryRoute> {
                 Column(Modifier.fillMaxSize()) {
-                    SubScreenHeader("Design gallery", onBack = { navController.popBackStack() })
+                    SubScreenHeader(stringResource(R.string.gallery_title), onBack = { navController.popBackStack() })
                     DesignGalleryScreen(Modifier.weight(1f))
                 }
             }

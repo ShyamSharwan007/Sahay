@@ -12,12 +12,14 @@
     <uses-permission android:name="android.permission.RECEIVE_SMS" tools:node="remove" />
     <uses-permission android:name="android.permission.READ_SMS" tools:node="remove" />
     <uses-permission android:name="android.permission.SEND_SMS" />
+    <!-- SMS is optional: tablets and phones without a SIM still run the app. -->
+    <uses-feature android:name="android.hardware.telephony" android:required="false" />
 
     <application
         android:name=".SahayApp"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
-        android:label="Sahay"
+        android:label="@string/app_name"
         android:localeConfig="@xml/locales_config"
         android:supportsRtl="true"
         android:theme="@style/Theme.Sahay.Starting">

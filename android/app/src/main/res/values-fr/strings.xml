@@ -129,6 +129,7 @@
     <string name="nav_me">Moi</string>
     <plurals name="nav_alerts_unread">
         <item quantity="one">Alertes, %1$d non lue</item>
+        <item quantity="many">Alertes, %1$d non lues</item>
         <item quantity="other">Alertes, %1$d non lues</item>
     </plurals>
     <string name="conn_online">En ligne</string>
@@ -136,6 +137,7 @@
     <string name="conn_offline">Hors ligne</string>
     <plurals name="conn_offline_phones">
         <item quantity="one">Hors ligne · %1$d téléphone proche</item>
+        <item quantity="many">Hors ligne · %1$d téléphones proches</item>
         <item quantity="other">Hors ligne · %1$d téléphones proches</item>
     </plurals>
     <string name="works_title">Ce qui fonctionne maintenant</string>
@@ -221,14 +223,17 @@
     <string name="time_just_now">À l\'instant</string>
     <plurals name="time_min_ago">
         <item quantity="one">il y a %1$d min</item>
+        <item quantity="many">il y a %1$d min</item>
         <item quantity="other">il y a %1$d min</item>
     </plurals>
     <plurals name="time_hours_ago">
         <item quantity="one">il y a %1$d h</item>
+        <item quantity="many">il y a %1$d h</item>
         <item quantity="other">il y a %1$d h</item>
     </plurals>
     <plurals name="time_days_ago">
         <item quantity="one">il y a %1$d j</item>
+        <item quantity="many">il y a %1$d j</item>
         <item quantity="other">il y a %1$d j</item>
     </plurals>
     <string name="updated_ago">Mis à jour %1$s</string>
@@ -260,6 +265,7 @@
     <string name="trust_description">Signalement %1$s, score %2$d pour cent</string>
     <plurals name="group_people">
         <item quantity="one">%1$d personne</item>
+        <item quantity="many">%1$d personnes</item>
         <item quantity="other">%1$d personnes</item>
     </plurals>
     <string name="group_at_shelter">Dans un abri</string>
