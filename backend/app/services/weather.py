@@ -32,27 +32,23 @@ async def fetch_forecast(lat: float, lon: float, start_date: str, end_date: str)
         if now - cached_time < 3600:  # 1 hour cache
             return data
 
-    # Open-Meteo forecast only works up to 16 days ahead
     start_dt = datetime.datetime.strptime(start_date, "%Y-%m-%d")
     end_dt = datetime.datetime.strptime(end_date, "%Y-%m-%d")
     today = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
 
-    if (start_dt - today).days > 16:
-        return []
+    clipped_start = max(start_dt, today)
+    clipped_end = min(end_dt, today + datetime.timedelta(days=15))
 
-    actual_end_dt = end_dt
-    if (end_dt - today).days > 16:
-        actual_end_dt = today + datetime.timedelta(days=16)
-
-    if actual_end_dt < start_dt:
+    if clipped_start > clipped_end:
         return []
 
     url = (
         f"https://api.open-meteo.com/v1/forecast"
         f"?latitude={lat}&longitude={lon}"
-        f"&start_date={start_dt.strftime('%Y-%m-%d')}&end_date={actual_end_dt.strftime('%Y-%m-%d')}"
+        f"&start_date={clipped_start.strftime('%Y-%m-%d')}&end_date={clipped_end.strftime('%Y-%m-%d')}"
         f"&daily=precipitation_sum,wind_speed_10m_max,temperature_2m_max"
         f"&timezone=Asia/Kolkata"
+        f"&forecast_days=16"
     )
 
     try:
@@ -69,6 +65,9 @@ async def fetch_forecast(lat: float, lon: float, start_date: str, end_date: str)
 
             result = []
             for i, d in enumerate(times):
+                d_dt = datetime.datetime.strptime(d, "%Y-%m-%d")
+                if not (start_dt <= d_dt <= end_dt):
+                    continue
                 r = float(rain[i]) if rain[i] is not None else 0.0
                 w = float(wind[i]) if wind[i] is not None else 0.0
                 t = float(temp[i]) if temp[i] is not None else 0.0
@@ -137,11 +136,11 @@ async def fetch_history(lat: float, lon: float, start_date: str, end_date: str) 
         if days_count == 0:
             return {}
 
-        avg_rain = round(total_rain / 5.0, 1)  # Average total per year for this period
+        avg_rain = round(total_rain / days_count, 1)  # Average DAILY rain
 
         # Load history templates
         templates_file = CONTENT_DIR / "history_templates.json"
-        summary = {"en": "Historically {avgRain} mm rain, {heavyDays} heavy rain days over {years} years."}
+        summary = {"en": "Historically {avgRain} mm/day average rain, {heavyDays} heavy rain days over these dates in the past {years} years."}
         if templates_file.exists():
             try:
                 summary = json.loads(templates_file.read_text())
