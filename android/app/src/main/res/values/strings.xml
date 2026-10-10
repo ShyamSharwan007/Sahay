@@ -313,7 +313,10 @@
     <string name="nav_warn_hospital">No open shelter found. This leads to a hospital.</string>
     <string name="nav_warn_risk_area">This way passes a flood-prone area. Take care.</string>
     <string name="nav_warn_no_pack">No saved roads. Showing a straight line.</string>
-    <string name="nav_straight_line">This is a straight line, not a road route.</string>
+    <string name="nav_straight_line">No path data — showing direction only</string>
+    <string name="nav_full_map">Full map</string>
+    <string name="nav_exit_full_map">Show route</string>
+    <string name="nav_other_places">Other safe places nearby</string>
     <string name="nav_arrived_title">You\'ve arrived</string>
     <string name="nav_arrived_body">Stay here and follow local advice.</string>
     <string name="nav_show_local">Show this to a local</string>
