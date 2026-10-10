@@ -1,5 +1,9 @@
 package com.sahay.app.main
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
+import com.sahay.R
 import com.sahay.core.contracts.ConnectivityState
 import com.sahay.designsystem.components.ConnectivityLevel
 
@@ -8,6 +12,16 @@ fun connectivityLevel(state: ConnectivityState): ConnectivityLevel = when {
     state.internet -> ConnectivityLevel.Online
     state.cellular -> ConnectivityLevel.SmsOnly
     else -> ConnectivityLevel.Offline
+}
+
+/** Chip text: "Online", "SMS only", "Offline" or "Offline · 3 phones nearby". */
+@Composable
+fun connectivityLabel(state: ConnectivityState): String = when (connectivityLevel(state)) {
+    ConnectivityLevel.Online -> stringResource(R.string.conn_online)
+    ConnectivityLevel.SmsOnly -> stringResource(R.string.conn_sms_only)
+    ConnectivityLevel.Offline ->
+        if (state.meshPeers > 0) pluralStringResource(R.plurals.conn_offline_phones, state.meshPeers, state.meshPeers)
+        else stringResource(R.string.conn_offline)
 }
 
 /** Things the "What works right now" sheet reports on. */

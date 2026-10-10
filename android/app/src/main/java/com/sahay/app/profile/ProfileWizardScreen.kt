@@ -84,7 +84,7 @@ fun ProfileWizardScreen(
 @Composable
 private fun StepContent(step: WizardStep, state: WizardState, vm: ProfileWizardViewModel) {
     when (step) {
-        WizardStep.ESSENTIALS -> EssentialsStep(state, vm::setName, vm::setNationality, vm::setPhone)
+        WizardStep.ESSENTIALS -> EssentialsStep(state, vm::setName, vm::setNationality, vm::setPhoneValue)
         WizardStep.MEDICAL -> MedicalStep(
             state, vm::setBloodGroup, vm::setAllergies, vm::setMedications, vm::setConditions, vm::addAllergy, vm::addCondition,
         )
@@ -142,6 +142,7 @@ private fun WizardButtons(state: WizardState, onBack: () -> Unit, onNext: () -> 
                 onClick = onNext,
                 icon = if (last) Icons.Rounded.Check else Icons.Rounded.ArrowForward,
                 loading = state.saving,
+                enabled = state.canProceed,
                 modifier = Modifier.weight(1f),
             )
         }

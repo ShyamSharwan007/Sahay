@@ -13,6 +13,8 @@ import com.sahay.app.data.FirebaseAuthTokenProvider
 import com.sahay.app.data.LoadableProfileStore
 import com.sahay.app.onboarding.AndroidAppLocaleController
 import com.sahay.app.onboarding.AppLocaleController
+import com.sahay.app.profile.AndroidDeviceCountryProvider
+import com.sahay.app.profile.DeviceCountryProvider
 import com.sahay.core.contracts.AuthTokenProvider
 import com.sahay.core.contracts.ProfileStore
 import com.sahay.core.contracts.UiPreferences
@@ -46,6 +48,9 @@ abstract class AppModule {
 
     @Binds @Singleton
     abstract fun localeController(impl: AndroidAppLocaleController): AppLocaleController
+
+    @Binds @Singleton
+    abstract fun deviceCountry(impl: AndroidDeviceCountryProvider): DeviceCountryProvider
 
     companion object {
         @Provides @Singleton

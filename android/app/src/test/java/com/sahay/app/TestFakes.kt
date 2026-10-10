@@ -20,6 +20,7 @@ class FakeAuth(
 ) : AuthRepository {
     override suspend fun signInWithGoogle(activityContext: Context): SignInResult = googleResult
     override suspend fun signInAsGuest(): SignInResult = guestResult
+    override fun signOut() { currentUser = null }
 }
 
 class FakeProfileStore(initial: UserProfile? = null, var failSave: Boolean = false) : LoadableProfileStore {

@@ -81,7 +81,7 @@ fun SahayTopBar(
             title,
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onBackground,
-            maxLines = 2,
+            maxLines = 1, // never wraps letter by letter next to the actions
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.weight(1f).semantics { heading() },
         )

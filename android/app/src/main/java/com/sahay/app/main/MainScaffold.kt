@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Cancel
 import androidx.compose.material.icons.rounded.CheckCircle
-import androidx.compose.material.icons.rounded.Construction
+import androidx.compose.material.icons.rounded.Emergency
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Map
 import androidx.compose.material.icons.rounded.Notifications
@@ -22,6 +22,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -42,33 +43,51 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
 import com.sahay.R
 import com.sahay.app.alerts.AlertDetailRoute
 import com.sahay.app.alerts.AlertDetailScreen
 import com.sahay.app.alerts.AlertsScreen
 import com.sahay.app.alerts.PasteAlertRoute
 import com.sahay.app.alerts.PasteAlertScreen
+import com.sahay.app.deeplink.DeepLinkTarget
+import com.sahay.app.emergency.EmergencyScreen
 import com.sahay.app.home.HomeScreen
+import com.sahay.app.local.ShowLocalRoute
+import com.sahay.app.local.ShowLocalScreen
 import com.sahay.app.map.MapScreen
+import com.sahay.app.me.AboutRoute
+import com.sahay.app.me.AboutScreen
+import com.sahay.app.me.EditProfileRoute
+import com.sahay.app.me.MeScreen
+import com.sahay.app.me.MedicalCardRoute
+import com.sahay.app.me.MedicalCardScreen
+import com.sahay.app.me.PrivacyRoute
+import com.sahay.app.me.PrivacyScreen
+import com.sahay.app.me.TripPackRoute
+import com.sahay.app.me.TripPackScreen
 import com.sahay.app.navigate.NavTarget
 import com.sahay.app.navigate.NavigateRoute
 import com.sahay.app.navigate.NavigateScreen
 import com.sahay.app.navigate.encode
 import com.sahay.app.people.PeopleRoute
 import com.sahay.app.people.PeopleScreen
+import com.sahay.app.profile.ProfileWizardScreen
+import com.sahay.app.profile.WizardStep
 import com.sahay.app.report.ReportRoute
 import com.sahay.app.report.ReportScreen
+import com.sahay.app.sos.SosRoute
+import com.sahay.app.sos.SosScreen
 import androidx.navigation.NavHostController
 import com.sahay.core.contracts.ConnectivityState
 import com.sahay.designsystem.LocalSahayColors
 import com.sahay.designsystem.SahaySpacing
 import com.sahay.designsystem.components.BottomBarItem
+import com.sahay.designsystem.components.ButtonSize
+import com.sahay.designsystem.components.ButtonVariant
 import com.sahay.designsystem.components.ConnectivityChip
-import com.sahay.designsystem.components.ConnectivityLevel
-import com.sahay.designsystem.components.EmptyState
 import com.sahay.designsystem.components.OfflineBanner
 import com.sahay.designsystem.components.SahayBottomBar
+import com.sahay.designsystem.components.SahayButton
 import com.sahay.designsystem.components.SahayTopBar
 import kotlinx.serialization.Serializable
 import java.text.DateFormat
@@ -79,7 +98,7 @@ import java.util.Date
 @Serializable data object MapTab
 @Serializable data object AlertsTab
 @Serializable data object MeTab
-@Serializable data class ComingSoonRoute(val titleRes: Int)
+@Serializable data object EmergencyRoute
 
 private val tabRoutes: List<Any> = listOf(HomeTab, MapTab, AlertsTab, MeTab)
 
@@ -92,6 +111,26 @@ fun MainScaffold(
     val navController = rememberNavController()
     val destination = navController.currentBackStackEntryAsState().value?.destination
     var showSheet by rememberSaveable { mutableStateOf(false) }
+    val pendingLink by viewModel.pendingLink.collectAsStateWithLifecycle()
+
+    // Emergency Mode on (from a tile, the top bar or a notification) shows its screen; off removes it.
+    LaunchedEffect(state.emergency) {
+        if (state.emergency) navController.showEmergency() else navController.popBackStack<EmergencyRoute>(inclusive = true)
+    }
+    // Notification links open once the main screens exist; unknown links were already dropped.
+    LaunchedEffect(pendingLink) {
+        val link = pendingLink ?: return@LaunchedEffect
+        when (link) {
+            DeepLinkTarget.NavigateSafe -> navController.navigate(NavigateRoute()) { launchSingleTop = true }
+            DeepLinkTarget.Groups -> navController.navigate(PeopleRoute) { launchSingleTop = true }
+            is DeepLinkTarget.Alert -> navController.navigate(AlertDetailRoute(link.id)) { launchSingleTop = true }
+            DeepLinkTarget.Emergency -> if (state.emergency) navController.showEmergency() else viewModel.activateEmergency()
+        }
+        viewModel.consumeLink()
+    }
+    val onEmergencyScreen = destination?.hasRoute(EmergencyRoute::class) == true
+    // These full-screen screens pad the system bars themselves, so the normal bars step aside.
+    val selfInsets = destination?.let { it.hasRoute(ShowLocalRoute::class) || it.hasRoute(EditProfileRoute::class) } == true
 
     val selectedTab = tabRoutes.indexOfFirst { route -> destination?.hierarchy?.any { it.hasRoute(route::class) } == true }
     val title = when (selectedTab) {
@@ -102,22 +141,37 @@ fun MainScaffold(
     }
 
     Column(Modifier.fillMaxSize()) {
-        SahayTopBar(
-            title = title,
-            actions = {
-                ConnectivityChip(
-                    level = connectivityLevel(state.connectivity),
-                    label = connectivityLabel(state.connectivity),
-                    onClick = { showSheet = true },
-                )
-            },
-        )
-        if (!state.connectivity.internet) {
-            OfflineBanner(offlineBannerText(state.savedDataSinceEpochSec), Modifier.fillMaxWidth())
+        // The Emergency screen has its own header (chip and battery), so the top bar steps aside.
+        if (!onEmergencyScreen && !selfInsets) {
+            SahayTopBar(
+                title = title,
+                actions = {
+                    if (!state.emergency) {
+                        SahayButton(
+                            text = stringResource(R.string.action_emergency_short),
+                            onClick = viewModel::activateEmergency,
+                            variant = ButtonVariant.Danger,
+                            size = ButtonSize.M,
+                            icon = Icons.Rounded.Emergency,
+                            fullWidth = false,
+                            compact = true,
+                        )
+                    }
+                    ConnectivityChip(
+                        compact = true,
+                        level = connectivityLevel(state.connectivity),
+                        label = connectivityLabel(state.connectivity),
+                        onClick = { showSheet = true },
+                    )
+                },
+            )
+            if (!state.connectivity.internet) {
+                OfflineBanner(offlineBannerText(state.savedDataSinceEpochSec), Modifier.fillMaxWidth())
+            }
         }
 
         // The bottom bar hides itself in Emergency Mode, so give the content the nav-bar inset back.
-        val contentInsets = if (state.emergency) Modifier.navigationBarsPadding() else Modifier
+        val contentInsets = if (state.emergency && !selfInsets) Modifier.navigationBarsPadding() else Modifier
         NavHost(
             navController = navController,
             startDestination = HomeTab,
@@ -125,7 +179,33 @@ fun MainScaffold(
         ) {
             composable<HomeTab> {
                 HomeScreen(
-                    onOpenAction = { titleRes -> navController.openHomeAction(titleRes) },
+                    onOpenAction = { titleRes ->
+                        if (titleRes == R.string.action_emergency_mode) viewModel.activateEmergency()
+                        else navController.openHomeAction(titleRes)
+                    },
+                    onDownloadPack = onOpenTripSetup,
+                )
+            }
+            composable<EmergencyRoute> {
+                EmergencyScreen(
+                    connectivity = state.connectivity,
+                    onConnectivityClick = { showSheet = true },
+                    onGoToSafety = { navController.navigate(NavigateRoute()) },
+                    onSos = { navController.navigate(SosRoute) },
+                    onShowLocal = { navController.navigate(ShowLocalRoute()) },
+                    onFindPeople = { navController.navigate(PeopleRoute) },
+                    onExit = viewModel::deactivateEmergency,
+                )
+            }
+            composable<SosRoute> {
+                SosScreen(
+                    onBack = { navController.popBackStack() },
+                    onEditContacts = { navController.navigate(EditProfileRoute(WizardStep.CONTACTS.ordinal)) },
+                )
+            }
+            composable<ShowLocalRoute> {
+                ShowLocalScreen(
+                    onBack = { navController.popBackStack() },
                     onDownloadPack = onOpenTripSetup,
                 )
             }
@@ -158,7 +238,10 @@ fun MainScaffold(
             composable<NavigateRoute> {
                 NavigateScreen(
                     onBack = { navController.popBackStack() },
-                    onShowLocal = { navController.navigate(ComingSoonRoute(R.string.action_show_local)) },
+                    onShowLocal = { destination ->
+                        val target = destination?.let { NavTarget.ToPoi(it.id).encode() }
+                        navController.navigate(ShowLocalRoute(target))
+                    },
                 )
             }
             composable<ReportRoute> { ReportScreen(onBack = { navController.popBackStack() }) }
@@ -168,36 +251,66 @@ fun MainScaffold(
                     onGoToGroup = { group -> navController.navigate(NavigateRoute(NavTarget.ToPoint(group.point).encode())) },
                 )
             }
-            composable<MeTab> { ComingSoon(R.string.nav_me, onBack = null) }
-            composable<ComingSoonRoute> { entry ->
-                ComingSoon(entry.toRoute<ComingSoonRoute>().titleRes, onBack = { navController.popBackStack() })
+            composable<MeTab> {
+                MeScreen(
+                    onEditProfile = { navController.navigate(EditProfileRoute()) },
+                    onMedicalCard = { navController.navigate(MedicalCardRoute) },
+                    onTripPack = { navController.navigate(TripPackRoute) },
+                    onPrivacy = { navController.navigate(PrivacyRoute) },
+                    onAbout = { navController.navigate(AboutRoute) },
+                )
             }
+            composable<EditProfileRoute> {
+                ProfileWizardScreen(
+                    onExit = { navController.popBackStack() },
+                    onFinished = { navController.popBackStack() },
+                )
+            }
+            composable<MedicalCardRoute> {
+                MedicalCardScreen(
+                    onBack = { navController.popBackStack() },
+                    onEdit = { navController.navigate(EditProfileRoute(WizardStep.MEDICAL.ordinal)) },
+                )
+            }
+            composable<TripPackRoute> {
+                TripPackScreen(onBack = { navController.popBackStack() }, onUpdate = onOpenTripSetup)
+            }
+            composable<PrivacyRoute> { PrivacyScreen(onBack = { navController.popBackStack() }) }
+            composable<AboutRoute> { AboutScreen(onBack = { navController.popBackStack() }) }
         }
 
-        SahayBottomBar(
-            items = bottomBarItems(state.unreadAlerts),
-            selectedIndex = selectedTab.coerceAtLeast(0),
-            onSelect = { index ->
-                navController.navigate(tabRoutes[index]) {
-                    popUpTo(navController.graph.findStartDestination().id) { saveState = true }
-                    launchSingleTop = true
-                    restoreState = true
-                }
-            },
-        )
+        if (!selfInsets) {
+            SahayBottomBar(
+                items = bottomBarItems(state.unreadAlerts),
+                selectedIndex = selectedTab.coerceAtLeast(0),
+                onSelect = { index ->
+                    navController.navigate(tabRoutes[index]) {
+                        popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                },
+            )
+        }
     }
 
     if (showSheet) WhatWorksSheet(state.connectivity, onDismiss = { showSheet = false })
 }
 
-/** Home tiles that have a real screen open it; the rest still show the placeholder. */
+/** Opens the screen behind a Home tile (Emergency Mode is handled by the caller). */
 private fun NavHostController.openHomeAction(titleRes: Int) {
     when (titleRes) {
         R.string.action_go_safety -> navigate(NavigateRoute())
+        R.string.action_sos -> navigate(SosRoute)
+        R.string.action_show_local -> navigate(ShowLocalRoute())
         R.string.action_report_hazard -> navigate(ReportRoute)
         R.string.action_find_people -> navigate(PeopleRoute)
-        else -> navigate(ComingSoonRoute(titleRes))
     }
+}
+
+/** Goes to the Emergency screen: back to it if it is already in the stack, otherwise on top. */
+private fun NavHostController.showEmergency() {
+    if (!popBackStack<EmergencyRoute>(inclusive = false)) navigate(EmergencyRoute) { launchSingleTop = true }
 }
 
 @Composable
@@ -212,15 +325,6 @@ private fun bottomBarItems(unread: Int): List<BottomBarItem> = listOf(
     ),
     BottomBarItem(stringResource(R.string.nav_me), Icons.Rounded.Person),
 )
-
-@Composable
-private fun connectivityLabel(state: ConnectivityState): String = when (connectivityLevel(state)) {
-    ConnectivityLevel.Online -> stringResource(R.string.conn_online)
-    ConnectivityLevel.SmsOnly -> stringResource(R.string.conn_sms_only)
-    ConnectivityLevel.Offline ->
-        if (state.meshPeers > 0) pluralStringResource(R.plurals.conn_offline_phones, state.meshPeers, state.meshPeers)
-        else stringResource(R.string.conn_offline)
-}
 
 @Composable
 private fun offlineBannerText(sinceEpochSec: Long?): String =
@@ -277,19 +381,5 @@ private fun CapabilityRow(label: String, available: Boolean) {
                 color = tint,
             )
         }
-    }
-}
-
-/** Stand-in for screens other tasks build. Never a dead end: sub-screens offer a way back. */
-@Composable
-private fun ComingSoon(titleRes: Int, onBack: (() -> Unit)?) {
-    Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
-        EmptyState(
-            icon = Icons.Rounded.Construction,
-            title = stringResource(titleRes),
-            body = stringResource(R.string.soon_body),
-            actionLabel = onBack?.let { stringResource(R.string.soon_back) },
-            onAction = onBack,
-        )
     }
 }

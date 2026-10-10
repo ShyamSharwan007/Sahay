@@ -28,6 +28,7 @@ import com.sahay.R
 import com.sahay.app.common.SubScreenHeader
 import com.sahay.app.common.distanceText
 import com.sahay.core.contracts.MapViewState
+import com.sahay.core.contracts.Poi
 import com.sahay.core.contracts.Route
 import com.sahay.core.contracts.RouteWarning
 import com.sahay.designsystem.LocalSahayDark
@@ -49,7 +50,8 @@ data class NavigateRoute(val target: String? = null)
 @Composable
 fun NavigateScreen(
     onBack: () -> Unit,
-    onShowLocal: () -> Unit,
+    /** Opens the "Show to a local" card for the current destination (null = a bare spot or the nearest shelter). */
+    onShowLocal: (Poi?) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: NavigateViewModel = hiltViewModel(),
 ) {
@@ -85,7 +87,7 @@ fun NavigateScreen(
 }
 
 @Composable
-private fun ActiveNavigation(state: NavUiState.Active, onShowLocal: () -> Unit) {
+private fun ActiveNavigation(state: NavUiState.Active, onShowLocal: (Poi?) -> Unit) {
     val route = state.route
     Column(Modifier.fillMaxSize()) {
         Column(
@@ -119,7 +121,7 @@ private fun ActiveNavigation(state: NavUiState.Active, onShowLocal: () -> Unit) 
         )
         SahayButton(
             text = stringResource(R.string.nav_show_local),
-            onClick = onShowLocal,
+            onClick = { onShowLocal(route.destination) },
             icon = Icons.Rounded.Translate,
             variant = ButtonVariant.Secondary,
             modifier = Modifier.padding(SahaySpacing.screenPadding),

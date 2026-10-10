@@ -2,6 +2,8 @@ package com.sahay.app.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.sahay.app.deeplink.DeepLinkRouter
+import com.sahay.app.deeplink.DeepLinkTarget
 import com.sahay.core.contracts.AlertRepository
 import com.sahay.core.contracts.ConnectivityMonitor
 import com.sahay.core.contracts.ConnectivityState
@@ -30,11 +32,22 @@ data class MainUiState(
 class MainViewModel @Inject constructor(
     private val connectivity: ConnectivityMonitor,
     alerts: AlertRepository,
-    emergencyMode: EmergencyModeController,
+    private val emergencyMode: EmergencyModeController,
     packs: PackRepository,
     private val riskMonitor: RiskMonitor,
     private val clock: Clock,
+    private val deepLinks: DeepLinkRouter,
 ) : ViewModel() {
+
+    /** A notification link waiting to be opened by the main screens. */
+    val pendingLink: StateFlow<DeepLinkTarget?> = deepLinks.pending
+
+    fun consumeLink() = deepLinks.consume()
+
+    fun activateEmergency() = emergencyMode.activate()
+
+    fun deactivateEmergency() = emergencyMode.deactivate()
+
 
     private val lastOnlineEpochSec = MutableStateFlow<Long?>(null)
 

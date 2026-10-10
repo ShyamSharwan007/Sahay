@@ -5,6 +5,7 @@ import com.sahay.app.profile.ContactDraft
 import com.sahay.app.profile.ProfileWizardViewModel
 import com.sahay.app.profile.Relation
 import com.sahay.app.profile.WizardStep
+import com.sahay.designsystem.phone.PhoneFieldValue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -71,6 +72,26 @@ class ProfileWizardViewModelTest {
         vm.next()
         assertEquals(WizardStep.MEDICAL, vm.step())
         assertFalse(vm.state.value.showErrors)
+    }
+
+    @Test fun `phone country follows the nationality until the user picks one`() {
+        val vm = vm()
+        assertEquals("IN", vm.state.value.phoneValue.region)
+        vm.setNationality("DE")
+        assertEquals("DE", vm.state.value.phoneValue.region)
+        vm.setPhoneValue(PhoneFieldValue("JP", "", manual = true))
+        vm.setNationality("FR")
+        assertEquals("JP", vm.state.value.phoneValue.region)
+    }
+
+    @Test fun `next stays disabled while the phone is invalid`() {
+        val vm = vm()
+        vm.setName("Anna")
+        assertTrue(vm.state.value.canProceed)
+        vm.setPhone("0151 123")
+        assertFalse(vm.state.value.canProceed)
+        vm.setPhone("")
+        assertTrue(vm.state.value.canProceed)
     }
 
     @Test fun `phone is optional but must be valid when given`() {

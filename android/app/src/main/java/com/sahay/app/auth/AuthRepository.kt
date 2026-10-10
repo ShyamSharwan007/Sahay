@@ -48,6 +48,8 @@ interface AuthRepository {
     /** [activityContext] must be an Activity: Credential Manager shows its sheet on top of it. */
     suspend fun signInWithGoogle(activityContext: Context): SignInResult
     suspend fun signInAsGuest(): SignInResult
+    /** Signs out locally; works offline. */
+    fun signOut()
 }
 
 @Singleton
@@ -95,6 +97,8 @@ class FirebaseAuthRepository @Inject constructor(
             SignInResult.Failed
         }
     }
+
+    override fun signOut() = auth.signOut()
 
     private suspend fun requestGoogleIdToken(activityContext: Context): String {
         val option = GetGoogleIdOption.Builder()

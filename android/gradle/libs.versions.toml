@@ -23,6 +23,7 @@ firebaseBom = "35.0.0"
 credentials = "1.6.0"
 googleid = "1.2.1"
 tink = "1.23.0"
+libphonenumber = "9.0.40"
 googleServices = "4.5.0"
 junit = "4.13.2"
 turbine = "1.2.1"
@@ -69,6 +70,7 @@ androidx-credentials = { module = "androidx.credentials:credentials", version.re
 androidx-credentials-play-services-auth = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentials" }
 googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }
 tink-android = { module = "com.google.crypto.tink:tink-android", version.ref = "tink" }
+libphonenumber = { module = "io.michaelrocks:libphonenumber-android", version.ref = "libphonenumber" }
 junit = { module = "junit:junit", version.ref = "junit" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }

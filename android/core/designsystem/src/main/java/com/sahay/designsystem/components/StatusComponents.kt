@@ -166,6 +166,8 @@ fun ConnectivityChip(
     label: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    /** Smaller padding so the chip leaves room for a title and other actions. */
+    compact: Boolean = false,
 ) {
     val colors = LocalSahayColors.current
     val scheme = MaterialTheme.colorScheme
@@ -178,12 +180,15 @@ fun ConnectivityChip(
             border = BorderStroke(1.dp, scheme.outline),
         ) {
             Row(
-                modifier = Modifier.padding(start = 12.dp, end = 14.dp, top = 7.dp, bottom = 7.dp),
+                modifier = Modifier.padding(
+                    start = if (compact) 8.dp else 12.dp, end = if (compact) 10.dp else 14.dp,
+                    top = if (compact) 5.dp else 7.dp, bottom = if (compact) 5.dp else 7.dp,
+                ),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(if (compact) 6.dp else 8.dp),
             ) {
                 ConnectivityDot(level)
-                Text(label, style = MaterialTheme.typography.labelMedium, color = scheme.onSurface)
+                Text(label, style = MaterialTheme.typography.labelMedium, color = scheme.onSurface, maxLines = 1)
             }
         }
     }
