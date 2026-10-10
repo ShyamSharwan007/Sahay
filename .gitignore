@@ -15,6 +15,7 @@ android/.idea/
 android/captures/
 *.iml
 .kotlin/
+**/bin/
 
 # Python
 __pycache__/
