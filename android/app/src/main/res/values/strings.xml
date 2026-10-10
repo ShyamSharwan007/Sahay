@@ -2,6 +2,7 @@
 <resources>
     <!-- Language names are shown in their own language, never translated. -->
     <string name="app_name" translatable="false">Sahay</string>
+    <string name="weather_temp" translatable="false">%1$s°C</string>
     <string name="gallery_title" translatable="false">Design gallery</string>
     <string name="lang_en" translatable="false">English</string>
     <string name="lang_de" translatable="false">Deutsch</string>

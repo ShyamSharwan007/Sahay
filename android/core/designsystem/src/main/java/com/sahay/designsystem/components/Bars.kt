@@ -147,8 +147,7 @@ fun SahayBottomBar(
 }
 
 /**
- * Circular 88 dp danger button. A soft pulse ring draws outside its bounds (no layout shift);
- * the pulse and shadow are disabled in Emergency Mode and when animations are removed.
+ * Circular 88 dp danger button. It is flat and still (no pulse); only this button casts a shadow, and not in Emergency Mode.
  * Pressing it starts the cancellable 5-second countdown (handled by the caller).
  */
 @Composable
@@ -159,29 +158,10 @@ fun SosButton(
     modifier: Modifier = Modifier,
 ) {
     val colors = LocalSahayColors.current
-    val calm = LocalEmergency.current || LocalReduceMotion.current
     val haptic = LocalHapticFeedback.current
-    val pulse = if (calm) 0f else {
-        val transition = rememberInfiniteTransition(label = "sosPulse")
-        val value by transition.animateFloat(
-            initialValue = 0f,
-            targetValue = 1f,
-            animationSpec = infiniteRepeatable(tween(1800), RepeatMode.Restart),
-            label = "sosPulseValue",
-        )
-        value
-    }
     Box(
         modifier = modifier
             .size(88.dp)
-            .drawBehind {
-                if (pulse > 0f) {
-                    drawCircle(
-                        color = colors.danger.copy(alpha = 0.35f * (1f - pulse)),
-                        radius = size.minDimension / 2f * (1f + 0.35f * pulse),
-                    )
-                }
-            }
             .then(if (LocalEmergency.current) Modifier else Modifier.shadow(8.dp, CircleShape, clip = false))
             .clip(CircleShape)
             .background(colors.danger)

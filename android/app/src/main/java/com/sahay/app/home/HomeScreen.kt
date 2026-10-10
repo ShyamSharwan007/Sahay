@@ -5,6 +5,15 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.annotation.StringRes
+import com.sahay.app.common.formatForecastNumber
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.material.icons.outlined.WbSunny
+import androidx.compose.material.icons.outlined.Umbrella
+import androidx.compose.material.icons.outlined.Cloud
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -116,16 +125,21 @@ private fun HomeContent(
             .padding(horizontal = SahaySpacing.screenPadding, vertical = SahaySpacing.sm),
         verticalArrangement = Arrangement.spacedBy(SahaySpacing.cardGap),
     ) {
-        if (state.updateAvailable) UpdateBanner(onUpdate, onDismissUpdate)
         StatusSection(state.status) { onOpenAction(R.string.action_go_safety) }
+        if (state.updateAvailable) UpdateBanner(onUpdate, onDismissUpdate)
 
         if (!state.hasPack) {
             NoPackCard(onDownloadPack)
         } else {
-            WeatherLine(state.todayForecast, state.forecastNote)
+            WeatherSection(state.todayForecast, state.upcomingForecast, state.forecastNote)
         }
 
-        homeActions.chunked(2).forEach { row ->
+        SahayButton(
+            text = stringResource(R.string.action_go_safety),
+            onClick = { onOpenAction(R.string.action_go_safety) },
+            icon = Icons.Rounded.NearMe,
+        )
+        homeActions.filter { it.label != R.string.action_go_safety }.chunked(2).forEach { row ->
             Row(horizontalArrangement = Arrangement.spacedBy(SahaySpacing.cardGap)) {
                 row.forEach { action ->
                     BigActionTile(
@@ -136,6 +150,7 @@ private fun HomeContent(
                         modifier = Modifier.weight(1f),
                     )
                 }
+                if (row.size == 1) Spacer(Modifier.weight(1f))
             }
         }
 
@@ -188,28 +203,51 @@ private fun StatusSection(status: HomeStatus, onGoToSafety: () -> Unit) {
     }
 }
 
+/** Today's weather in one line (icon, temperature, rain, wind, risk), then the next days as small pills. */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun WeatherLine(day: ForecastDay?, note: ForecastNote) {
-    val dayFormat = remember { DateTimeFormatter.ofPattern("EEE d MMM", Locale.getDefault()) }
-    Column(verticalArrangement = Arrangement.spacedBy(SahaySpacing.xxs)) {
-        if (day == null) {
+private fun WeatherSection(today: ForecastDay?, upcoming: List<ForecastDay>, note: ForecastNote) {
+    val locale = LocalConfiguration.current.locales[0]
+    val dayFormat = remember(locale) { DateTimeFormatter.ofPattern("EEE", locale) }
+    Column(verticalArrangement = Arrangement.spacedBy(SahaySpacing.xs)) {
+        if (today == null) {
             val text = if (note == ForecastNote.BEYOND_RANGE) R.string.trip_forecast_empty else R.string.home_weather_none
             Text(stringResource(text), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
         } else {
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(SahaySpacing.sm)) {
-                Text(
-                    forecastLine(day, dayFormat),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.weight(1f),
-                )
-                val (kind, label) = riskPresentation(day.riskLevel)
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(SahaySpacing.sm),
+                verticalArrangement = Arrangement.spacedBy(SahaySpacing.xxs),
+                itemVerticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(weatherIcon(today), contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                Text(stringResource(R.string.weather_temp, formatForecastNumber(today.maxTempC)), style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(R.string.trip_forecast_rain, formatForecastNumber(today.rainMm)), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(stringResource(R.string.trip_forecast_wind, formatForecastNumber(today.windKmh)), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                val (kind, label) = riskPresentation(today.riskLevel)
                 StatusChip(kind, stringResource(label))
+            }
+            if (upcoming.isNotEmpty()) {
+                Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(SahaySpacing.xs)) {
+                    upcoming.forEach { day ->
+                        val (kind, _) = riskPresentation(day.riskLevel)
+                        StatusChip(kind, day.date.format(dayFormat) + " · " + stringResource(R.string.trip_forecast_rain, formatForecastNumber(day.rainMm)))
+                    }
+                }
             }
             ForecastCaption()
         }
     }
 }
+
+/** Simple line icon: umbrella for real rain, cloud for a little, sun otherwise. */
+private fun weatherIcon(day: ForecastDay): ImageVector = when {
+    day.rainMm >= RAIN_HEAVY_MM -> Icons.Outlined.Umbrella
+    day.rainMm >= RAIN_LIGHT_MM -> Icons.Outlined.Cloud
+    else -> Icons.Outlined.WbSunny
+}
+
+private const val RAIN_HEAVY_MM = 10.0
+private const val RAIN_LIGHT_MM = 1.0
 
 @Composable
 private fun NoPackCard(onDownload: () -> Unit) {
