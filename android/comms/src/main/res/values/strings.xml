@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="comms_channel_alerts">Safety alerts</string>
     <string name="comms_channel_alerts_info">Safety updates</string>
     <string name="comms_notification_simulation">Simulation: %1$s</string>

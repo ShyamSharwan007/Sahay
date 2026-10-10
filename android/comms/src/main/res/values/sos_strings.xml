@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SOS SMS wording. Translated for en, de, fr, ar; every other app language falls back to English (see ResourceSosStrings). -->
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <string name="comms_sos_unknown_name">a tourist</string>
+    <string name="comms_sos_intro">SOS from %1$s via Sahay. I need help.</string>
+    <string name="comms_sos_location">Location: %1$s (±%2$s m, %3$s).</string>
+    <string name="comms_sos_location_no_accuracy">Location: %1$s (%2$s).</string>
+    <string name="comms_sos_location_unavailable">Location unavailable.</string>
+    <string name="comms_sos_blood">Blood group: %1$s.</string>
+    <string name="comms_sos_allergies">Allergies: %1$s.</string>
+    <string name="comms_sos_staying">Staying at: %1$s.</string>
+
+    <string name="comms_sos_fail_no_contacts">No emergency contacts saved.</string>
+    <string name="comms_sos_fail_no_permission">SMS permission is off.</string>
+    <string name="comms_sos_fail_airplane">Airplane mode is on.</string>
+    <string name="comms_sos_fail_no_sim">No SIM card found.</string>
+    <string name="comms_sos_fail_no_service">No mobile signal.</string>
+    <string name="comms_sos_fail_invalid_number">Invalid phone number.</string>
+    <string name="comms_sos_fail_timeout">No confirmation after 20 seconds.</string>
+    <string name="comms_sos_fail_generic">The phone couldn\'t send the message.</string>
+    <string name="comms_sos_failed_entry">%1$s: %2$s</string>
+</resources>

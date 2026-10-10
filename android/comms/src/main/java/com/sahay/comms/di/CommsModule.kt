@@ -10,10 +10,15 @@ import com.sahay.comms.alerts.SystemAlertNotifier
 import com.sahay.comms.alerts.TemplateCacheDao
 import com.sahay.comms.connectivity.RealConnectivityMonitor
 import com.sahay.comms.fake.FakeGroupService
-import com.sahay.comms.fake.FakeReportRepository
-import com.sahay.comms.fake.FakeSosService
 import com.sahay.comms.net.CommsApi
 import com.sahay.comms.net.OkHttpCommsApi
+import com.sahay.comms.net.ReportsApi
+import com.sahay.comms.reports.RealReportRepository
+import com.sahay.comms.reports.ReportDao
+import com.sahay.comms.reports.ReportDatabase
+import com.sahay.comms.sos.AndroidSmsDispatcher
+import com.sahay.comms.sos.RealSosService
+import com.sahay.comms.sos.SmsDispatcher
 import com.sahay.core.contracts.AlertRepository
 import com.sahay.core.contracts.ConnectivityMonitor
 import com.sahay.core.contracts.GroupService
@@ -28,7 +33,7 @@ import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 /**
- * Alerts and connectivity are real; SOS, reports and groups still point at fakes until their turn.
+ * Alerts, connectivity, SOS and reports are real; groups still point at a fake until their turn.
  * (The Fake* classes stay in the module for tests and previews.)
  */
 @Module
@@ -38,10 +43,10 @@ abstract class CommsModule {
     abstract fun alertRepository(impl: RealAlertRepository): AlertRepository
 
     @Binds @Singleton
-    abstract fun sosService(impl: FakeSosService): SosService
+    abstract fun sosService(impl: RealSosService): SosService
 
     @Binds @Singleton
-    abstract fun reportRepository(impl: FakeReportRepository): ReportRepository
+    abstract fun reportRepository(impl: RealReportRepository): ReportRepository
 
     @Binds @Singleton
     abstract fun groupService(impl: FakeGroupService): GroupService
@@ -53,6 +58,12 @@ abstract class CommsModule {
     abstract fun commsApi(impl: OkHttpCommsApi): CommsApi
 
     @Binds @Singleton
+    abstract fun reportsApi(impl: OkHttpCommsApi): ReportsApi
+
+    @Binds @Singleton
+    abstract fun smsDispatcher(impl: AndroidSmsDispatcher): SmsDispatcher
+
+    @Binds @Singleton
     abstract fun alertNotifier(impl: SystemAlertNotifier): AlertNotifier
 
     companion object {
@@ -61,6 +72,14 @@ abstract class CommsModule {
             Room.databaseBuilder(context, CommsDatabase::class.java, "sahay_comms.db")
                 .fallbackToDestructiveMigration(dropAllTables = true)   // alerts are re-fetched; v1 has no migrations
                 .build()
+
+        // Queued reports are user data: no destructive fallback here, a schema change needs a real Migration.
+        @Provides @Singleton
+        fun reportDatabase(@ApplicationContext context: Context): ReportDatabase =
+            Room.databaseBuilder(context, ReportDatabase::class.java, "sahay_reports.db").build()
+
+        @Provides
+        fun reportDao(db: ReportDatabase): ReportDao = db.reportDao()
 
         @Provides
         fun alertDao(db: CommsDatabase): AlertDao = db.alertDao()
