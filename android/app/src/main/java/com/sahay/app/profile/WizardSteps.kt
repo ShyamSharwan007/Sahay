@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -39,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import com.sahay.R
@@ -152,7 +154,7 @@ private fun CountryPicker(countries: List<Country>, onPick: (Country) -> Unit) {
         LazyColumn(Modifier.fillMaxWidth()) {
             items(results, key = { it.code }) { country ->
                 Row(
-                    Modifier.fillMaxWidth().clickable { onPick(country) }.padding(vertical = SahaySpacing.sm),
+                    Modifier.fillMaxWidth().heightIn(min = 48.dp).clickable { onPick(country) }.padding(vertical = SahaySpacing.sm),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(SahaySpacing.sm),
                 ) {

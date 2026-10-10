@@ -161,6 +161,7 @@ private fun SendingContent(label: String) {
 private fun DoneContent(result: SosResult, contacts: List<EmergencyContact>, onRetry: () -> Unit) {
     val statuses = contacts.map { it to contactStatus(it, result) }
     val failedCount = statuses.count { it.second == ContactSendStatus.FAILED }
+    // StatusCard announces the outcome (polite live region) when this state appears.
     when {
         failedCount == 0 -> StatusCard(StatusKind.Safe, stringResource(R.string.sos_sent_title), stringResource(R.string.sos_sent_body))
         failedCount == statuses.size -> StatusCard(StatusKind.Danger, stringResource(R.string.sos_failed_title), stringResource(R.string.sos_failed_body))
