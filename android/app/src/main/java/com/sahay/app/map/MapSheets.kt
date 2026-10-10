@@ -122,6 +122,10 @@ private fun ReportSheetContent(report: HazardReport) {
         score = report.trustScore.toFloat(),
         description = stringResource(R.string.trust_description, trustLabel, percent),
     )
+    if (report.photoPath != null || report.photoUrl != null) {
+        com.sahay.app.report.ReportPhotoThumb(report)
+        com.sahay.app.report.PhotoReviewChip(report.reviewStatus)
+    }
     Text(stringResource(R.string.report_age, timeAgoText(report.createdAtEpochSec, now)), style = MaterialTheme.typography.bodyLarge)
     Text(
         report.note ?: stringResource(R.string.report_no_note),

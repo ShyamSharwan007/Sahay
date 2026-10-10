@@ -15,6 +15,7 @@ import kotlinx.serialization.json.jsonObject
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -79,6 +80,19 @@ class OkHttpCommsApi internal constructor(
             .post(body)
             .build()
         return decode(ReportDto.serializer(), execute(httpRequest))
+    }
+
+    override suspend fun uploadPhoto(reportId: String, jpeg: ByteArray, idToken: String?): ReportDto {
+        val body = MultipartBody.Builder()
+            .setType(MultipartBody.FORM)
+            .addFormDataPart("file", "photo.jpg", jpeg.toRequestBody("image/jpeg".toMediaType()))
+            .build()
+        val request = Request.Builder()
+            .url(baseUrl.newBuilder().addPathSegment("reports").addPathSegment(reportId).addPathSegment("photo").build())
+            .authorized(idToken)
+            .post(body)
+            .build()
+        return decode(ReportDto.serializer(), execute(request))
     }
 
     override suspend fun reports(regionId: String?, sinceMin: Int, idToken: String?): List<ReportDto> {

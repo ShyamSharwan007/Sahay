@@ -27,7 +27,13 @@ internal object ReportMerger {
         val others = server.filter { !it.mine && it.id !in localByServerId }
 
         val fromServer = server.map { report ->
-            localByServerId[report.id]?.let { report.copy(id = it.localId, mine = true, pendingSync = false) } ?: report
+            localByServerId[report.id]?.let {
+                // The server's review state is the fresher one; the photo file only exists on this phone.
+                report.copy(
+                    id = it.localId, mine = true, pendingSync = false,
+                    photoPath = it.photoPath, reviewStatus = report.reviewStatus ?: localReviewStatus(it),
+                )
+            } ?: report
         }
         val fromPhone = local
             .filter { it.serverId == null || it.serverId !in serverIds }
@@ -59,8 +65,14 @@ internal object ReportMerger {
             mine = true,
             channel = Channel.entries.firstOrNull { it.name == entity.channel } ?: Channel.INTERNET,
             pendingSync = status == ReportStatus.PENDING,
+            photoPath = entity.photoPath,
+            reviewStatus = localReviewStatus(entity),
         )
     }
+
+    /** A queued photo counts as "pending" until the server says otherwise. */
+    private fun localReviewStatus(entity: ReportEntity): String? =
+        entity.reviewStatus ?: if (entity.photoPath != null) "pending" else null
 
     /** A report from `GET /reports`, or null if its type is unknown to this app version. */
     fun fromDto(dto: ReportDto): HazardReport? {
@@ -78,6 +90,7 @@ internal object ReportMerger {
             mine = dto.mine,
             channel = Channel.entries.firstOrNull { it.name == dto.channel } ?: Channel.INTERNET,
             pendingSync = false,
+            reviewStatus = dto.reviewStatus,
         )
     }
 

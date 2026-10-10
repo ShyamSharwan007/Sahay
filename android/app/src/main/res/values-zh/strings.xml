@@ -433,4 +433,12 @@
     <string name="update_dismiss">关闭</string>
     <string name="action_save">保存</string>
     <string name="me_saved">已保存</string>
+    <string name="report_add_photo">添加照片</string>
+    <string name="report_take_photo">拍照</string>
+    <string name="report_remove_photo">删除照片</string>
+    <string name="report_photo_failed">无法使用这张照片，请换一张。</string>
+    <string name="report_photo_description">险情照片</string>
+    <string name="photo_pending_review">待审核</string>
+    <string name="photo_approved">已通过</string>
+    <string name="photo_rejected">未通过</string>
 </resources>

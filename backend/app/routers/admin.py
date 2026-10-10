@@ -15,7 +15,7 @@ from sqlalchemy.orm import Session
 from app.auth import admin_user
 from app.db.session import get_db
 from app.limiter import limiter
-from app.models import AdminOverview, AlertResponse, CamelModel, SimulateRequest
+from app.models import AdminOverview, AlertResponse, CamelModel, Report, SimulateRequest
 from app.routers.alerts import _generate_id, _get_region_bbox
 from app.wire import build_alert, build_shelter
 
@@ -267,6 +267,94 @@ def end_simulation(
     )
     db.commit()
     return {"status": "ok", "ended": result.rowcount}
+
+
+class AdminReport(Report):
+    region_id: str | None = None
+
+
+@router.get("/admin/reports", response_model=list[AdminReport])
+@limiter.limit("60/minute")
+def list_admin_reports(
+    request: Request,
+    region_id: str = Query(..., alias="regionId"),
+    since_hours: int = Query(72, alias="sinceHours", ge=1, le=720),
+    user: dict = Depends(admin_user),
+    db: Session = Depends(get_db),
+):
+    """GET /admin/reports?regionId= — reports of the last hours with trust and photo review state."""
+    from app.routers.reports import (
+        REPORT_COLUMNS,
+        _compute_trust_for_report,
+        _get_active_alerts,
+        _review_status,
+    )
+
+    now = int(time.time())
+    rows = (
+        db.execute(
+            text(
+                f"SELECT {REPORT_COLUMNS} FROM reports WHERE region_id = :r AND created_at >= :since "
+                "ORDER BY created_at DESC LIMIT 200"
+            ),
+            {"r": region_id, "since": now - since_hours * 3600},
+        )
+        .mappings()
+        .all()
+    )
+    alerts = _get_active_alerts(db, region_id, now)
+    out = []
+    for row in rows:
+        r = dict(row)
+        score, label = _compute_trust_for_report(db, r, now, alerts)
+        out.append(
+            AdminReport(
+                id=r["id"],
+                type=r["type"],
+                lat=r["lat"],
+                lon=r["lon"],
+                note=r["note"],
+                photo_url=r["photo_url"],
+                created_at=r["created_at"],
+                trust_score=round(score, 2),
+                label=label,
+                mine=False,
+                channel=r["channel"],
+                review_status=_review_status(db, r, score),
+                region_id=r["region_id"],
+            )
+        )
+    return out
+
+
+def _set_review(db: Session, report_id: str, status: str) -> dict:
+    result = db.execute(
+        text("UPDATE reports SET review_status = :s WHERE id = :id AND photo_url IS NOT NULL"),
+        {"s": status, "id": report_id},
+    )
+    db.commit()
+    if result.rowcount == 0:
+        raise HTTPException(
+            status_code=404,
+            detail={"error": {"code": "NOT_FOUND", "message": "Report with a photo not found"}},
+        )
+    return {"id": report_id, "reviewStatus": status}
+
+
+@router.post("/admin/reports/{report_id}/approve")
+@limiter.limit("60/minute")
+def approve_report_photo(
+    report_id: str, request: Request, user: dict = Depends(admin_user), db: Session = Depends(get_db)
+):
+    return _set_review(db, report_id, "approved")
+
+
+@router.post("/admin/reports/{report_id}/reject")
+@limiter.limit("60/minute")
+def reject_report_photo(
+    report_id: str, request: Request, user: dict = Depends(admin_user), db: Session = Depends(get_db)
+):
+    return _set_review(db, report_id, "rejected")
 
 
 class AdminAlert(AlertResponse):

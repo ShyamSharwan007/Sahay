@@ -93,13 +93,52 @@ class RealReportRepositoryTest {
         assertEquals(emptyList<GeoPoint>(), h.routing.latest)
     }
 
-    @Test fun `a photo is sent as base64 and its file is removed afterwards`() = runBlocking {
+    @Test fun `a photo is uploaded after the report and its state is kept`() = runBlocking {
         val h = harness()
         val photo = byteArrayOf(1, 2, 3, 4)
-        h.repository.submit(HazardType.FLOOD, h.spot, null, photo)
+        val report = h.repository.submit(HazardType.FLOOD, h.spot, null, photo)
 
-        assertEquals("AQIDBA==", h.posts.single().body.getValue("photoBase64").jsonPrimitive.content)
-        assertEquals(0, h.photoDir.listFiles().orEmpty().size)
+        assertEquals(JsonNull, h.posts.single().body.getValue("photoBase64"))   // the report itself carries no photo
+        val upload = h.uploads.single()
+        assertEquals("/api/v1/reports/r_9f2/photo", upload.path)
+        assertTrue(upload.contentType!!.startsWith("multipart/form-data"))
+        assertEquals("Bearer tok-1", upload.authorization)
+        assertEquals(1, h.photoDir.listFiles().orEmpty().size)                    // kept for the thumbnail
+        val row = h.db.reportDao().find(report.id)!!
+        assertTrue(row.photoUploaded)
+        assertEquals("pending", row.reviewStatus)
+        assertEquals("pending", h.repository.reports.await { it.isNotEmpty() }.single().reviewStatus)
+    }
+
+    @Test fun `a failed photo upload is retried and the report stays sent`() = runBlocking {
+        val h = harness()
+        h.photoResponse = { n -> if (n == 1) errorResponse(500) else ReportHarness.photoAccepted() }
+        val report = h.repository.submit(HazardType.FLOOD, h.spot, null, byteArrayOf(1, 2, 3))
+
+        assertEquals("SENT", h.db.reportDao().find(report.id)!!.status)
+        h.waitUntil("photo uploaded on retry") { h.db.reportDao().find(report.id)!!.photoUploaded }
+        assertEquals(2, h.uploads.size)
+        assertEquals(1, h.posts.size)                                             // the report was not sent again
+    }
+
+    @Test fun `a photo the server refuses for good is given up`() = runBlocking {
+        val h = harness()
+        h.photoResponse = { errorResponse(400) }
+        val report = h.repository.submit(HazardType.FLOOD, h.spot, null, byteArrayOf(1, 2, 3))
+
+        assertTrue(h.db.reportDao().find(report.id)!!.photoUploaded)
+        assertEquals(1, h.uploads.size)
+    }
+
+    @Test fun `a photo taken offline goes up after the report when the connection returns`() = runBlocking {
+        val h = harness(online = false)
+        val report = h.repository.submit(HazardType.FLOOD, h.spot, null, byteArrayOf(1, 2, 3))
+        assertEquals(1, h.photoDir.listFiles().orEmpty().size)
+        assertTrue(h.uploads.isEmpty())
+
+        h.goOnline()
+        h.waitUntil("photo uploaded") { h.db.reportDao().find(report.id)!!.photoUploaded }
+        assertEquals(1, h.posts.size)
     }
 
     // ------------------------------------------------------------------ offline → pending → synced

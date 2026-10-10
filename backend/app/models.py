@@ -141,6 +141,8 @@ class Report(CamelModel):
     label: str
     mine: bool
     channel: str
+    # Added with photo upload: null when the report has no photo, else pending | approved | rejected.
+    review_status: str | None = None
 
 
 class PresenceCreate(CamelModel):

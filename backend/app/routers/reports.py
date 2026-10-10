@@ -1,11 +1,13 @@
 import time
 from typing import Any
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Request
+from fastapi import APIRouter, Depends, File, HTTPException, Query, Request, UploadFile
+from fastapi.responses import Response
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from app.auth import current_user, optional_user
+from app.config import settings
 from app.db.session import get_db
 from app.limiter import limiter
 from app.models import Report, ReportCreate
@@ -21,6 +23,14 @@ from app.services.trust import (
 )
 
 router = APIRouter()
+
+# Never SELECT * from reports in lists: photo_data can be large.
+REPORT_COLUMNS = (
+    "id, uid, region_id, type, lat, lon, reporter_lat, reporter_lon, note, photo_url, "
+    "created_at, channel, photo_mime, review_status"
+)
+MAX_PHOTO_BYTES = 1024 * 1024
+AUTO_APPROVE_TRUST = 0.7
 
 VALID_REPORT_TYPES = {"FL", "RB", "SF", "SO", "PL", "LS", "OT"}
 
@@ -101,12 +111,12 @@ def _compute_trust_for_report(
     )
 
     # E
-    e_score = 0.0  # Evidence always 0 as per prompt (photoUrl null)
+    e_score = 1.0 if report.get("photo_url") else 0.0  # Evidence: a photo is attached
 
     # H
     # Past reports by this reporter
     past_query = """
-        SELECT *
+        SELECT id, uid, region_id, type, lat, lon, reporter_lat, reporter_lon, created_at
         FROM reports
         WHERE uid = :uid
           AND created_at < :created_at
@@ -280,6 +290,7 @@ def post_report(
         label=label,
         mine=True,
         channel=req.channel,
+        review_status=None,
     )
 
 
@@ -297,7 +308,7 @@ def get_reports(
     now = int(time.time())
     cutoff = now - since_min * 60
 
-    query = "SELECT * FROM reports WHERE created_at >= :cutoff"
+    query = f"SELECT {REPORT_COLUMNS} FROM reports WHERE created_at >= :cutoff"
     params: dict[str, Any] = {"cutoff": cutoff}
     if region_id:
         query += " AND region_id = :region_id"
@@ -319,20 +330,134 @@ def get_reports(
 
         trust_score, label = _compute_trust_for_report(db, r_dict, now, alerts_by_region[r_region])
 
-        out.append(
-            Report(
-                id=r_dict["id"],
-                type=r_dict["type"],
-                lat=r_dict["lat"],
-                lon=r_dict["lon"],
-                note=r_dict["note"],
-                photo_url=r_dict["photo_url"],
-                created_at=r_dict["created_at"],
-                trust_score=round(trust_score, 2),
-                label=label,
-                mine=(uid is not None and r_dict["uid"] == uid),
-                channel=r_dict["channel"],
-            )
-        )
+        out.append(_to_report(db, r_dict, trust_score, label, uid))
 
     return out
+
+
+def _to_report(db: Session, r: dict[str, Any], trust_score: float, label: str, uid: str | None) -> Report:
+    """Builds the API shape; a pending photo is approved as soon as the report is trusted enough."""
+    status = _review_status(db, r, trust_score)
+    return Report(
+        id=r["id"],
+        type=r["type"],
+        lat=r["lat"],
+        lon=r["lon"],
+        note=r["note"],
+        photo_url=r["photo_url"],
+        created_at=r["created_at"],
+        trust_score=round(trust_score, 2),
+        label=label,
+        mine=(uid is not None and r["uid"] == uid),
+        channel=r["channel"],
+        review_status=status,
+    )
+
+
+def _review_status(db: Session, r: dict[str, Any], trust_score: float) -> str | None:
+    """None without a photo. Pending photos become approved once trust reaches 0.7; rejected stays rejected."""
+    if not r.get("photo_url"):
+        return None
+    status = r.get("review_status") or "pending"
+    if status == "pending" and trust_score >= AUTO_APPROVE_TRUST:
+        db.execute(
+            text("UPDATE reports SET review_status = 'approved' WHERE id = :id AND review_status = 'pending'"),
+            {"id": r["id"]},
+        )
+        db.commit()
+        return "approved"
+    return status
+
+
+def _sniff_image_mime(data: bytes) -> str | None:
+    """JPEG, PNG or WebP by magic bytes; the declared content type is not trusted."""
+    if data.startswith(b"\xff\xd8\xff"):
+        return "image/jpeg"
+    if data.startswith(b"\x89PNG\r\n\x1a\n"):
+        return "image/png"
+    if data[:4] == b"RIFF" and data[8:12] == b"WEBP":
+        return "image/webp"
+    return None
+
+
+def _bad_request(message: str, status: int = 400) -> HTTPException:
+    return HTTPException(status_code=status, detail={"error": {"code": "BAD_REQUEST", "message": message}})
+
+
+@router.post("/reports/{report_id}/photo", response_model=Report)
+@limiter.limit("10/minute")
+async def post_report_photo(
+    report_id: str,
+    request: Request,
+    file: UploadFile = File(...),
+    user: dict = Depends(current_user),
+    db: Session = Depends(get_db),
+):
+    """POST /reports/{id}/photo (multipart; the report's owner only; image up to 1 MB)."""
+    row = db.execute(
+        text(f"SELECT {REPORT_COLUMNS} FROM reports WHERE id = :id"), {"id": report_id}
+    ).mappings().first()
+    if row is None:
+        raise HTTPException(status_code=404, detail={"error": {"code": "NOT_FOUND", "message": "Report not found"}})
+    if row["uid"] != user.get("uid"):
+        raise HTTPException(status_code=403, detail={"error": {"code": "FORBIDDEN", "message": "Not your report"}})
+
+    data = await file.read(MAX_PHOTO_BYTES + 1)
+    if len(data) > MAX_PHOTO_BYTES:
+        raise _bad_request("Photo must be 1 MB or smaller", 413)
+    mime = _sniff_image_mime(data)
+    if mime is None:
+        raise _bad_request("Photo must be a JPEG, PNG or WebP image")
+
+    photo_url = f"/api/v1/reports/{report_id}/photo"
+    db.execute(
+        text(
+            "UPDATE reports SET photo_data = :data, photo_mime = :mime, photo_url = :url, "
+            "review_status = 'pending' WHERE id = :id"
+        ),
+        {"data": data, "mime": mime, "url": photo_url, "id": report_id},
+    )
+    db.commit()
+
+    now = int(time.time())
+    r = dict(row)
+    r.update(photo_url=photo_url, photo_mime=mime, review_status="pending")
+    trust_score, label = _compute_trust_for_report(
+        db, r, now, _get_active_alerts(db, r["region_id"], now)
+    )
+    return _to_report(db, r, trust_score, label, user.get("uid"))
+
+
+@router.get("/reports/{report_id}/photo")
+@limiter.limit("120/minute")
+def get_report_photo(
+    report_id: str,
+    request: Request,
+    user: dict | None = Depends(optional_user),
+    db: Session = Depends(get_db),
+):
+    """GET /reports/{id}/photo — public once approved; the owner and admins can always see it."""
+    row = db.execute(
+        text(f"SELECT {REPORT_COLUMNS}, photo_data FROM reports WHERE id = :id"), {"id": report_id}
+    ).mappings().first()
+    if row is None or row["photo_data"] is None:
+        raise HTTPException(status_code=404, detail={"error": {"code": "NOT_FOUND", "message": "No photo"}})
+
+    r = dict(row)
+    if r.get("review_status") != "approved":
+        allowed = user is not None and (
+            r["uid"] == user.get("uid") or (user.get("email") or "").lower() in settings.admin_email_set
+        )
+        if not allowed and r.get("review_status") == "pending":
+            now = int(time.time())
+            score, _ = _compute_trust_for_report(db, r, now, _get_active_alerts(db, r["region_id"], now))
+            allowed = _review_status(db, r, score) == "approved"
+        if not allowed:
+            raise HTTPException(status_code=404, detail={"error": {"code": "NOT_FOUND", "message": "No photo"}})
+
+    data = bytes(r["photo_data"])
+    return Response(
+        content=data,
+        media_type=r.get("photo_mime") or "image/jpeg",
+        headers={"Cache-Control": "private, max-age=300"},
+    )

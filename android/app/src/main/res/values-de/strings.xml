@@ -494,4 +494,12 @@
     <string name="update_dismiss">Schließen</string>
     <string name="action_save">Speichern</string>
     <string name="me_saved">Gespeichert</string>
+    <string name="report_add_photo">Foto hinzufügen</string>
+    <string name="report_take_photo">Foto aufnehmen</string>
+    <string name="report_remove_photo">Foto entfernen</string>
+    <string name="report_photo_failed">Dieses Foto ging nicht. Versuchen Sie ein anderes.</string>
+    <string name="report_photo_description">Foto der Gefahr</string>
+    <string name="photo_pending_review">Wird geprüft</string>
+    <string name="photo_approved">Geprüft</string>
+    <string name="photo_rejected">Nicht freigegeben</string>
 </resources>

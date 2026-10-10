@@ -79,7 +79,9 @@ abstract class CommsModule {
         // Queued reports are user data: no destructive fallback here, a schema change needs a real Migration.
         @Provides @Singleton
         fun reportDatabase(@ApplicationContext context: Context): ReportDatabase =
-            Room.databaseBuilder(context, ReportDatabase::class.java, "sahay_reports.db").build()
+            Room.databaseBuilder(context, ReportDatabase::class.java, "sahay_reports.db")
+                .addMigrations(ReportDatabase.MIGRATION_1_2)
+                .build()
 
         @Provides
         fun reportDao(db: ReportDatabase): ReportDao = db.reportDao()

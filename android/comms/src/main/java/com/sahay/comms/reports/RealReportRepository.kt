@@ -37,7 +37,6 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.io.IOException
 import java.time.Clock
-import java.util.Base64
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
@@ -165,7 +164,9 @@ class RealReportRepository internal constructor(
         return try {
             val items = api.reports(packRepository.activePack.value?.regionId, ReportMerger.WINDOW_MIN, token())
             serverReports.value = items.mapNotNull(ReportMerger::fromDto)
-            dao.deleteFinishedBefore(nowSec() - KEEP_FINISHED_SEC)
+            val cutoff = nowSec() - KEEP_FINISHED_SEC
+            dao.finishedBefore(cutoff).forEach { photos.delete(it.photoPath) }
+            dao.deleteFinishedBefore(cutoff)
             Result.success(Unit)
         } catch (e: CancellationException) {
             throw e
@@ -191,6 +192,10 @@ class RealReportRepository internal constructor(
             val outcome = sendLock.withLock { sendOne(report.localId) }
             if (outcome == SendOutcome.RETRY_LATER) return false  // the server or network is struggling: do not hammer it
         }
+        for (report in dao.photosToUpload()) {
+            val outcome = sendLock.withLock { uploadPhoto(report.localId) }
+            if (outcome == SendOutcome.RETRY_LATER) return false
+        }
         return true
     }
 
@@ -206,15 +211,15 @@ class RealReportRepository internal constructor(
             reporterLat = entity.reporterLat ?: 0.0,      // 0,0 = "no fix" for the server
             reporterLon = entity.reporterLon ?: 0.0,
             note = entity.note,
-            photoBase64 = photos.read(entity.photoPath)?.let { Base64.getEncoder().encodeToString(it) },
+            photoBase64 = null,                           // the photo goes up separately, see uploadPhoto
             createdAt = entity.createdAtEpochSec,
             channel = entity.channel,
         )
         return try {
             val answer = post(request) ?: return SendOutcome.RETRY_LATER
             dao.markSent(localId, answer.id, answer.trustScore.coerceIn(0.0, 1.0), answer.photoUrl)
-            photos.delete(entity.photoPath)
-            SendOutcome.DONE
+            // The report is safe on the server now; a failing photo upload is retried later and never undoes that.
+            if (entity.photoPath != null && uploadPhoto(localId) == SendOutcome.RETRY_LATER) SendOutcome.RETRY_LATER else SendOutcome.DONE
         } catch (e: CancellationException) {
             throw e
         } catch (e: ApiException) {
@@ -231,6 +236,47 @@ class RealReportRepository internal constructor(
             SendOutcome.RETRY_LATER
         } catch (e: Exception) {
             Log.w(TAG, "Report not sent: ${e.message}")
+            SendOutcome.RETRY_LATER
+        }
+    }
+
+    /**
+     * Uploads the photo of a report the server already has. Must be called with [sendLock] held.
+     * A refusal that cannot get better (too big, not an image, not found) gives the photo up; the report stays.
+     */
+    private suspend fun uploadPhoto(localId: String): SendOutcome {
+        val entity = dao.find(localId)
+            ?.takeIf { it.status == ReportStatus.SENT.name && !it.photoUploaded && it.serverId != null && it.photoPath != null }
+            ?: return SendOutcome.DONE
+        val serverId = entity.serverId ?: return SendOutcome.DONE
+        val jpeg = photos.read(entity.photoPath)
+        if (jpeg == null) { // the file is gone: nothing left to send
+            dao.markPhotoUploaded(localId, null, null)
+            return SendOutcome.DONE
+        }
+        return try {
+            val token = token() ?: return SendOutcome.RETRY_LATER
+            val answer = try {
+                api.uploadPhoto(serverId, jpeg, token)
+            } catch (e: ApiException) {
+                if (e.httpCode != HTTP_UNAUTHORIZED) throw e
+                val fresh = token(forceRefresh = true)?.takeIf { it != token } ?: throw e
+                api.uploadPhoto(serverId, jpeg, fresh)
+            }
+            dao.markPhotoUploaded(localId, answer.photoUrl, answer.reviewStatus ?: "pending")
+            SendOutcome.DONE
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: ApiException) {
+            if (isFinalRefusal(e.httpCode) || e.httpCode == HTTP_PAYLOAD_TOO_LARGE) {
+                Log.w(TAG, "Server refused a photo for good (HTTP ${e.httpCode})")
+                dao.markPhotoUploaded(localId, null, null)
+                SendOutcome.DONE
+            } else {
+                SendOutcome.RETRY_LATER
+            }
+        } catch (e: Exception) {
+            Log.i(TAG, "Photo not sent yet: ${e.message}")
             SendOutcome.RETRY_LATER
         }
     }
@@ -311,6 +357,7 @@ class RealReportRepository internal constructor(
         private const val KEEP_FINISHED_SEC = 48 * 3600L
         private const val HTTP_UNAUTHORIZED = 401
         private const val HTTP_TIMEOUT = 408
+        private const val HTTP_PAYLOAD_TOO_LARGE = 413
         private const val HTTP_TOO_MANY_REQUESTS = 429
     }
 }

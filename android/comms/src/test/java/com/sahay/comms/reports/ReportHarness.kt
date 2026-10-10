@@ -44,6 +44,9 @@ import java.util.concurrent.TimeUnit
 /** What the fake server saw in a `POST /reports`. */
 class PostedReport(val body: JsonObject, val authorization: String?)
 
+/** A `POST /reports/{id}/photo`. */
+class PhotoUpload(val path: String, val contentType: String?, val bytes: Int, val authorization: String?)
+
 class FakeAuth(var token: String? = "tok-1", var refreshed: String? = "tok-2") : AuthTokenProvider {
     override val uid: String? = "u1"
     override suspend fun idToken(forceRefresh: Boolean): String? = if (forceRefresh) refreshed else token
@@ -80,6 +83,9 @@ class ReportHarness(
 
     // ---- the fake server
     val posts = CopyOnWriteArrayList<PostedReport>()
+    val uploads = CopyOnWriteArrayList<PhotoUpload>()
+    /** Answer to the n-th photo upload (1-based). */
+    @Volatile var photoResponse: (Int) -> MockResponse = { photoAccepted() }
     val getUrls = CopyOnWriteArrayList<String>()
     val getAuthorizations = CopyOnWriteArrayList<String?>()
     /** Answer to the n-th POST (1-based). */
@@ -93,6 +99,10 @@ class ReportHarness(
             override fun dispatch(request: RecordedRequest): MockResponse {
                 val path = request.url.encodedPath
                 return when {
+                    request.method == "POST" && path.endsWith("/photo") -> {
+                        uploads += PhotoUpload(path, request.headers["Content-Type"], (request.body?.size ?: 0L).toInt(), request.headers["Authorization"])
+                        photoResponse(uploads.size)
+                    }
                     request.method == "POST" && path.endsWith("/reports") -> {
                         val body = Json.parseToJsonElement(request.bodyText()).jsonObject
                         posts += PostedReport(body, request.headers["Authorization"])
@@ -168,6 +178,12 @@ class ReportHarness(
             MockResponse.Builder().code(200).addHeader("Content-Type", "application/json").body(
                 """{"id":"$id","type":"FL","lat":12.6208,"lon":80.1945,"note":null,"photoUrl":null,"createdAt":$NOW,""" +
                     """"trustScore":$trust,"label":"$label","mine":true,"channel":"INTERNET"}""",
+            ).build()
+
+        fun photoAccepted(id: String = "r_9f2", status: String = "pending"): MockResponse =
+            MockResponse.Builder().code(200).addHeader("Content-Type", "application/json").body(
+                """{"id":"$id","type":"FL","lat":12.6208,"lon":80.1945,"note":null,"photoUrl":"/api/v1/reports/$id/photo",""" +
+                    """"createdAt":$NOW,"trustScore":0.5,"label":"LIKELY","mine":true,"channel":"INTERNET","reviewStatus":"$status"}""",
             ).build()
 
         fun errorResponse(code: Int): MockResponse =

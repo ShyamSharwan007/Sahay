@@ -451,4 +451,12 @@
     <string name="update_dismiss">Закрыть</string>
     <string name="action_save">Сохранить</string>
     <string name="me_saved">Сохранено</string>
+    <string name="report_add_photo">Добавить фото</string>
+    <string name="report_take_photo">Сделать фото</string>
+    <string name="report_remove_photo">Убрать фото</string>
+    <string name="report_photo_failed">Не удалось использовать это фото. Попробуйте другое.</string>
+    <string name="report_photo_description">Фото опасности</string>
+    <string name="photo_pending_review">На проверке</string>
+    <string name="photo_approved">Одобрено</string>
+    <string name="photo_rejected">Не одобрено</string>
 </resources>
