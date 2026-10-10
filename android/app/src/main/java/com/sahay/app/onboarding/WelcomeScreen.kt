@@ -16,7 +16,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowForward
+import androidx.compose.material.icons.automirrored.rounded.ArrowForward
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -60,7 +60,7 @@ fun WelcomeScreen(onGetStarted: () -> Unit) {
         SahayButton(
             text = stringResource(R.string.welcome_get_started),
             onClick = onGetStarted,
-            icon = Icons.Rounded.ArrowForward,
+            icon = Icons.AutoMirrored.Rounded.ArrowForward,
             modifier = Modifier.padding(vertical = SahaySpacing.xl),
         )
     }

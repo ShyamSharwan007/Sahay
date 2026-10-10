@@ -2,7 +2,10 @@ package com.sahay.app.navigate
 
 import com.sahay.app.common.distanceMeters
 import com.sahay.core.contracts.GeoPoint
+import com.sahay.core.contracts.Poi
+import com.sahay.core.contracts.PoiType
 import com.sahay.core.contracts.Route
+import com.sahay.core.contracts.ShelterStatus
 import com.sahay.core.contracts.SahayConfig
 import kotlin.math.ceil
 import kotlin.math.max
@@ -42,3 +45,16 @@ fun hasArrived(route: Route, position: GeoPoint): Boolean {
 /** Whole minutes at walking speed, at least 1. */
 fun walkingMinutes(distanceM: Double): Int =
     max(1, ceil(distanceM / SahayConfig.WALKING_M_PER_MIN).toInt())
+
+/** How many alternative safe places the card lists. */
+const val NEARBY_SAFE_COUNT = 3
+
+/** The nearest shelters (not full or closed) other than the current destination, closest first. */
+fun nearbySafePlaces(pois: List<Poi>, excludeId: String?, from: GeoPoint): List<Pair<Poi, Double>> =
+    pois.asSequence()
+        .filter { it.type == PoiType.SHELTER || it.type == PoiType.CANDIDATE_SHELTER }
+        .filter { it.status != ShelterStatus.FULL && it.status != ShelterStatus.CLOSED && it.id != excludeId }
+        .map { it to distanceMeters(from, it.point) }
+        .sortedBy { it.second }
+        .take(NEARBY_SAFE_COUNT)
+        .toList()

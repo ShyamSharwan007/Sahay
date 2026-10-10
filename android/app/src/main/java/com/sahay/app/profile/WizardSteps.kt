@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -39,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import com.sahay.R
@@ -48,7 +50,11 @@ import com.sahay.designsystem.components.ButtonSize
 import com.sahay.designsystem.components.ButtonVariant
 import com.sahay.designsystem.components.SahayButton
 import com.sahay.designsystem.components.StatusCard
+import com.sahay.designsystem.components.PhoneFieldTexts
+import com.sahay.designsystem.components.PhoneNumberField
 import com.sahay.designsystem.components.StatusKind
+import com.sahay.designsystem.phone.PhoneFieldValue
+import com.sahay.designsystem.phone.PhoneNumbers
 
 // ---------------------------------------------------------------- 1 Essentials
 
@@ -57,30 +63,46 @@ internal fun EssentialsStep(
     state: WizardState,
     onName: (String) -> Unit,
     onNationality: (String?) -> Unit,
-    onPhone: (String) -> Unit,
+    onPhone: (PhoneFieldValue) -> Unit,
 ) {
     StepHeader(stringResource(R.string.essentials_title), stringResource(R.string.essentials_body))
+    var nameTouched by rememberSaveable { mutableStateOf(false) }
+    val nameError = (state.showErrors || nameTouched) && state.nameError
     OutlinedTextField(
         value = state.name,
-        onValueChange = onName,
+        onValueChange = { nameTouched = true; onName(it) },
         label = { Text(stringResource(R.string.essentials_name)) },
-        isError = state.showErrors && state.nameError,
-        supportingText = { if (state.showErrors && state.nameError) Text(stringResource(R.string.essentials_name_error)) },
+        isError = nameError,
+        supportingText = { if (nameError) Text(stringResource(R.string.essentials_name_error)) },
         singleLine = true,
         keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words),
         modifier = Modifier.fillMaxWidth(),
     )
     NationalityField(state.nationality, onNationality)
-    OutlinedTextField(
-        value = state.phone,
+    PhoneNumberField(
+        value = state.phoneValue,
         onValueChange = onPhone,
-        label = { Text(stringResource(R.string.essentials_phone)) },
-        placeholder = { Text(stringResource(R.string.essentials_phone_hint)) },
-        isError = state.showErrors && state.phoneError,
-        supportingText = { if (state.showErrors && state.phoneError) Text(stringResource(R.string.essentials_phone_error)) },
-        singleLine = true,
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+        label = stringResource(R.string.essentials_phone),
+        texts = phoneFieldTexts(),
+        showErrors = state.showErrors,
         modifier = Modifier.fillMaxWidth(),
+    )
+}
+
+/** The words of the phone field, from string resources. */
+@Composable
+internal fun phoneFieldTexts(): PhoneFieldTexts {
+    val button = stringResource(R.string.phone_country_button)
+    val invalid = stringResource(R.string.phone_invalid_for_country)
+    return PhoneFieldTexts(
+        countryButton = { country, dial -> String.format(button, country, dial) },
+        sheetTitle = stringResource(R.string.phone_country_title),
+        searchLabel = stringResource(R.string.phone_country_search),
+        popular = stringResource(R.string.phone_popular),
+        allCountries = stringResource(R.string.phone_all_countries),
+        noResults = stringResource(R.string.phone_no_results),
+        invalid = { country -> String.format(invalid, country) },
+        required = stringResource(R.string.phone_required),
     )
 }
 
@@ -132,7 +154,7 @@ private fun CountryPicker(countries: List<Country>, onPick: (Country) -> Unit) {
         LazyColumn(Modifier.fillMaxWidth()) {
             items(results, key = { it.code }) { country ->
                 Row(
-                    Modifier.fillMaxWidth().clickable { onPick(country) }.padding(vertical = SahaySpacing.sm),
+                    Modifier.fillMaxWidth().heightIn(min = 48.dp).clickable { onPick(country) }.padding(vertical = SahaySpacing.sm),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(SahaySpacing.sm),
                 ) {
@@ -217,7 +239,7 @@ internal fun ContactsStep(
 ) {
     StepHeader(stringResource(R.string.contacts_title), stringResource(R.string.contacts_body))
     state.contacts.forEachIndexed { index, contact ->
-        ContactCard(index, contact, state.showErrors, canRemove = index > 0, onChange = { onUpdate(index, it) }, onRemove = { onRemove(index) })
+        ContactCard(index, contact, state.contactPhoneValue(contact), state.showErrors, canRemove = index > 0, onChange = { onUpdate(index, it) }, onRemove = { onRemove(index) })
     }
     if (state.canAddContact) {
         SahayButton(
@@ -234,14 +256,16 @@ internal fun ContactsStep(
 private fun ContactCard(
     index: Int,
     contact: ContactDraft,
+    phoneValue: PhoneFieldValue,
     showErrors: Boolean,
     canRemove: Boolean,
     onChange: (ContactDraft) -> Unit,
     onRemove: () -> Unit,
 ) {
-    val nameError = showErrors && contact.name.isBlank()
-    val phoneError = showErrors && !isValidE164(contact.phone)
-    val relationError = showErrors && contact.relation == null
+    var nameTouched by rememberSaveable { mutableStateOf(false) }
+    val nameError = (showErrors || nameTouched) && contact.name.isBlank()
+    // With Next disabled, say what is missing once the rest of the card is filled in.
+    val relationError = contact.relation == null && (showErrors || (contact.name.isNotBlank() && PhoneNumbers.isValid(contact.phone)))
     OutlinedCard(shape = SahayShapes.card, modifier = Modifier.fillMaxWidth()) {
         Column(Modifier.padding(SahaySpacing.md), verticalArrangement = Arrangement.spacedBy(SahaySpacing.sm)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -263,7 +287,7 @@ private fun ContactCard(
             }
             OutlinedTextField(
                 value = contact.name,
-                onValueChange = { onChange(contact.copy(name = it)) },
+                onValueChange = { nameTouched = true; onChange(contact.copy(name = it)) },
                 label = { Text(stringResource(R.string.contacts_name)) },
                 isError = nameError,
                 supportingText = { if (nameError) Text(stringResource(R.string.contacts_name_error)) },
@@ -271,15 +295,13 @@ private fun ContactCard(
                 keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words),
                 modifier = Modifier.fillMaxWidth(),
             )
-            OutlinedTextField(
-                value = contact.phone,
-                onValueChange = { onChange(contact.copy(phone = it)) },
-                label = { Text(stringResource(R.string.contacts_phone)) },
-                placeholder = { Text(stringResource(R.string.essentials_phone_hint)) },
-                isError = phoneError,
-                supportingText = { if (phoneError) Text(stringResource(R.string.contacts_phone_error)) },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+            PhoneNumberField(
+                value = phoneValue,
+                onValueChange = { onChange(contact.copy(phone = it.rawPhone(), phoneRegion = it.manualRegion())) },
+                label = stringResource(R.string.contacts_phone),
+                texts = phoneFieldTexts(),
+                required = true,
+                showErrors = showErrors,
                 modifier = Modifier.fillMaxWidth(),
             )
             Text(stringResource(R.string.contacts_relation), style = MaterialTheme.typography.labelLarge)
@@ -300,7 +322,7 @@ private fun ContactCard(
 }
 
 @StringRes
-private fun Relation.label() = when (this) {
+internal fun Relation.label() = when (this) {
     Relation.PARENT -> R.string.relation_parent
     Relation.PARTNER -> R.string.relation_partner
     Relation.SIBLING -> R.string.relation_sibling

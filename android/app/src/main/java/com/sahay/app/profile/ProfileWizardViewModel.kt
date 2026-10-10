@@ -1,5 +1,6 @@
 package com.sahay.app.profile
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sahay.app.auth.AuthRepository
@@ -7,6 +8,8 @@ import com.sahay.app.onboarding.AppLocaleController
 import com.sahay.core.contracts.EmergencyContact
 import com.sahay.core.contracts.ProfileStore
 import com.sahay.core.contracts.UserProfile
+import com.sahay.designsystem.phone.PhoneFieldValue
+import com.sahay.designsystem.phone.PhoneNumbers
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,8 +23,14 @@ enum class WizardStep { ESSENTIALS, MEDICAL, CONTACTS, STAY, PRIVACY, PERMISSION
 
 const val MAX_CONTACTS = 3
 
-data class ContactDraft(val name: String = "", val phone: String = "", val relation: Relation? = null) {
-    val isValid get() = name.isNotBlank() && isValidE164(phone) && relation != null
+/** [phone] is "+<dial code><digits>"; [phoneRegion] is set only when the user (or a pasted number) chose the country. */
+data class ContactDraft(
+    val name: String = "",
+    val phone: String = "",
+    val relation: Relation? = null,
+    val phoneRegion: String? = null,
+) {
+    val isValid get() = name.isNotBlank() && PhoneNumbers.isValid(phone) && relation != null
 }
 
 data class WizardState(
@@ -29,6 +38,10 @@ data class WizardState(
     val name: String = "",
     val nationality: String? = null,
     val phone: String = "",
+    val phoneRegion: String? = null,
+    /** Countries of the SIM and the device, for the default country code. */
+    val deviceSim: String? = null,
+    val deviceLocale: String? = null,
     val bloodGroup: String? = null,
     val allergies: String = "",
     val medications: String = "",
@@ -46,7 +59,18 @@ data class WizardState(
     val stepIndex get() = step.ordinal
     val stepCount get() = WizardStep.entries.size
     val nameError get() = name.isBlank()
-    val phoneError get() = phone.isNotBlank() && !isValidE164(phone)
+    /** Country code order: nationality, SIM, device region, India. */
+    val autoPhoneRegion get() = PhoneNumbers.defaultRegion(nationality, deviceSim, deviceLocale)
+    val phoneValue get() = phoneFieldValue(phone, phoneRegion, autoPhoneRegion)
+    val phoneError get() = phone.isNotBlank() && !PhoneNumbers.isValid(phone, phoneValue.region)
+    /** A contact's number starts in the same country as the user's own. */
+    fun contactPhoneValue(contact: ContactDraft) = phoneFieldValue(contact.phone, contact.phoneRegion, phoneValue.region)
+    /** False while the current step has something invalid; Next stays disabled. */
+    val canProceed get() = when (step) {
+        WizardStep.ESSENTIALS -> !nameError && !phoneError
+        WizardStep.CONTACTS -> contacts.all { it.isValid }
+        else -> true
+    }
     val canAddContact get() = contacts.size < MAX_CONTACTS
 }
 
@@ -55,17 +79,28 @@ class ProfileWizardViewModel @Inject constructor(
     private val auth: AuthRepository,
     private val profiles: ProfileStore,
     private val locales: AppLocaleController,
+    savedState: SavedStateHandle = SavedStateHandle(),
+    deviceCountry: DeviceCountryProvider = NoDeviceCountry,
 ) : ViewModel() {
 
-    // Prefill the name from the Google account; guests have none.
-    private val _state = MutableStateFlow(WizardState(name = auth.currentUser?.displayName.orEmpty()))
+    // First run: prefill the name from the Google account (guests have none).
+    // Editing: start from the saved profile, on the step named by the route's "step" argument.
+    private val _state = MutableStateFlow(
+        (profiles.profile.value?.takeIf { it.onboardingComplete }
+            ?.let { it.toWizardState(startStep = WizardStep.entries.getOrElse(savedState.get<Int>("step") ?: 0) { WizardStep.ESSENTIALS }) }
+            ?: WizardState(name = auth.currentUser?.displayName.orEmpty()))
+            .copy(deviceSim = deviceCountry.simCountry(), deviceLocale = deviceCountry.localeCountry()),
+    )
     val state: StateFlow<WizardState> = _state.asStateFlow()
 
     // ---- field editing
 
     fun setName(value: String) = edit { copy(name = value) }
     fun setNationality(code: String?) = edit { copy(nationality = code) }
-    fun setPhone(value: String) = edit { copy(phone = value) }
+    /** Sets the whole number as text (must start with "+"); the country is then read from its dial code. */
+    fun setPhone(value: String) = edit { copy(phone = value, phoneRegion = null) }
+
+    fun setPhoneValue(value: PhoneFieldValue) = edit { copy(phone = value.rawPhone(), phoneRegion = value.manualRegion()) }
     fun setBloodGroup(value: String?) = edit { copy(bloodGroup = value) }
     fun setAllergies(value: String) = edit { copy(allergies = value) }
     fun setMedications(value: String) = edit { copy(medications = value) }
@@ -96,7 +131,7 @@ class ProfileWizardViewModel @Inject constructor(
     fun next() {
         val s = _state.value
         if (s.saving) return
-        if (!isStepValid(s)) {
+        if (!s.canProceed) {
             edit { copy(showErrors = true) }
             return
         }
@@ -120,12 +155,6 @@ class ProfileWizardViewModel @Inject constructor(
     fun retrySave() = save()
 
     // ---- internals
-
-    private fun isStepValid(s: WizardState) = when (s.step) {
-        WizardStep.ESSENTIALS -> !s.nameError && !s.phoneError
-        WizardStep.CONTACTS -> s.contacts.all { it.isValid }
-        else -> true
-    }
 
     private fun goTo(step: WizardStep) = edit { copy(step = step, showErrors = false, saveFailed = false) }
 
@@ -160,6 +189,23 @@ internal fun String.withItem(item: String): String {
 
 private fun String.orNullIfBlank(): String? = trim().ifEmpty { null }
 
+/** Inverse of [toProfile]: fills the wizard from a saved profile so it can be edited. */
+internal fun UserProfile.toWizardState(startStep: WizardStep = WizardStep.ESSENTIALS) = WizardState(
+    step = startStep,
+    name = displayName,
+    nationality = nationality,
+    phone = phone.orEmpty(),
+    bloodGroup = bloodGroup,
+    allergies = allergies.orEmpty(),
+    medications = medications.orEmpty(),
+    conditions = conditions.orEmpty(),
+    contacts = contacts.map { c -> ContactDraft(c.name, c.phone, Relation.entries.firstOrNull { it.key == c.relation }) }
+        .ifEmpty { listOf(ContactDraft()) },
+    hotelName = hotelName.orEmpty(),
+    hotelAddress = hotelAddress.orEmpty(),
+    groupFinderOptIn = groupFinderOptIn,
+)
+
 internal fun WizardState.toProfile(
     uid: String,
     isGuest: Boolean,
@@ -174,14 +220,14 @@ internal fun WizardState.toProfile(
     photoUrl = photoUrl,
     language = language,
     nationality = nationality,
-    phone = phone.orNullIfBlank()?.let(::normalizePhone),
+    phone = phone.orNullIfBlank()?.let(PhoneNumbers::toE164),
     bloodGroup = bloodGroup?.takeIf { it != BLOOD_GROUP_UNKNOWN },
     allergies = allergies.orNullIfBlank(),
     medications = medications.orNullIfBlank(),
     conditions = conditions.orNullIfBlank(),
     hotelName = hotelName.orNullIfBlank(),
     hotelAddress = hotelAddress.orNullIfBlank(),
-    contacts = contacts.map { EmergencyContact(it.name.trim(), normalizePhone(it.phone), it.relation?.key.orEmpty()) },
+    contacts = contacts.map { EmergencyContact(it.name.trim(), PhoneNumbers.toE164(it.phone), it.relation?.key.orEmpty()) },
     smsAlertsOptIn = false, // always false in this build
     groupFinderOptIn = groupFinderOptIn,
     onboardingComplete = true,

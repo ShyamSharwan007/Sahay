@@ -33,6 +33,8 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -81,7 +83,7 @@ fun SahayTopBar(
             title,
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onBackground,
-            maxLines = 2,
+            maxLines = 1, // never wraps letter by letter next to the actions
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.weight(1f).semantics { heading() },
         )
@@ -158,6 +160,7 @@ fun SosButton(
 ) {
     val colors = LocalSahayColors.current
     val calm = LocalEmergency.current || LocalReduceMotion.current
+    val haptic = LocalHapticFeedback.current
     val pulse = if (calm) 0f else {
         val transition = rememberInfiniteTransition(label = "sosPulse")
         val value by transition.animateFloat(
@@ -182,7 +185,7 @@ fun SosButton(
             .then(if (LocalEmergency.current) Modifier else Modifier.shadow(8.dp, CircleShape, clip = false))
             .clip(CircleShape)
             .background(colors.danger)
-            .clickable(role = Role.Button, onClick = onClick)
+            .clickable(role = Role.Button, onClick = { haptic.performHapticFeedback(HapticFeedbackType.LongPress); onClick() })
             .semantics { this.contentDescription = contentDescription },
         contentAlignment = Alignment.Center,
     ) {

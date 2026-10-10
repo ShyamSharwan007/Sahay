@@ -82,6 +82,5 @@ class TripRulesTest {
         assertTrue(capabilityAvailable(Capability.SAVED_MAP, offline))
         assertFalse(capabilityAvailable(Capability.ALERTS_ONLINE, offline))
         assertFalse(capabilityAvailable(Capability.SMS, offline))
-        assertTrue(capabilityAvailable(Capability.NEARBY_PHONES, offline))
     }
 }

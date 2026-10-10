@@ -1,0 +1,474 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Common -->
+    <string name="action_back">Retour</string>
+    <string name="action_next">Suivant</string>
+    <string name="action_skip">Passer</string>
+    <string name="action_continue">Continuer</string>
+    <string name="action_finish">Terminer</string>
+    <string name="action_retry">Réessayer</string>
+    <string name="action_remove">Supprimer</string>
+    <string name="action_close">Fermer</string>
+    <string name="loading">Chargement</string>
+
+    <!-- Language picker -->
+    <string name="language_title">Choisissez votre langue</string>
+    <string name="language_subtitle">Les alertes et l\'aide utiliseront cette langue.</string>
+    <string name="language_selected">Sélectionnée</string>
+
+    <!-- Welcome -->
+    <string name="welcome_get_started">Commencer</string>
+    <string name="welcome_slide1_title">Fonctionne hors ligne</string>
+    <string name="welcome_slide1_body">Cartes, abris et itinéraires sont enregistrés sur votre téléphone. Aucun réseau nécessaire.</string>
+    <string name="welcome_slide2_title">Alertes dans votre langue</string>
+    <string name="welcome_slide2_body">Les alertes officielles sont traduites en mots simples.</string>
+    <string name="welcome_slide3_title">Une aide à portée de doigt</string>
+    <string name="welcome_slide3_body">Envoyez un SMS SOS à vos contacts, même sans internet.</string>
+    <string name="welcome_page_indicator">Page %1$d sur %2$d</string>
+
+    <!-- Sign in -->
+    <string name="signin_title">Connectez-vous à Sahay</string>
+    <string name="signin_body">Il faut internet une seule fois pour se connecter. Ensuite, Sahay fonctionne hors ligne.</string>
+    <string name="signin_google">Continuer avec Google</string>
+    <string name="signin_guest">Continuer en invité</string>
+    <string name="signin_error_no_internet_title">Il faut internet une fois pour se connecter</string>
+    <string name="signin_error_no_internet_body">Connectez-vous au Wi-Fi ou aux données mobiles, puis réessayez.</string>
+    <string name="signin_error_no_account_title">Aucun compte Google trouvé</string>
+    <string name="signin_error_no_account_body">Ajoutez un compte Google dans les réglages, ou continuez en invité.</string>
+    <string name="signin_error_failed_title">Connexion impossible</string>
+    <string name="signin_error_failed_body">Un problème est survenu. Réessayez ou continuez en invité.</string>
+
+    <!-- Wizard shell -->
+    <string name="wizard_step_of">Étape %1$d sur %2$d</string>
+    <string name="wizard_save_failed_title">Impossible d\'enregistrer vos informations</string>
+    <string name="wizard_save_failed_body">Vérifiez que vous êtes connecté, puis réessayez.</string>
+
+    <!-- Step 1: Essentials -->
+    <string name="essentials_title">À propos de vous</string>
+    <string name="essentials_body">Les secours et les habitants voient ceci sur votre carte d\'aide.</string>
+    <string name="essentials_name">Votre nom</string>
+    <string name="essentials_name_error">Saisissez votre nom.</string>
+    <string name="essentials_nationality">Nationalité</string>
+    <string name="essentials_nationality_empty">Choisissez votre pays</string>
+    <string name="essentials_nationality_search">Rechercher un pays</string>
+    <string name="essentials_nationality_none">Aucun pays ne correspond à votre recherche.</string>
+    <string name="essentials_phone">Numéro de téléphone (facultatif)</string>
+
+    <!-- Step 2: Medical -->
+    <string name="medical_title">Informations médicales</string>
+    <string name="medical_body">Facultatif – aide les secours.</string>
+    <string name="medical_blood_group">Groupe sanguin</string>
+    <string name="medical_blood_unknown">Je ne sais pas</string>
+    <string name="medical_allergies">Allergies</string>
+    <string name="medical_medications">Médicaments</string>
+    <string name="medical_conditions">Problèmes de santé</string>
+    <string name="medical_quick_add">Ajout rapide</string>
+    <string name="medical_chip_penicillin">Pénicilline</string>
+    <string name="medical_chip_nuts">Noix</string>
+    <string name="medical_chip_asthma">Asthme</string>
+    <string name="medical_chip_diabetes">Diabète</string>
+
+    <!-- Phone number field -->
+    <string name="phone_country_button">Indicatif du pays : %1$s %2$s</string>
+    <string name="phone_country_title">Choisissez un pays</string>
+    <string name="phone_country_search">Rechercher par pays ou indicatif</string>
+    <string name="phone_popular">Populaires</string>
+    <string name="phone_all_countries">Tous les pays</string>
+    <string name="phone_no_results">Aucun pays ne correspond à votre recherche.</string>
+    <string name="phone_invalid_for_country">Ce numéro semble incorrect pour %1$s</string>
+    <string name="phone_required">Saisissez un numéro de téléphone.</string>
+
+    <!-- Step 3: Contacts -->
+    <string name="contacts_title">Contacts d\'urgence</string>
+    <string name="contacts_body">Nous leur écrivons si vous envoyez un SOS. Ajoutez 1 à 3 personnes.</string>
+    <string name="contacts_card_title">Contact %1$d</string>
+    <string name="contacts_name">Nom</string>
+    <string name="contacts_name_error">Saisissez un nom.</string>
+    <string name="contacts_phone">Numéro de téléphone</string>
+    <string name="contacts_relation">Lien</string>
+    <string name="contacts_relation_error">Choisissez un lien.</string>
+    <string name="contacts_add">Ajouter un autre contact</string>
+    <string name="relation_parent">Parent</string>
+    <string name="relation_partner">Conjoint(e)</string>
+    <string name="relation_sibling">Frère ou sœur</string>
+    <string name="relation_friend">Ami(e)</string>
+    <string name="relation_other">Autre</string>
+
+    <!-- Step 4: Where you stay -->
+    <string name="stay_title">Où vous logez</string>
+    <string name="stay_body">Facultatif. Affiché aux habitants sur votre carte d\'aide.</string>
+    <string name="stay_hotel_name">Nom de l\'hôtel ou du lieu</string>
+    <string name="stay_hotel_address">Adresse</string>
+
+    <!-- Step 5: Privacy -->
+    <string name="privacy_title">Votre vie privée</string>
+    <string name="privacy_group_finder">M\'aider à trouver des groupes proches</string>
+    <string name="privacy_group_finder_body">Seuls les groupes de 5 personnes ou plus sont affichés. Personne ne vous voit personnellement.</string>
+    <string name="privacy_medical_note">Vos informations médicales restent sur ce téléphone. Elles ne partent que dans le SMS SOS que vous choisissez d\'envoyer.</string>
+
+    <!-- Step 6: Permissions -->
+    <string name="permissions_title">Autoriser ce dont Sahay a besoin</string>
+    <string name="permissions_body">Vous pourrez changer cela plus tard dans les réglages.</string>
+    <string name="permission_allow">Autoriser</string>
+    <string name="permission_granted">Autorisé</string>
+    <string name="permission_location_title">Position</string>
+    <string name="permission_location_why">Trouve l\'abri le plus proche et montre où vous êtes.</string>
+    <string name="permission_location_denied">Sans elle, les itinéraires vers les abris ne partiront pas de votre position.</string>
+    <string name="permission_notifications_title">Notifications</string>
+    <string name="permission_notifications_why">Vous prévient quand le danger approche.</string>
+    <string name="permission_notifications_denied">Sans elles, vous ne verrez pas les alertes quand l\'appli est fermée.</string>
+    <string name="permission_sms_title">SMS</string>
+    <string name="permission_sms_why">Envoie votre SOS et lit les alertes officielles sans internet.</string>
+    <string name="permission_sms_denied">Sans elle, les SMS SOS et les alertes hors ligne ne fonctionneront pas.</string>
+    <string name="permission_open_settings">Ouvrir les réglages</string>
+
+    <!-- Main scaffold -->
+    <string name="nav_home">Accueil</string>
+    <string name="nav_map">Carte</string>
+    <string name="nav_alerts">Alertes</string>
+    <string name="nav_me">Moi</string>
+    <plurals name="nav_alerts_unread">
+        <item quantity="one">Alertes, %1$d non lue</item>
+        <item quantity="other">Alertes, %1$d non lues</item>
+    </plurals>
+    <string name="conn_online">En ligne</string>
+    <string name="conn_sms_only">SMS seulement</string>
+    <string name="conn_offline">Hors ligne</string>
+    <plurals name="conn_offline_phones">
+        <item quantity="one">Hors ligne · %1$d téléphone proche</item>
+        <item quantity="other">Hors ligne · %1$d téléphones proches</item>
+    </plurals>
+    <string name="works_title">Ce qui fonctionne maintenant</string>
+    <string name="works_saved_map">Votre carte et vos lieux enregistrés</string>
+    <string name="works_alerts_online">Alertes en direct par internet</string>
+    <string name="works_sms">Alertes et SOS par SMS</string>
+    <string name="works_yes">Fonctionne</string>
+    <string name="works_no">Indisponible</string>
+    <string name="offline_banner_since">Hors ligne – données enregistrées de %1$s</string>
+    <string name="offline_banner">Hors ligne – données enregistrées</string>
+
+    <!-- Home -->
+    <string name="home_safe_title">Vous êtes en sécurité</string>
+    <string name="home_safe_body">Aucune alerte active dans votre zone</string>
+    <string name="home_zone_title">Vous êtes dans une zone inondable</string>
+    <string name="home_zone_body">Connaissez le chemin vers l\'abri le plus proche.</string>
+    <string name="home_warning_generic_body">Restez vigilant et suivez les consignes locales.</string>
+    <string name="home_simulation">Simulation</string>
+    <string name="home_weather">Aujourd\'hui : %1$s mm de pluie · vent %2$s km/h · %3$s °C</string>
+    <string name="home_weather_none">Prévisions indisponibles – affichage des tendances passées</string>
+    <string name="home_no_pack_title">Téléchargez votre pack de voyage</string>
+    <string name="home_no_pack_body">Obtenez cartes, abris et conseils qui fonctionnent sans internet.</string>
+    <string name="home_no_pack_action">Télécharger le pack</string>
+    <string name="home_precautions">Précautions</string>
+    <string name="action_go_safety">Aller en lieu sûr</string>
+    <string name="action_sos">SOS</string>
+    <string name="action_show_local">Montrer à un habitant</string>
+    <string name="action_report_hazard">Signaler un danger</string>
+    <string name="action_find_people">Trouver des gens</string>
+    <string name="action_emergency_mode">Mode urgence</string>
+
+    <!-- Trip setup -->
+    <string name="trip_region_title">Où allez-vous ?</string>
+    <string name="trip_region_body">Choisissez le lieu que vous allez visiter.</string>
+    <string name="trip_regions_empty_title">Aucun lieu pour l\'instant</string>
+    <string name="trip_regions_empty_body">Les lieux apparaîtront bientôt ici. Réessayez dans un instant.</string>
+    <string name="trip_regions_error_title">Impossible de charger les lieux</string>
+    <string name="trip_regions_error_body">Vérifiez votre connexion et réessayez.</string>
+    <string name="trip_skip">Passer pour l\'instant</string>
+    <string name="trip_dates_title">Quand serez-vous là-bas ?</string>
+    <string name="trip_dates_hint">Choisissez le premier et le dernier jour. 30 jours maximum.</string>
+    <string name="trip_dates_forecast_note">Les prévisions couvrent jusqu\'à 16 jours.</string>
+    <string name="trip_dates_error_missing">Choisissez le premier et le dernier jour.</string>
+    <string name="trip_dates_error_past">Votre voyage ne peut pas commencer dans le passé.</string>
+    <string name="trip_dates_error_order">Le premier jour doit précéder le dernier.</string>
+    <string name="trip_dates_error_long">Choisissez 30 jours au maximum.</string>
+    <string name="trip_download_action">Télécharger le pack</string>
+    <string name="trip_download_title">Enregistrement de votre pack</string>
+    <string name="trip_download_wifi">Restez en Wi-Fi si possible.</string>
+    <string name="trip_download_percent">%1$d %%</string>
+    <string name="trip_step_manifest">Récupération des infos du voyage</string>
+    <string name="trip_step_data">Enregistrement des lieux et des routes</string>
+    <string name="trip_step_map">Enregistrement de la carte</string>
+    <string name="trip_step_assets">Enregistrement des noms sur la carte</string>
+    <string name="trip_step_verify">Vérification de tout</string>
+    <string name="trip_step_done">Terminé</string>
+    <string name="trip_step_active">En cours</string>
+    <string name="trip_step_pending">En attente</string>
+    <string name="trip_failed_title">Le téléchargement ne s\'est pas terminé</string>
+    <string name="trip_failed_body">Vérifiez votre connexion et réessayez.</string>
+    <string name="trip_unavailable_body">Ce pack n\'est pas disponible pour le moment. Choisissez un autre lieu.</string>
+    <string name="trip_ready_title">Vous êtes prêt à voyager hors ligne</string>
+    <string name="trip_ready_summary">%1$s · %2$s – %3$s</string>
+    <string name="trip_forecast">Prévisions</string>
+    <string name="trip_forecast_empty">Pas encore de prévisions. Elles couvrent jusqu\'à 16 jours.</string>
+    <string name="trip_forecast_rain">%1$s mm</string>
+    <string name="trip_forecast_wind">%1$s km/h</string>
+    <string name="risk_low">Faible</string>
+    <string name="risk_moderate">Modéré</string>
+    <string name="risk_high">Élevé</string>
+    <string name="risk_severe">Très élevé</string>
+    <string name="risk_unknown">Inconnu</string>
+    <string name="trip_history">Historique</string>
+    <string name="trip_incidents">Ce qui s\'est passé ici avant</string>
+    <string name="trip_incident_source">Lire la source</string>
+    <string name="trip_precautions">Avant et pendant votre voyage</string>
+
+    <!-- Shared -->
+    <string name="distance_m">%1$d m</string>
+    <string name="distance_km">%1$s km</string>
+    <string name="distance_away">à %1$s</string>
+    <string name="distance_unknown">Distance inconnue</string>
+    <string name="time_just_now">À l\'instant</string>
+    <plurals name="time_min_ago">
+        <item quantity="one">il y a %1$d min</item>
+        <item quantity="other">il y a %1$d min</item>
+    </plurals>
+    <plurals name="time_hours_ago">
+        <item quantity="one">il y a %1$d h</item>
+        <item quantity="other">il y a %1$d h</item>
+    </plurals>
+    <plurals name="time_days_ago">
+        <item quantity="one">il y a %1$d j</item>
+        <item quantity="other">il y a %1$d j</item>
+    </plurals>
+    <string name="updated_ago">Mis à jour %1$s</string>
+    <string name="action_call_number">Appeler le %1$s</string>
+    <string name="action_go_here">Aller ici</string>
+    <string name="action_go">Y aller</string>
+    <string name="action_recenter">Recentrer</string>
+    <string name="action_refresh">Actualiser</string>
+    <string name="action_turn_on">Activer</string>
+    <string name="action_done">Terminé</string>
+    <string name="poi_type_shelter">Abri</string>
+    <string name="poi_type_possible_shelter">Abri possible</string>
+    <string name="poi_type_hospital">Hôpital</string>
+    <string name="poi_type_police">Commissariat</string>
+    <string name="shelter_open">Ouvert</string>
+    <string name="shelter_full">Complet</string>
+    <string name="shelter_closed">Fermé</string>
+    <string name="shelter_unknown">Statut inconnu</string>
+    <string name="hazard_flood">Inondation</string>
+    <string name="hazard_road_blocked">Route bloquée</string>
+    <string name="hazard_shelter_full">Abri complet</string>
+    <string name="hazard_shelter_open">Abri ouvert</string>
+    <string name="hazard_power_line">Ligne électrique à terre</string>
+    <string name="hazard_landslide">Glissement de terrain</string>
+    <string name="hazard_other">Autre chose</string>
+    <string name="trust_verified">Vérifié</string>
+    <string name="trust_likely">Probable</string>
+    <string name="trust_unconfirmed">Non confirmé</string>
+    <string name="trust_description">Signalement %1$s, score %2$d pour cent</string>
+    <plurals name="group_people">
+        <item quantity="one">%1$d personne</item>
+        <item quantity="other">%1$d personnes</item>
+    </plurals>
+    <string name="group_at_shelter">Dans un abri</string>
+    <string name="group_safe_area">En zone sûre</string>
+    <string name="group_risk">Risque d\'inondation</string>
+    <string name="group_dont_go">N\'y allez pas – risque d\'inondation</string>
+    <string name="group_summary">%1$s · %2$s · %3$s</string>
+
+    <!-- Map -->
+    <string name="map_filter_shelters">Abris</string>
+    <string name="map_filter_hospitals">Hôpitaux</string>
+    <string name="map_filter_police">Police</string>
+    <string name="map_filter_reports">Signalements</string>
+    <string name="map_filter_groups">Groupes</string>
+    <string name="map_filter_risk">Zones à risque</string>
+    <string name="map_no_pack_title">Pas encore de pack de voyage</string>
+    <string name="map_no_pack_body">Téléchargez un pack pour voir les abris et les itinéraires sûrs sur la carte.</string>
+    <string name="map_error_title">Impossible d\'ouvrir la carte</string>
+    <string name="map_error_body">Votre pack enregistré n\'a pas pu être lu. Réessayez.</string>
+    <string name="report_age">Signalé %1$s</string>
+    <string name="report_no_note">Pas de note</string>
+    <string name="report_pending_send">Enregistré. Sera envoyé dès que possible</string>
+
+    <!-- Navigate -->
+    <string name="nav_header">%1$s · %2$s</string>
+    <string name="nav_eta_walk">%1$d min à pied</string>
+    <string name="nav_finding">Recherche du chemin le plus sûr…</string>
+    <string name="nav_no_fix_title">Position introuvable</string>
+    <string name="nav_no_fix_body">Approchez-vous d\'une fenêtre et réessayez.</string>
+    <string name="nav_no_permission_body">Autorisez la position dans les réglages pour que Sahay parte de là où vous êtes.</string>
+    <string name="nav_no_route_title">Aucun chemin trouvé</string>
+    <string name="nav_no_route_body">Réessayez ou cherchez des abris sur la carte.</string>
+    <string name="nav_destination_point">Le lieu choisi</string>
+    <string name="nav_avoids_risk">Évite les routes inondables</string>
+    <string name="nav_warn_far_from_road">Vous êtes loin d\'une route. Rejoignez d\'abord la route la plus proche.</string>
+    <string name="nav_warn_hospital">Aucun abri ouvert trouvé. Ce chemin mène à un hôpital.</string>
+    <string name="nav_warn_risk_area">Ce chemin passe par une zone inondable. Soyez prudent.</string>
+    <string name="nav_warn_no_pack">Aucune route enregistrée. Affichage d\'une ligne droite.</string>
+    <string name="nav_straight_line">Pas de données de chemin – direction seulement</string>
+    <string name="nav_full_map">Carte entière</string>
+    <string name="nav_exit_full_map">Voir l\'itinéraire</string>
+    <string name="nav_other_places">Autres lieux sûrs proches</string>
+    <string name="nav_arrived_title">Vous êtes arrivé</string>
+    <string name="nav_arrived_body">Restez ici et suivez les consignes locales.</string>
+    <string name="nav_show_local">Montrer ceci à un habitant</string>
+
+    <!-- Alerts -->
+    <string name="alerts_paste">Coller une alerte</string>
+    <string name="alerts_empty_title">Aucune alerte</string>
+    <string name="alerts_empty_body">Les alertes officielles s\'afficheront ici dans votre langue.</string>
+    <string name="alerts_refresh_failed_title">Impossible de chercher de nouvelles alertes</string>
+    <string name="alerts_refresh_failed_body">Affichage des alertes enregistrées. Tirez vers le bas pour réessayer.</string>
+    <string name="severity_emergency">Urgence</string>
+    <string name="severity_warning">Avertissement</string>
+    <string name="severity_watch">Vigilance</string>
+    <string name="severity_info">Info</string>
+    <string name="verif_official">Officiel vérifié</string>
+    <string name="verif_looks_official">Semble officiel – non vérifié</string>
+    <string name="verif_unverified">Non vérifié</string>
+    <string name="source_internet">Internet</string>
+    <string name="source_sms_server">SMS de Sahay</string>
+    <string name="source_sms_official">SMS officiel</string>
+    <string name="source_mesh">Téléphone proche</string>
+    <string name="source_pasted">Collé</string>
+    <string name="alert_unread">Non lue</string>
+    <string name="alert_received">Reçue %1$s</string>
+    <string name="alert_in_english">En anglais</string>
+    <string name="alert_show_original">Voir l\'original</string>
+    <string name="alert_hide_original">Masquer l\'original</string>
+    <string name="alert_not_found_title">Alerte introuvable</string>
+    <string name="alert_not_found_body">Elle a peut-être été supprimée.</string>
+    <string name="paste_body">Collez un SMS reçu. Nous le mettrons en mots simples.</string>
+    <string name="paste_hint">Collez le message ici</string>
+    <string name="paste_action">Traduire</string>
+    <string name="paste_empty_error">Collez d\'abord un message.</string>
+
+    <!-- Report a hazard -->
+    <string name="report_what">Que voyez-vous ?</string>
+    <string name="report_location_label">Votre position</string>
+    <string name="report_locating">Recherche de votre position…</string>
+    <string name="report_no_fix_title">Nous avons besoin de votre position</string>
+    <string name="report_no_fix_body">Approchez-vous d\'une fenêtre et réessayez.</string>
+    <string name="report_note_label">Note (facultatif)</string>
+    <string name="report_note_counter">%1$d/%2$d</string>
+    <string name="report_submit">Envoyer le signalement</string>
+    <string name="report_failed">Impossible d\'enregistrer votre signalement. Réessayez.</string>
+    <string name="report_sent_title">Envoyé</string>
+    <string name="report_sent_body">Merci. Les personnes proches peuvent le voir.</string>
+    <string name="report_saved_title">Enregistré – sera envoyé dès que possible</string>
+    <string name="report_saved_body">Nous l\'enverrons dès que vous aurez du réseau.</string>
+    <string name="report_selected">Sélectionné</string>
+
+    <!-- Find people -->
+    <string name="people_privacy">Seuls les groupes de %1$d personnes ou plus sont affichés. Personne ne vous voit personnellement.</string>
+    <string name="people_optin_title">« Trouver des gens » est désactivé</string>
+    <string name="people_optin_body">Activez-le pour voir les groupes de voyageurs près de vous. Votre téléphone ne partage qu\'une zone approximative.</string>
+    <string name="people_optin_failed">Impossible de l\'activer. Réessayez.</string>
+    <string name="people_empty_title">Aucun groupe à proximité</string>
+    <string name="people_empty_body">Nous chercherons à nouveau dans 2 minutes.</string>
+    <string name="people_no_fix_title">Nous avons besoin de votre position</string>
+    <string name="people_no_fix_body">Approchez-vous d\'une fenêtre et réessayez.</string>
+    <string name="people_refresh_failed">Actualisation impossible. Affichage de la dernière liste.</string>
+    <string name="people_stale">Ces groupes ne sont peut-être plus à jour.</string>
+    <string name="people_nearby_phones">Téléphones proches : %1$d</string>
+
+    <!-- Common additions -->
+    <string name="action_cancel">Annuler</string>
+    <string name="action_emergency_short">Urgence</string>
+
+    <!-- Emergency Mode -->
+    <string name="emergency_headline">Restez calme. Voici quoi faire.</string>
+    <string name="emergency_battery">Batterie %1$d %%</string>
+    <string name="emergency_battery_low">Batterie faible : %1$d %%</string>
+    <string name="emergency_battery_unknown">Batterie inconnue</string>
+    <string name="emergency_exit">Quitter le mode urgence</string>
+    <string name="emergency_exit_hint">Maintenez appuyé 2 secondes pour quitter.</string>
+
+    <!-- SOS -->
+    <string name="sos_sending_in">Envoi du SOS dans</string>
+    <string name="sos_to">À : %1$s</string>
+    <string name="sos_message_preview">Ce SMS sera envoyé</string>
+    <string name="sos_message_sent">Ce que nous avons envoyé</string>
+    <string name="sos_cancel">Annuler</string>
+    <string name="sos_sending">Envoi de votre SOS…</string>
+    <string name="sos_permission_title">Autorisez les SMS pour envoyer votre SOS</string>
+    <string name="sos_sent_title">SOS envoyé</string>
+    <string name="sos_sent_body">Vos contacts ont reçu votre SMS.</string>
+    <string name="sos_partial_title">Certains SMS n\'ont pas été envoyés</string>
+    <string name="sos_partial_body">Réessayez ou appelez le 112.</string>
+    <string name="sos_failed_title">SOS non envoyé</string>
+    <string name="sos_failed_body">Vérifiez que votre téléphone a une carte SIM et du réseau. Réessayez ou appelez le 112.</string>
+    <string name="sos_contact_sent">Envoyé</string>
+    <string name="sos_contact_failed">Non envoyé</string>
+    <string name="sos_location_included">Votre position était dans le SMS.</string>
+    <string name="sos_location_missing">Votre position n\'était pas dans le SMS.</string>
+    <string name="sos_retry">Réessayer</string>
+    <string name="sos_no_contacts_title">Aucun contact d\'urgence</string>
+    <string name="sos_no_contacts_body">Ajoutez quelqu\'un à qui nous pouvons écrire si vous avez besoin d\'aide.</string>
+    <string name="sos_add_contact">Ajouter un contact</string>
+    <string name="sos_sms_app_title">Envoyer depuis votre appli de messages</string>
+    <string name="sos_sms_app_body">Sahay ne peut pas envoyer de SMS sans autorisation. Le texte est prêt dans votre appli de messages.</string>
+    <string name="sos_open_sms">Ouvrir l\'appli de messages</string>
+    <string name="sos_dial_failed">Ce téléphone ne peut pas appeler. Demandez à quelqu\'un à proximité d\'appeler le 112.</string>
+
+    <!-- Show to a local -->
+    <string name="local_tab_card">Carte</string>
+    <string name="local_tab_phrasebook">Guide de conversation</string>
+    <string name="local_no_tamil_title">Le texte tamoul demande votre pack de voyage</string>
+    <string name="local_no_tamil_body">Téléchargez-le une fois. Ensuite, il fonctionne hors ligne.</string>
+    <string name="local_headline_fallback">Je suis touriste. Je ne parle pas tamoul. Aidez-moi, s\'il vous plaît.</string>
+    <string name="local_destination">Je veux aller à</string>
+    <string name="local_hotel">Où je loge</string>
+    <string name="local_medical">Médical</string>
+    <string name="local_blood_group">Groupe sanguin : %1$s</string>
+    <string name="local_allergies">Allergies : %1$s</string>
+    <string name="local_phrasebook_empty_title">Pas encore de phrases</string>
+    <string name="local_phrasebook_empty_body">Le guide de conversation vient avec votre pack de voyage.</string>
+    <string name="phrase_cat_emergency">Urgence</string>
+    <string name="phrase_cat_directions">Directions</string>
+    <string name="phrase_cat_medical">Médical</string>
+    <string name="phrase_cat_basic">Essentiel</string>
+
+    <!-- Me -->
+    <string name="me_action_failed">Impossible d\'enregistrer. Réessayez.</string>
+    <string name="me_section_details">Vos informations</string>
+    <string name="me_edit_profile">Modifier le profil</string>
+    <string name="me_medical_card">Carte médicale</string>
+    <string name="me_section_trip">Voyage</string>
+    <string name="me_trip_pack">Pack de voyage</string>
+    <string name="me_trip_pack_none">Pas encore de pack de voyage</string>
+    <string name="me_section_settings">Réglages</string>
+    <string name="me_theme">Thème</string>
+    <string name="theme_system">Système</string>
+    <string name="theme_light">Clair</string>
+    <string name="theme_dark">Sombre</string>
+    <string name="me_language">Langue</string>
+    <string name="me_privacy">Confidentialité</string>
+    <string name="me_about">À propos et licences</string>
+    <string name="me_sign_out">Se déconnecter</string>
+    <string name="me_sign_out_title">Se déconnecter ?</string>
+    <string name="me_sign_out_body">Vos informations sur ce téléphone seront effacées. Vous pourrez tout reconfigurer à tout moment.</string>
+    <string name="me_name_missing">Voyageur</string>
+    <string name="me_guest">Invité</string>
+    <string name="medcard_not_added">Non renseigné</string>
+    <string name="medcard_no_contacts">Aucun contact d\'urgence pour l\'instant.</string>
+
+    <!-- Trip pack -->
+    <string name="trip_pack_update">Mettre à jour le pack</string>
+    <string name="trip_pack_delete">Supprimer le pack</string>
+    <string name="trip_pack_delete_title">Supprimer votre pack de voyage ?</string>
+    <string name="trip_pack_delete_body">Cartes et abris ne fonctionneront plus hors ligne tant que vous ne l\'aurez pas retéléchargé.</string>
+    <string name="trip_pack_region">Lieu</string>
+    <string name="trip_pack_dates">Dates</string>
+    <string name="trip_pack_version">Version</string>
+    <string name="trip_pack_size">Taille</string>
+    <string name="trip_pack_downloaded">Téléchargé</string>
+
+    <!-- Privacy and About -->
+    <string name="privacy_stays_title">Reste sur ce téléphone</string>
+    <string name="privacy_stays_body">Vos informations médicales et vos contacts d\'urgence. Ils ne partent que dans le SMS SOS que vous choisissez d\'envoyer.</string>
+    <string name="privacy_shared_title">Partagé avec Sahay</string>
+    <string name="privacy_shared_body">Un identifiant aléatoire, votre langue et votre région. Les signalements de danger incluent leur lieu.</string>
+    <string name="about_app_line">Sahay %1$s</string>
+    <string name="about_licenses">Données ouvertes et licences</string>
+    <string name="about_osm">Données cartographiques © contributeurs OpenStreetMap (ODbL)</string>
+    <string name="about_openfreemap">Style de carte de secours, libre d\'usage</string>
+    <string name="about_protomaps">Tuiles de carte hors ligne</string>
+    <string name="about_maplibre">Moteur de carte (BSD 2-Clause)</string>
+    <string name="about_manrope">Police (SIL Open Font License)</string>
+    <string name="about_openmeteo">Prévisions météo (CC BY 4.0)</string>
+    <string name="about_open_link">Ouvrir le site</string>
+</resources>

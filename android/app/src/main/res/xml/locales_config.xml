@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Only languages with a translated UI. Other languages still choose the alert language in the app and show the English UI. -->
 <locale-config xmlns:android="http://schemas.android.com/apk/res/android">
     <locale android:name="en" />
     <locale android:name="de" />
     <locale android:name="fr" />
-    <locale android:name="es" />
-    <locale android:name="ru" />
-    <locale android:name="ja" />
-    <locale android:name="ko" />
-    <locale android:name="zh" />
     <locale android:name="ar" />
 </locale-config>

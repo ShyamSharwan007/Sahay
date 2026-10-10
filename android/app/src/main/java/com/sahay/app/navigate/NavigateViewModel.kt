@@ -36,6 +36,10 @@ sealed interface NavUiState {
         val riskZones: List<RiskZone>,
         val remainingM: Double,
         val arrived: Boolean,
+        /** Every pack place, for the full-screen map. */
+        val allPois: List<Poi> = emptyList(),
+        /** The nearest other safe places with their straight-line distance in metres. */
+        val nearby: List<Pair<Poi, Double>> = emptyList(),
     ) : NavUiState
 }
 
@@ -48,7 +52,7 @@ class NavigateViewModel @Inject constructor(
 ) : ViewModel() {
 
     // Type-safe routes store their arguments under the property name.
-    private val target: NavTarget = parseNavTarget(savedState.get<String>("target"))
+    private var target: NavTarget = parseNavTarget(savedState.get<String>("target"))
 
     private val attempt = MutableStateFlow(0)
 
@@ -63,6 +67,12 @@ class NavigateViewModel @Inject constructor(
 
     fun retry() = attempt.update { it + 1 }
 
+    /** Re-routes to another safe place picked from the "nearby" list. */
+    fun routeTo(poi: Poi) {
+        target = NavTarget.ToPoi(poi.id)
+        retry()
+    }
+
     private fun navigationFlow(): Flow<NavUiState> = flow {
         emit(NavUiState.Finding)
         val start = location.lastFix.value ?: location.currentFix()
@@ -76,11 +86,12 @@ class NavigateViewModel @Inject constructor(
             return@flow
         }
         val zones = safely { packs.riskZones() } ?: emptyList()
-        emit(active(route, zones, start))
+        val pois = safely { packs.pois() } ?: emptyList()
+        emit(active(route, zones, start, pois))
         // A failing location stream keeps the last known state instead of crashing the screen.
         location.updates(LocationMode.NAVIGATION)
             .catch { }
-            .collect { emit(active(route, zones, it)) }
+            .collect { emit(active(route, zones, it, pois)) }
     }
 
     private suspend fun findRoute(start: LocationFix): Route? = safely {
@@ -94,7 +105,7 @@ class NavigateViewModel @Inject constructor(
         }
     }
 
-    private fun active(route: Route, zones: List<RiskZone>, fix: LocationFix): NavUiState.Active {
+    private fun active(route: Route, zones: List<RiskZone>, fix: LocationFix, pois: List<Poi>): NavUiState.Active {
         val arrived = hasArrived(route, fix.point)
         return NavUiState.Active(
             route = route,
@@ -102,6 +113,8 @@ class NavigateViewModel @Inject constructor(
             riskZones = zones,
             remainingM = if (arrived) 0.0 else remainingDistanceM(route, fix.point),
             arrived = arrived,
+            allPois = pois,
+            nearby = nearbySafePlaces(pois, route.destination?.id, fix.point),
         )
     }
 

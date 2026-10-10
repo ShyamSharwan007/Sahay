@@ -1,5 +1,6 @@
 package com.sahay
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -8,6 +9,9 @@ import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sahay.app.SahayNavHost
+import com.sahay.app.deeplink.DeepLinkRouter
+import com.sahay.app.deeplink.parseDeepLink
+import com.sahay.core.contracts.DeepLinks
 import com.sahay.core.contracts.EmergencyModeController
 import com.sahay.core.contracts.UiPreferences
 import com.sahay.designsystem.SahayTheme
@@ -19,6 +23,7 @@ class MainActivity : AppCompatActivity() {
 
     @Inject lateinit var uiPreferences: UiPreferences
     @Inject lateinit var emergencyMode: EmergencyModeController
+    @Inject lateinit var deepLinks: DeepLinkRouter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen() // must run before super.onCreate
@@ -31,5 +36,19 @@ class MainActivity : AppCompatActivity() {
                 SahayNavHost()
             }
         }
+        // After a rotation the same intent comes back; its link was already handled.
+        if (savedInstanceState == null) handleDeepLink(intent)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleDeepLink(intent)
+    }
+
+    private fun handleDeepLink(intent: Intent?) {
+        val raw = intent?.getStringExtra(DeepLinks.EXTRA) ?: return
+        intent.removeExtra(DeepLinks.EXTRA) // handle each link once
+        parseDeepLink(raw)?.let(deepLinks::post)
     }
 }

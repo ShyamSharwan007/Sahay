@@ -64,6 +64,15 @@ android {
 
     testOptions {
         unitTests.isIncludeAndroidResources = true
+        // Robolectric needs these JDK internals opened on Java 17+.
+        unitTests.all {
+            it.jvmArgs(
+                "--add-exports=java.base/jdk.internal.access=ALL-UNNAMED",
+                "--add-opens=java.base/java.lang=ALL-UNNAMED",
+                "--add-opens=java.base/java.io=ALL-UNNAMED",
+                "--add-opens=java.base/java.util=ALL-UNNAMED",
+            )
+        }
     }
 }
 
