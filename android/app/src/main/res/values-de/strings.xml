@@ -489,4 +489,7 @@
     <string name="home_see_all">Alle anzeigen</string>
     <string name="precautions_empty_title">Noch keine Vorsichtsmaßnahmen</string>
     <string name="precautions_empty_body">Laden Sie Ihr Reisepaket herunter, um zu sehen, was Sie vorbereiten sollten.</string>
+    <string name="update_available">Neue Version verfügbar</string>
+    <string name="update_action">Aktualisieren</string>
+    <string name="update_dismiss">Schließen</string>
 </resources>

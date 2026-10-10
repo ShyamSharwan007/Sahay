@@ -513,4 +513,7 @@
     <string name="home_see_all">عرض الكل</string>
     <string name="precautions_empty_title">لا توجد احتياطات بعد</string>
     <string name="precautions_empty_body">نزّل حزمة رحلتك لترى ما يجب أن تستعد له.</string>
+    <string name="update_available">يتوفر إصدار جديد</string>
+    <string name="update_action">تحديث</string>
+    <string name="update_dismiss">إغلاق</string>
 </resources>

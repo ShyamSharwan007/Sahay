@@ -503,4 +503,7 @@
     <string name="home_see_all">See all</string>
     <string name="precautions_empty_title">No precautions yet</string>
     <string name="precautions_empty_body">Download your trip pack to see what to prepare.</string>
+    <string name="update_available">New version available</string>
+    <string name="update_action">Update</string>
+    <string name="update_dismiss">Dismiss</string>
 </resources>

@@ -1,14 +1,20 @@
 package com.sahay.app.home
 
+import android.content.ActivityNotFoundException
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material.icons.rounded.Emergency
 import androidx.compose.material.icons.rounded.Flag
@@ -16,12 +22,17 @@ import androidx.compose.material.icons.rounded.Group
 import androidx.compose.material.icons.rounded.NearMe
 import androidx.compose.material.icons.rounded.Sos
 import androidx.compose.material.icons.rounded.Translate
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import com.sahay.app.update.APK_DOWNLOAD_URL
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
@@ -39,7 +50,10 @@ import com.sahay.app.common.riskPresentation
 import com.sahay.app.common.forecastLine
 import com.sahay.app.common.ForecastNote
 import com.sahay.app.common.ForecastCaption
+import com.sahay.designsystem.SahayShapes
 import com.sahay.designsystem.SahaySpacing
+import com.sahay.designsystem.components.ButtonSize
+import com.sahay.designsystem.components.palette
 import com.sahay.designsystem.components.BigActionTile
 import com.sahay.designsystem.components.ButtonVariant
 import com.sahay.designsystem.components.LoadingState
@@ -74,11 +88,17 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
     if (state.loading) {
         LoadingState(stringResource(R.string.loading), modifier.padding(SahaySpacing.screenPadding))
         return
     }
-    HomeContent(state, onOpenAction, onDownloadPack, onSeeAllPrecautions, modifier)
+    HomeContent(
+        state, onOpenAction, onDownloadPack, onSeeAllPrecautions,
+        onUpdate = { context.openInBrowser(APK_DOWNLOAD_URL) },
+        onDismissUpdate = viewModel::dismissUpdate,
+        modifier = modifier,
+    )
 }
 
 @Composable
@@ -87,6 +107,8 @@ private fun HomeContent(
     onOpenAction: (Int) -> Unit,
     onDownloadPack: () -> Unit,
     onSeeAllPrecautions: () -> Unit,
+    onUpdate: () -> Unit,
+    onDismissUpdate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -94,6 +116,7 @@ private fun HomeContent(
             .padding(horizontal = SahaySpacing.screenPadding, vertical = SahaySpacing.sm),
         verticalArrangement = Arrangement.spacedBy(SahaySpacing.cardGap),
     ) {
+        if (state.updateAvailable) UpdateBanner(onUpdate, onDismissUpdate)
         StatusSection(state.status) { onOpenAction(R.string.action_go_safety) }
 
         if (!state.hasPack) {
@@ -208,6 +231,39 @@ private fun NoPackCard(onDownload: () -> Unit) {
                 icon = Icons.Rounded.Download,
                 variant = ButtonVariant.Primary,
             )
+        }
+    }
+}
+
+/** Opens [url] in the browser. Does nothing when the phone has no browser. */
+private fun Context.openInBrowser(url: String) {
+    try {
+        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+    } catch (_: ActivityNotFoundException) {
+        // no browser: nothing more we can do
+    }
+}
+
+/** "New version available" with Update and a dismiss cross. */
+@Composable
+private fun UpdateBanner(onUpdate: () -> Unit, onDismiss: () -> Unit) {
+    val palette = StatusKind.Info.palette()
+    Surface(shape = SahayShapes.card, color = palette.container, modifier = Modifier.fillMaxWidth()) {
+        Row(Modifier.padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+            Icon(Icons.Rounded.Download, contentDescription = null, tint = palette.main)
+            Column(Modifier.weight(1f).padding(horizontal = 12.dp)) {
+                Text(stringResource(R.string.update_available), style = MaterialTheme.typography.titleMedium)
+                SahayButton(
+                    text = stringResource(R.string.update_action),
+                    onClick = onUpdate,
+                    size = ButtonSize.M,
+                    fullWidth = false,
+                    modifier = Modifier.padding(top = 4.dp),
+                )
+            }
+            IconButton(onClick = onDismiss) {
+                Icon(Icons.Rounded.Close, contentDescription = stringResource(R.string.update_dismiss))
+            }
         }
     }
 }

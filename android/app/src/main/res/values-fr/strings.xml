@@ -489,4 +489,7 @@
     <string name="home_see_all">Tout voir</string>
     <string name="precautions_empty_title">Aucune précaution pour l\'instant</string>
     <string name="precautions_empty_body">Téléchargez votre pack de voyage pour voir quoi préparer.</string>
+    <string name="update_available">Nouvelle version disponible</string>
+    <string name="update_action">Mettre à jour</string>
+    <string name="update_dismiss">Fermer</string>
 </resources>

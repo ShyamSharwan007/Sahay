@@ -11,7 +11,9 @@ import com.sahay.core.contracts.PackRepository
 import com.sahay.core.contracts.Precaution
 import com.sahay.core.contracts.ProfileStore
 import com.sahay.core.contracts.RiskMonitor
+import com.sahay.app.update.UpdateChecker
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -29,6 +31,7 @@ data class HomeUiState(
     val todayForecast: ForecastDay? = null,
     val forecastNote: ForecastNote = ForecastNote.UNAVAILABLE_PAST_PATTERNS,
     val precautions: List<Precaution> = emptyList(),
+    val updateAvailable: Boolean = false,
 )
 
 @HiltViewModel
@@ -39,7 +42,16 @@ class HomeViewModel @Inject constructor(
     packs: PackRepository,
     profiles: ProfileStore,
     private val clock: Clock,
+    private val updates: UpdateChecker,
 ) : ViewModel() {
+
+    init {
+        viewModelScope.launch { updates.checkIfDue() }
+    }
+
+    fun dismissUpdate() {
+        viewModelScope.launch { updates.dismiss() }
+    }
 
     val state: StateFlow<HomeUiState> = combine(
         alerts.alerts,
@@ -58,5 +70,6 @@ class HomeViewModel @Inject constructor(
                 ?: ForecastNote.UNAVAILABLE_PAST_PATTERNS,
             precautions = pack?.precautions.orEmpty(),
         )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), HomeUiState())
+    }.combine(updates.updateAvailable) { home, update -> home.copy(updateAvailable = update) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), HomeUiState())
 }
