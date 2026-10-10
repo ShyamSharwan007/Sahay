@@ -1,9 +1,9 @@
 {
   "iiitdm-kancheepuram": {
-    "packVersion": "2026-10-10.3",
+    "packVersion": "2026-10-10.4",
     "sqliteUrl": "https://github.com/ShyamSharwan007/Sahay/releases/download/packs-v1/iiitdm-kancheepuram.sqlite",
-    "sqliteBytes": 352256,
-    "sqliteSha256": "5013e59872ce67d0a59c68694340606ff903600baf6f41ac55f5fe987d6d6bc5",
+    "sqliteBytes": 696320,
+    "sqliteSha256": "d9c9469ac9bed1ac42376b245947502d3cc3c0c7838b89743554eed812d80231",
     "pmtilesUrl": null,
     "pmtilesBytes": null,
     "styleLightUrl": null,
@@ -12,10 +12,10 @@
     "assetsZipBytes": null
   },
   "mahabalipuram": {
-    "packVersion": "2026-10-10.2",
+    "packVersion": "2026-10-10.4",
     "sqliteUrl": "https://github.com/ShyamSharwan007/Sahay/releases/download/packs-v1/mahabalipuram.sqlite",
-    "sqliteBytes": 286720,
-    "sqliteSha256": "05d126b87323623cb203882c8a879e33594ef45f05f9c02846d34a1505a2f7c0",
+    "sqliteBytes": 659456,
+    "sqliteSha256": "1afeb3be3e7716a49b681c1ead6523abaf256ad6a2e8d17086eb314f52017996",
     "pmtilesUrl": null,
     "pmtilesBytes": null,
     "styleLightUrl": null,
