@@ -59,7 +59,7 @@ internal fun lightSahayColors() = buildSahayColors(
 internal fun darkSahayColors() = buildSahayColors(
     safe = Color(0xFF4ADE95), watch = Color(0xFFF2C14E), warning = Color(0xFFFF9F5A),
     danger = Color(0xFFFF6B6B), info = Color(0xFF86ABFF),
-    onStatus = Color(0xFF0D1413), surface = Color(0xFF141D1C), containerAlpha = 0.18f,
+    onStatus = Color(0xFF0A0F0E), surface = Color(0xFF111817), containerAlpha = 0.18f,
 )
 
 internal fun emergencySahayColors() = buildSahayColors(
@@ -104,27 +104,27 @@ internal val DarkColorScheme: ColorScheme = darkColorScheme(
     onPrimaryContainer = Color(0xFFBDF1EB),
     secondary = Color(0xFF5FD3CA),
     onSecondary = Color(0xFF00332F),
-    secondaryContainer = Color(0xFF1C2726),
+    secondaryContainer = Color(0xFF18211F),
     onSecondaryContainer = Color(0xFFE5EEEC),
-    background = Color(0xFF0D1413),
+    background = Color(0xFF0A0F0E),
     onBackground = Color(0xFFE5EEEC),
-    surface = Color(0xFF141D1C),
+    surface = Color(0xFF111817),
     onSurface = Color(0xFFE5EEEC),
-    surfaceVariant = Color(0xFF1C2726),
+    surfaceVariant = Color(0xFF18211F),
     onSurfaceVariant = Color(0xFFA3B3B0),
     surfaceTint = Color(0xFF5FD3CA),
     outline = Color(0xFF2F3D3B),
     outlineVariant = Color(0xFF2F3D3B),
     error = Color(0xFFFF6B6B),
-    onError = Color(0xFF0D1413),
+    onError = Color(0xFF0A0F0E),
     errorContainer = Color(0xFF3A1B1B),
     onErrorContainer = Color(0xFFFFD9D9),
     // Layered surfaces: each step is slightly lighter than the one below.
-    surfaceContainerLowest = Color(0xFF0D1413),
-    surfaceContainerLow = Color(0xFF111A19),
-    surfaceContainer = Color(0xFF141D1C),
-    surfaceContainerHigh = Color(0xFF1C2726),
-    surfaceContainerHighest = Color(0xFF243230),
+    surfaceContainerLowest = Color(0xFF0A0F0E),
+    surfaceContainerLow = Color(0xFF0E1514),
+    surfaceContainer = Color(0xFF111817),
+    surfaceContainerHigh = Color(0xFF18211F),
+    surfaceContainerHighest = Color(0xFF1F2B29),
 )
 
 internal val EmergencyColorScheme: ColorScheme = darkColorScheme(

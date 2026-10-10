@@ -10,6 +10,7 @@ from app.db.session import get_db
 from app.limiter import limiter
 from app.models import Group, GroupsResponse
 from app.routers.reports import (
+    REPORT_COLUMNS,
     _compute_trust_for_report,
     _find_region_for_coords,
     _get_active_alerts,
@@ -75,7 +76,8 @@ def get_groups(
     reports = (
         db.execute(
             text(
-                "SELECT * FROM reports WHERE region_id = :region_id AND type = 'FL' AND created_at >= :cutoff"
+                f"SELECT {REPORT_COLUMNS} FROM reports "
+                "WHERE region_id = :region_id AND type = 'FL' AND created_at >= :cutoff"
             ),
             {"region_id": region_id, "cutoff": cutoff_12h},
         )

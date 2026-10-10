@@ -19,7 +19,7 @@ import androidx.compose.material.icons.rounded.ContactPhone
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Sms
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -193,7 +193,7 @@ private fun SendingContent(label: String) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(SahaySpacing.md),
     ) {
-        CircularProgressIndicator()
+        LinearProgressIndicator(Modifier.fillMaxWidth())
         Text(label, style = MaterialTheme.typography.titleLarge, textAlign = TextAlign.Center)
     }
 }

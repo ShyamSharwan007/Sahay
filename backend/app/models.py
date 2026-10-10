@@ -64,6 +64,10 @@ class AdminOverview(CamelModel):
     groups: int
     beacons: int
     sms_sent_today: int
+    # Added for the admin overview; older clients ignore them.
+    active_alerts: int = 0
+    pending_reviews: int = 0
+    people_in_groups: int = 0
 
 
 class ForecastDay(CamelModel):
@@ -141,6 +145,8 @@ class Report(CamelModel):
     label: str
     mine: bool
     channel: str
+    # Added with photo upload: null when the report has no photo, else pending | approved | rejected.
+    review_status: str | None = None
 
 
 class PresenceCreate(CamelModel):

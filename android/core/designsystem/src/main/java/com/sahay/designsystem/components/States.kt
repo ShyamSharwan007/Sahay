@@ -92,61 +92,22 @@ private fun StateMessage(
 }
 
 /**
- * Skeleton list with a soft shimmer. In Emergency Mode, or when animations are removed,
- * the skeleton is static (no shimmer).
+ * Loading: a linear progress bar and one line of text. In Emergency Mode, or when animations are removed,
+ * the bar is left out and only the text shows. [rows] is kept so existing callers still compile.
  */
 @Composable
 fun LoadingState(
     loadingDescription: String,
     modifier: Modifier = Modifier,
-    rows: Int = 3,
+    @Suppress("UNUSED_PARAMETER") rows: Int = 3,
 ) {
-    val brush = skeletonBrush()
+    val calm = LocalEmergency.current || LocalReduceMotion.current
     Column(
-        modifier = modifier.fillMaxWidth().semantics { contentDescription = loadingDescription },
+        modifier = modifier.fillMaxWidth().padding(vertical = 24.dp).semantics { contentDescription = loadingDescription },
         verticalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
     ) {
-        repeat(rows) {
-            CardSurface {
-                Row(Modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Box40(brush)
-                    Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        SkeletonBar(brush, 0.6f, 14)
-                        SkeletonBar(brush, 0.9f, 12)
-                    }
-                }
-            }
-        }
+        if (!calm) androidx.compose.material3.LinearProgressIndicator(Modifier.fillMaxWidth())
+        Text(loadingDescription, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
-}
-
-@Composable
-private fun Box40(brush: Brush) {
-    androidx.compose.foundation.layout.Box(Modifier.size(40.dp).clip(CircleShape).background(brush))
-}
-
-@Composable
-private fun SkeletonBar(brush: Brush, fraction: Float, heightDp: Int) {
-    androidx.compose.foundation.layout.Box(
-        Modifier
-            .fillMaxWidth(fraction)
-            .height(heightDp.dp)
-            .clip(RoundedCornerShape(6.dp))
-            .background(brush),
-    )
-}
-
-@Composable
-private fun skeletonBrush(): Brush {
-    val base = MaterialTheme.colorScheme.surfaceVariant
-    val highlight = MaterialTheme.colorScheme.outline.copy(alpha = 0.55f)
-    if (LocalEmergency.current || LocalReduceMotion.current) return Brush.linearGradient(listOf(base, base))
-    val transition = rememberInfiniteTransition(label = "shimmer")
-    val offset by transition.animateFloat(
-        initialValue = -400f,
-        targetValue = 1200f,
-        animationSpec = infiniteRepeatable(tween(1200, easing = LinearEasing), RepeatMode.Restart),
-        label = "shimmerOffset",
-    )
-    return Brush.linearGradient(listOf(base, highlight, base), start = androidx.compose.ui.geometry.Offset(offset, 0f), end = androidx.compose.ui.geometry.Offset(offset + 400f, 0f))
 }

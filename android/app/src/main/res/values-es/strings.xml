@@ -443,4 +443,14 @@
     <string name="update_available">Nueva versión disponible</string>
     <string name="update_action">Actualizar</string>
     <string name="update_dismiss">Descartar</string>
+    <string name="action_save">Guardar</string>
+    <string name="me_saved">Guardado</string>
+    <string name="report_add_photo">Añadir foto</string>
+    <string name="report_take_photo">Hacer foto</string>
+    <string name="report_remove_photo">Quitar foto</string>
+    <string name="report_photo_failed">No se pudo usar esa foto. Prueba con otra.</string>
+    <string name="report_photo_description">Foto del peligro</string>
+    <string name="photo_pending_review">Pendiente de revisión</string>
+    <string name="photo_approved">Aprobada</string>
+    <string name="photo_rejected">No aprobada</string>
 </resources>

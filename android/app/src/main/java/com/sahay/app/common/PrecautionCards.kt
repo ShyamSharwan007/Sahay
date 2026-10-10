@@ -68,7 +68,7 @@ fun PrecautionCard(id: String, severity: Int, title: String, body: String, modif
     var expanded by rememberSaveable(id) { mutableStateOf(false) }
     // Only a body that really gets cut off needs the toggle.
     var overflows by rememberSaveable(id) { mutableStateOf(false) }
-    val outline = if (!LocalSahayDark.current || LocalEmergency.current) BorderStroke(1.dp, MaterialTheme.colorScheme.outline) else null
+    val outline = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
 
     Surface(
         modifier = modifier.fillMaxWidth(),

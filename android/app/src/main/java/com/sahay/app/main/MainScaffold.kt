@@ -66,7 +66,10 @@ import com.sahay.app.me.AboutScreen
 import com.sahay.app.me.GalleryRoute
 import com.sahay.designsystem.DesignGalleryScreen
 import com.sahay.app.common.SubScreenHeader
-import com.sahay.app.me.EditProfileRoute
+import com.sahay.app.profile.EditProfileRoute
+import com.sahay.app.profile.EditProfileScreen
+import com.sahay.app.profile.EditSectionRoute
+import com.sahay.app.profile.EditSectionScreen
 import com.sahay.app.me.MeScreen
 import com.sahay.app.me.MedicalCardRoute
 import com.sahay.app.me.MedicalCardScreen
@@ -98,6 +101,12 @@ import com.sahay.designsystem.components.OfflineBanner
 import com.sahay.designsystem.components.SahayBottomBar
 import com.sahay.designsystem.components.SahayButton
 import com.sahay.designsystem.components.SahayTopBar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import java.text.DateFormat
 import java.util.Date
@@ -143,9 +152,27 @@ fun MainScaffold(
     }
     val onEmergencyScreen = destination?.hasRoute(EmergencyRoute::class) == true
     // These full-screen screens pad the system bars themselves, so the normal bars step aside.
-    val selfInsets = destination?.let { it.hasRoute(ShowLocalRoute::class) || it.hasRoute(EditProfileRoute::class) } == true
+    val selfInsets = destination?.let { it.hasRoute(ShowLocalRoute::class) } == true
 
-    val selectedTab = tabRoutes.indexOfFirst { route -> destination?.hierarchy?.any { it.hasRoute(route::class) } == true }
+    // Tab screens select their own tab; other screens keep the tab they were opened from, except the ones that
+    // clearly belong to one tab (alerts, profile pages).
+    var originTab by rememberSaveable { mutableIntStateOf(0) }
+    val ownTab = tabRoutes.indexOfFirst { route -> destination?.hierarchy?.any { it.hasRoute(route::class) } == true }
+    LaunchedEffect(ownTab) { if (ownTab >= 0) originTab = ownTab }
+    val selectedTab = when {
+        ownTab >= 0 -> ownTab
+        destination == null -> originTab
+        destination.hasRoute(AlertDetailRoute::class) || destination.hasRoute(PasteAlertRoute::class) -> 2
+        destination.hasRoute(PrecautionsRoute::class) -> 0
+        listOf(
+            EditProfileRoute::class, EditSectionRoute::class, MedicalCardRoute::class, TripPackRoute::class,
+            PrivacyRoute::class, AboutRoute::class, GalleryRoute::class,
+        ).any { destination.hasRoute(it) } -> 3
+        else -> originTab
+    }
+    val snackbar = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    val savedMessage = stringResource(R.string.me_saved)
     val title = when (selectedTab) {
         1 -> stringResource(R.string.nav_map)
         2 -> stringResource(R.string.nav_alerts)
@@ -220,7 +247,7 @@ fun MainScaffold(
             composable<SosRoute> {
                 SosScreen(
                     onBack = { navController.popBackStack() },
-                    onEditContacts = { navController.navigate(EditProfileRoute(WizardStep.CONTACTS.ordinal)) },
+                    onEditContacts = { navController.navigate(EditSectionRoute(WizardStep.CONTACTS.ordinal)) },
                 )
             }
             composable<ShowLocalRoute> {
@@ -273,7 +300,7 @@ fun MainScaffold(
             }
             composable<MeTab> {
                 MeScreen(
-                    onEditProfile = { navController.navigate(EditProfileRoute()) },
+                    onEditProfile = { navController.navigate(EditProfileRoute) },
                     onMedicalCard = { navController.navigate(MedicalCardRoute) },
                     onTripPack = { navController.navigate(TripPackRoute) },
                     onPrivacy = { navController.navigate(PrivacyRoute) },
@@ -281,15 +308,24 @@ fun MainScaffold(
                 )
             }
             composable<EditProfileRoute> {
-                ProfileWizardScreen(
-                    onExit = { navController.popBackStack() },
-                    onFinished = { navController.popBackStack() },
+                EditProfileScreen(
+                    onBack = { navController.popBackStack() },
+                    onOpenSection = { step -> navController.navigate(EditSectionRoute(step.ordinal)) },
+                )
+            }
+            composable<EditSectionRoute> {
+                EditSectionScreen(
+                    onBack = { navController.popBackStack() },
+                    onSaved = {
+                        navController.popBackStack()
+                        scope.launch { snackbar.showSnackbar(savedMessage) }
+                    },
                 )
             }
             composable<MedicalCardRoute> {
                 MedicalCardScreen(
                     onBack = { navController.popBackStack() },
-                    onEdit = { navController.navigate(EditProfileRoute(WizardStep.MEDICAL.ordinal)) },
+                    onEdit = { navController.navigate(EditSectionRoute(WizardStep.MEDICAL.ordinal)) },
                 )
             }
             composable<TripPackRoute> {
@@ -308,6 +344,7 @@ fun MainScaffold(
             }
         }
 
+        SnackbarHost(snackbar)
         if (!selfInsets) {
             SahayBottomBar(
                 items = bottomBarItems(state.unreadAlerts),

@@ -498,4 +498,14 @@
     <string name="update_available">Nouvelle version disponible</string>
     <string name="update_action">Mettre à jour</string>
     <string name="update_dismiss">Fermer</string>
+    <string name="action_save">Enregistrer</string>
+    <string name="me_saved">Enregistré</string>
+    <string name="report_add_photo">Ajouter une photo</string>
+    <string name="report_take_photo">Prendre une photo</string>
+    <string name="report_remove_photo">Retirer la photo</string>
+    <string name="report_photo_failed">Cette photo ne marche pas. Essayez-en une autre.</string>
+    <string name="report_photo_description">Photo du danger</string>
+    <string name="photo_pending_review">En attente de vérification</string>
+    <string name="photo_approved">Approuvée</string>
+    <string name="photo_rejected">Non approuvée</string>
 </resources>

@@ -306,6 +306,10 @@ data class HazardReport(
     val mine: Boolean,
     val channel: Channel,
     val pendingSync: Boolean,          // true while queued offline
+    /** Local file of the photo on this phone (own reports only); null when none. Added with photo upload. */
+    val photoPath: String? = null,
+    /** Photo review: "pending", "approved" or "rejected"; null when the report has no photo. */
+    val reviewStatus: String? = null,
 )
 
 interface ReportRepository {

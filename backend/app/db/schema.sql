@@ -49,7 +49,10 @@ CREATE TABLE IF NOT EXISTS reports (
     note         TEXT,
     photo_url    TEXT,
     created_at   BIGINT,
-    channel      TEXT
+    channel      TEXT,
+    photo_data   BYTEA,
+    photo_mime   TEXT,
+    review_status TEXT NOT NULL DEFAULT 'pending'
 );
 CREATE INDEX IF NOT EXISTS idx_reports_region_created
     ON reports (region_id, created_at);

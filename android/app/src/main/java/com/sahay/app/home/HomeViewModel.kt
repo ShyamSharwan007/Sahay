@@ -30,6 +30,8 @@ data class HomeUiState(
     /** Null when there is no pack or the pack has no entry for today. */
     val todayForecast: ForecastDay? = null,
     val forecastNote: ForecastNote = ForecastNote.UNAVAILABLE_PAST_PATTERNS,
+    /** The next few days after today, for the small pills. */
+    val upcomingForecast: List<ForecastDay> = emptyList(),
     val precautions: List<Precaution> = emptyList(),
     val updateAvailable: Boolean = false,
 )
@@ -66,6 +68,7 @@ class HomeViewModel @Inject constructor(
             language = profile?.language ?: "en",
             hasPack = pack != null,
             todayForecast = todaysForecast(pack, LocalDate.now(clock)),
+            upcomingForecast = upcomingForecast(pack, LocalDate.now(clock)),
             forecastNote = pack?.let { forecastNote(it.forecast, it.tripStart, LocalDate.now(clock)) }
                 ?: ForecastNote.UNAVAILABLE_PAST_PATTERNS,
             precautions = pack?.precautions.orEmpty(),

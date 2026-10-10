@@ -1,389 +1,554 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sahay Admin Dashboard</title>
-    <!-- MapLibre -->
-    <link href="https://unpkg.com/maplibre-gl@4.7.0/dist/maplibre-gl.css" rel="stylesheet" />
-    <script src="https://unpkg.com/maplibre-gl@4.7.0/dist/maplibre-gl.js"></script>
-    
-    <style>
-        /* Design Tokens from DESIGN.md */
-        :root {
-            --bg: #F6F8F7;
-            --surface: #FFFFFF;
-            --surface-variant: #EBF0EE;
-            --outline: #C5D0CD;
-            --on-bg: #132120;
-            --on-surface-variant: #4A5A57;
-            --primary: #0B6E6E;
-            --on-primary: #FFFFFF;
-            --danger: #C62828;
-            --watch: #9A6700;
-            --safe: #18794C;
-            --radius-card: 16px;
-            --radius-btn: 16px;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sahay Admin Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://unpkg.com/maplibre-gl@4.7.0/dist/maplibre-gl.css" rel="stylesheet">
+<script src="https://unpkg.com/maplibre-gl@4.7.0/dist/maplibre-gl.js"></script>
+<style>
+/* Tokens from docs/DESIGN.md section 2 */
+:root {
+  --bg:#F6F8F7; --surface:#FFFFFF; --surface-variant:#EBF0EE; --outline:#C5D0CD;
+  --on-bg:#132120; --on-variant:#4A5A57; --primary:#0B6E6E; --on-primary:#FFFFFF;
+  --primary-container:#CDEDE9; --on-primary-container:#00302D;
+  --safe:#18794C; --watch:#9A6700; --warning:#C2410C; --danger:#C62828; --info:#2457C5; --on-status:#FFFFFF;
+  --safe-c:rgba(24,121,76,.12); --watch-c:rgba(154,103,0,.12); --warning-c:rgba(194,65,12,.12);
+  --danger-c:rgba(198,40,40,.12); --info-c:rgba(36,87,197,.12);
+  --radius:16px;
+}
+:root[data-theme="dark"] {
+  --bg:#0D1413; --surface:#141D1C; --surface-variant:#1C2726; --outline:#2F3D3B;
+  --on-bg:#E5EEEC; --on-variant:#A3B3B0; --primary:#5FD3CA; --on-primary:#00332F;
+  --primary-container:#0F4A47; --on-primary-container:#BDF1EB;
+  --safe:#4ADE95; --watch:#F2C14E; --warning:#FF9F5A; --danger:#FF6B6B; --info:#86ABFF; --on-status:#0D1413;
+  --safe-c:rgba(74,222,149,.18); --watch-c:rgba(242,193,78,.18); --warning-c:rgba(255,159,90,.18);
+  --danger-c:rgba(255,107,107,.18); --info-c:rgba(134,171,255,.18);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not([data-theme="dark"]) {
+    --bg:#0D1413; --surface:#141D1C; --surface-variant:#1C2726; --outline:#2F3D3B;
+    --on-bg:#E5EEEC; --on-variant:#A3B3B0; --primary:#5FD3CA; --on-primary:#00332F;
+    --primary-container:#0F4A47; --on-primary-container:#BDF1EB;
+    --safe:#4ADE95; --watch:#F2C14E; --warning:#FF9F5A; --danger:#FF6B6B; --info:#86ABFF; --on-status:#0D1413;
+    --safe-c:rgba(74,222,149,.18); --watch-c:rgba(242,193,78,.18); --warning-c:rgba(255,159,90,.18);
+    --danger-c:rgba(255,107,107,.18); --info-c:rgba(134,171,255,.18);
+  }
+}
+* { box-sizing: border-box; }
+body { margin:0; font-family:'Manrope',system-ui,sans-serif; font-size:15px; line-height:22px; font-weight:500;
+  background:var(--bg); color:var(--on-bg); }
+h1,h2,h3 { margin:0; font-weight:700; }
+h2 { font-size:20px; line-height:26px; } h3 { font-size:16px; }
+.caption { font-size:12px; line-height:16px; font-weight:600; letter-spacing:.2px; color:var(--on-variant); }
+.muted { color:var(--on-variant); }
+button, select, input, textarea { font-family:inherit; font-size:15px; color:var(--on-bg); }
 
-        [data-theme="dark"] {
-            --bg: #0D1413;
-            --surface: #141D1C;
-            --surface-variant: #1C2726;
-            --outline: #2F3D3B;
-            --on-bg: #E5EEEC;
-            --on-surface-variant: #A3B3B0;
-            --primary: #5FD3CA;
-            --on-primary: #00332F;
-            --danger: #FF6B6B;
-            --watch: #F2C14E;
-            --safe: #4ADE95;
-        }
+/* Layout */
+#app { display:grid; grid-template-columns:240px 1fr; min-height:100vh; }
+#sidebar { background:var(--surface); border-right:1px solid var(--outline); padding:20px 12px; display:flex; flex-direction:column; gap:4px;
+  position:sticky; top:0; height:100vh; }
+#sidebar .brand { font-weight:800; font-size:20px; padding:4px 12px 16px; }
+.nav { display:flex; align-items:center; gap:10px; width:100%; text-align:start; padding:10px 12px; border:0; border-radius:12px;
+  background:none; cursor:pointer; font-weight:600; color:var(--on-variant); }
+.nav:hover { background:var(--surface-variant); }
+.nav[aria-current="page"] { background:var(--primary-container); color:var(--on-primary-container); }
+.nav svg { width:20px; height:20px; flex:none; }
+#main { min-width:0; display:flex; flex-direction:column; }
+#topbar { display:flex; align-items:center; gap:12px; flex-wrap:wrap; padding:12px 24px; background:var(--surface);
+  border-bottom:1px solid var(--outline); position:sticky; top:0; z-index:20; }
+#topbar .spacer { flex:1; }
+#menuBtn { display:none; }
+#content { padding:24px; display:flex; flex-direction:column; gap:16px; max-width:1200px; width:100%; }
+section.page { display:none; flex-direction:column; gap:16px; }
+section.page.active { display:flex; }
 
-        body {
-            margin: 0;
-            font-family: 'Manrope', system-ui, sans-serif;
-            background-color: var(--bg);
-            color: var(--on-bg);
-            transition: background-color 0.2s, color 0.2s;
-            display: flex;
-            min-height: 100vh;
-        }
+/* Components */
+.card { background:var(--surface); border:1px solid var(--outline); border-radius:var(--radius); padding:20px; }
+.grid { display:grid; gap:12px; }
+.stats { grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); }
+.stat .num { font-size:34px; line-height:40px; font-weight:800; }
+.btn { border:0; border-radius:12px; padding:10px 18px; font-weight:600; cursor:pointer; background:var(--primary); color:var(--on-primary); }
+.btn.secondary { background:var(--surface-variant); color:var(--on-bg); }
+.btn.danger { background:var(--danger); color:var(--on-status); }
+.btn.small { padding:6px 12px; font-size:13px; }
+.btn:disabled { opacity:.5; cursor:not-allowed; }
+.btn:focus-visible, .nav:focus-visible, select:focus-visible, input:focus-visible { outline:2px solid var(--primary); outline-offset:2px; }
+select, input[type=text], input[type=number], textarea { width:100%; padding:10px 12px; background:var(--surface-variant); border:1px solid var(--outline); border-radius:12px; }
+select.inline { width:auto; }
+label { display:block; font-weight:600; margin-bottom:6px; }
+.field { margin-bottom:14px; }
+.row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+.chip { display:inline-flex; align-items:center; gap:6px; padding:3px 10px; border-radius:12px; font-size:12px; font-weight:700; }
+.chip.safe { background:var(--safe-c); color:var(--safe); } .chip.watch { background:var(--watch-c); color:var(--watch); }
+.chip.warning { background:var(--warning-c); color:var(--warning); } .chip.danger { background:var(--danger-c); color:var(--danger); }
+.chip.info { background:var(--info-c); color:var(--info); } .chip.neutral { background:var(--surface-variant); color:var(--on-variant); }
+.sim-badge { display:none; background:#F2C14E; color:#3a2a00; padding:5px 12px; border-radius:12px; font-weight:800; font-size:12px; letter-spacing:.4px; }
+.sim-badge.on { display:inline-block; }
+.map { height:360px; border-radius:12px; border:1px solid var(--outline); }
+.table-wrap { overflow-x:auto; }
+table { width:100%; border-collapse:collapse; }
+th { text-align:start; font-size:12px; letter-spacing:.2px; color:var(--on-variant); padding:8px 10px; border-bottom:1px solid var(--outline); white-space:nowrap; }
+td { padding:10px; border-bottom:1px solid var(--outline); vertical-align:middle; }
+tr:last-child td { border-bottom:0; }
+.thumb { width:56px; height:56px; object-fit:cover; border-radius:10px; cursor:zoom-in; background:var(--surface-variant); }
+.bar { width:60px; height:6px; background:var(--surface-variant); border-radius:3px; overflow:hidden; display:inline-block; vertical-align:middle; }
+.bar > i { display:block; height:100%; background:var(--primary); }
+.state { text-align:center; padding:32px 12px; color:var(--on-variant); }
+.skeleton { height:16px; border-radius:8px; background:var(--surface-variant); margin:10px 0; }
 
-        /* Basic Layout */
-        #sidebar {
-            width: 250px;
-            background: var(--surface);
-            border-right: 1px solid var(--outline);
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-        #content {
-            flex-grow: 1;
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
+/* Toasts, dialogs, lightbox */
+#toasts { position:fixed; right:16px; bottom:16px; display:flex; flex-direction:column; gap:8px; z-index:3000; }
+.toast { background:var(--surface); border:1px solid var(--outline); border-inline-start:4px solid var(--safe); border-radius:12px; padding:12px 16px; max-width:340px; font-weight:600; }
+.toast.error { border-inline-start-color:var(--danger); }
+#lightbox { position:fixed; inset:0; background:rgba(0,0,0,.85); display:none; align-items:center; justify-content:center; z-index:3500; cursor:zoom-out; }
+#lightbox.open { display:flex; } #lightbox img { max-width:94vw; max-height:90vh; border-radius:12px; }
+#auth-guard { position:fixed; inset:0; background:var(--bg); display:flex; align-items:center; justify-content:center; z-index:4000; padding:16px; }
+#scrim { display:none; }
 
-        /* Typography */
-        h1, h2, h3 { margin: 0; font-weight: 700; }
-        .caption { font-size: 12px; color: var(--on-surface-variant); font-weight: 600; }
-        
-        /* Components */
-        .card {
-            background: var(--surface);
-            border: 1px solid var(--outline);
-            border-radius: var(--radius-card);
-            padding: 20px;
-        }
-        .btn {
-            background: var(--primary);
-            color: var(--on-primary);
-            border: none;
-            border-radius: var(--radius-btn);
-            padding: 12px 24px;
-            font-weight: 600;
-            cursor: pointer;
-            font-family: inherit;
-        }
-        .btn-danger { background: var(--danger); color: white; }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        
-        .badge {
-            background: var(--watch);
-            color: white;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 700;
-            display: none;
-        }
-
-        /* Form */
-        label { display: block; margin-bottom: 8px; font-weight: 600; }
-        select, input, textarea {
-            width: 100%;
-            padding: 12px;
-            background: var(--surface-variant);
-            border: 1px solid var(--outline);
-            border-radius: 12px;
-            color: var(--on-bg);
-            font-family: inherit;
-            margin-bottom: 16px;
-            box-sizing: border-box;
-        }
-
-        /* Map */
-        #map { height: 300px; border-radius: 12px; margin-bottom: 16px; border: 1px solid var(--outline); }
-
-        /* Auth */
-        #auth-guard {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: var(--bg); display: flex; flex-direction: column;
-            align-items: center; justify-content: center; z-index: 1000;
-        }
-    </style>
-    <!-- Firebase -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
-
-        const firebaseConfig = {
-            apiKey: "__FIREBASE_API_KEY__",
-            authDomain: "__FIREBASE_AUTH_DOMAIN__",
-            projectId: "__FIREBASE_PROJECT_ID__",
-            appId: "__FIREBASE_APP_ID__"
-        };
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const provider = new GoogleAuthProvider();
-
-        let idToken = "";
-
-        // UI Logic
-        const loginBtn = document.getElementById("loginBtn");
-        loginBtn.onclick = () => signInWithPopup(auth, provider);
-
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                idToken = await user.getIdToken();
-                document.getElementById("auth-guard").style.display = "none";
-                loadRegions();
-            } else {
-                document.getElementById("auth-guard").style.display = "flex";
-            }
-        });
-
-        // Theme toggle
-        document.getElementById("themeToggle").onclick = () => {
-            const isDark = document.body.getAttribute('data-theme') === 'dark';
-            document.body.setAttribute('data-theme', isDark ? 'light' : 'dark');
-        };
-
-        // Fetch Regions
-        async function loadRegions() {
-            const res = await fetch("/api/v1/regions");
-            const regions = await res.json();
-            const select = document.getElementById("regionSelect");
-            regions.forEach(r => {
-                const opt = document.createElement("option");
-                opt.value = r.id;
-                opt.textContent = r.name;
-                select.appendChild(opt);
-            });
-            select.onchange = () => {
-                initMap(regions.find(r => r.id === select.value).bbox);
-                if (idToken) loadAlerts();
-            };
-            initMap(regions[0].bbox);
-            if (idToken) loadAlerts();
-        }
-
-        // Map setup
-        let map, marker, circle;
-        function initMap(bbox) {
-            const center = [(bbox[0]+bbox[2])/2, (bbox[1]+bbox[3])/2];
-            if(map) map.remove();
-            
-            map = new maplibregl.Map({
-                container: 'map',
-                style: 'https://tiles.openfreemap.org/styles/liberty',
-                center: center,
-                zoom: 12
-            });
-
-            marker = new maplibregl.Marker({draggable: true}).setLngLat(center).addTo(map);
-            
-            map.on('click', (e) => marker.setLngLat(e.lngLat));
-        }
-
-        // Templates setup
-        let templates = [];
-        async function loadTemplates() {
-            const res = await fetch("/api/v1/alert-templates");
-            templates = await res.json();
-            const select = document.getElementById("templateSelect");
-            templates.forEach(t => {
-                const opt = document.createElement("option");
-                opt.value = t.code;
-                opt.textContent = t.title;
-                select.appendChild(opt);
-            });
-            select.onchange = () => {
-                const sel = templates.find(t => t.code === select.value);
-                document.getElementById("severity").value = sel.severity;
-            };
-        }
-        loadTemplates();
-
-        // Simulate toggle
-        document.getElementById("simToggle").onchange = (e) => {
-            document.getElementById("simBadge").style.display = e.target.checked ? 'block' : 'none';
-        };
-
-        // Publish alert
-        document.getElementById("publishBtn").onclick = async () => {
-            const pos = marker.getLngLat();
-            const body = {
-                regionId: document.getElementById("regionSelect").value,
-                templateCode: document.getElementById("templateSelect").value,
-                severity: parseInt(document.getElementById("severity").value),
-                lat: pos.lat,
-                lon: pos.lng,
-                radiusM: parseInt(document.getElementById("radius").value),
-                extraText: document.getElementById("extraText").value || null,
-                isSimulation: document.getElementById("simToggle").checked
-            };
-            
-            const res = await fetch("/api/v1/alerts", {
-                method: "POST",
-                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${idToken}` },
-                body: JSON.stringify(body)
-            });
-            const data = await res.json();
-            if (res.ok) {
-                alert(`Published! Wire format (${data.wire.length}/160 chars):\n${data.wire}`);
-            } else {
-                alert(`Error: ${data.error?.message}`);
-            }
-        };
-
-        // Simulate Scenario
-        document.getElementById("simulateScenarioBtn").onclick = async () => {
-            if(!confirm("Are you sure you want to run the cyclone simulation scenario?")) return;
-            const res = await fetch("/api/v1/admin/simulate", {
-                method: "POST",
-                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${idToken}` },
-                body: JSON.stringify({
-                    regionId: document.getElementById("regionSelect").value,
-                    scenario: "cyclone"
-                })
-            });
-            if(res.ok) {
-                alert("Simulation generated successfully.");
-                loadAlerts();
-            } else alert("Failed to generate simulation.");
-        };
-
-        // End Simulation
-        document.getElementById("endSimulationBtn").onclick = async () => {
-            if(!confirm("End all active simulations in this region?")) return;
-            const res = await fetch("/api/v1/admin/simulate/end", {
-                method: "POST",
-                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${idToken}` },
-                body: JSON.stringify({
-                    regionId: document.getElementById("regionSelect").value
-                })
-            });
-            if(res.ok) {
-                alert("Simulation ended.");
-                loadAlerts();
-            } else alert("Failed to end simulation.");
-        };
-
-        // Load Alerts
-        async function loadAlerts() {
-            const regionId = document.getElementById("regionSelect").value;
-            const res = await fetch(`/api/v1/alerts?region=${regionId}`, {
-                headers: { "Authorization": `Bearer ${idToken}` }
-            });
-            if (!res.ok) return;
-            const alerts = await res.json();
-            const list = document.getElementById("alertList");
-            list.innerHTML = "";
-            const now = Math.floor(Date.now() / 1000);
-            
-            alerts.forEach(a => {
-                const div = document.createElement("div");
-                div.style.padding = "12px";
-                div.style.background = "var(--surface-variant)";
-                div.style.borderRadius = "8px";
-                
-                const status = a.expiresAt > now ? 
-                    '<span style="color:var(--safe);font-weight:bold;">Active</span>' : 
-                    '<span style="color:var(--on-surface-variant);">Expired</span>';
-                
-                div.innerHTML = `
-                    <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-                        <strong>${a.templateCode}</strong>
-                        ${status}
-                    </div>
-                    <div style="font-size: 12px; color: var(--on-surface-variant);">
-                        Issued: ${new Date(a.issuedAt * 1000).toLocaleString()} <br>
-                        Simulation: ${a.isSimulation ? 'Yes' : 'No'}
-                    </div>
-                `;
-                list.appendChild(div);
-            });
-        }
-        
-        document.getElementById("refreshAlertsBtn").onclick = loadAlerts;
-
-    </script>
+@media (max-width: 860px) {
+  #app { grid-template-columns:1fr; }
+  #sidebar { position:fixed; inset-block:0; inset-inline-start:0; width:260px; z-index:50; transform:translateX(-105%); transition:transform .2s; }
+  [dir=rtl] #sidebar { transform:translateX(105%); }
+  body.menu-open #sidebar { transform:none; }
+  body.menu-open #scrim { display:block; position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:40; }
+  #menuBtn { display:inline-flex; }
+  #topbar { padding:10px 16px; } #content { padding:16px; }
+  .map { height:280px; }
+}
+@media (prefers-reduced-motion: reduce) { #sidebar { transition:none; } }
+</style>
 </head>
 <body>
+<div id="toasts" aria-live="polite"></div>
+<div id="lightbox" role="dialog" aria-label="Photo"><img alt="Report photo"></div>
 
 <div id="auth-guard">
-    <div class="card" style="text-align: center;">
-        <h2>Sahay Admin</h2>
-        <p>Please sign in to continue.</p>
-        <button id="loginBtn" class="btn">Sign in with Google</button>
-    </div>
-</div>
-
-<div id="sidebar">
+  <div class="card" style="text-align:center;max-width:360px">
     <h2>Sahay Admin</h2>
-    <div id="simBadge" class="badge">SIMULATION MODE</div>
-    
-    <label>Region</label>
-    <select id="regionSelect"></select>
-    
-    <button class="btn" id="themeToggle" style="margin-top:auto; background:var(--surface-variant); color:var(--on-bg)">Toggle Theme</button>
+    <p class="muted">Sign in with an admin account to continue.</p>
+    <button id="loginBtn" class="btn">Sign in with Google</button>
+    <p id="authNote" class="caption"></p>
+  </div>
 </div>
 
-<div id="content">
-    <div class="card">
-        <h2>Simulate Scenario</h2>
-        <p class="caption">Generates 2 alerts (CYC_WARN, FLD_EVAC) at the region centre and marks a shelter FULL.</p>
-        <button id="simulateScenarioBtn" class="btn btn-danger">Simulate Cyclone</button>
-        <button id="endSimulationBtn" class="btn" style="margin-left: 8px;">End Simulation</button>
-    </div>
+<div id="scrim"></div>
+<div id="app">
+  <nav id="sidebar" aria-label="Sections">
+    <div class="brand">Sahay Admin</div>
+    <button class="nav" data-page="overview">Overview</button>
+    <button class="nav" data-page="alerts">Alerts</button>
+    <button class="nav" data-page="simulate">Simulate</button>
+    <button class="nav" data-page="reports">Reports</button>
+    <button class="nav" data-page="shelters">Shelters</button>
+    <button class="nav" data-page="people">People &amp; groups</button>
+    <button class="nav" data-page="sms">SMS log</button>
+    <div style="flex:1"></div>
+    <button class="nav" id="signOutBtn">Sign out</button>
+  </nav>
 
-    <div class="card">
-        <h2>Recent Alerts</h2>
-        <button id="refreshAlertsBtn" class="btn" style="margin-bottom: 16px;">Refresh List</button>
-        <div id="alertList" style="display: flex; flex-direction: column; gap: 8px;"></div>
-    </div>
+  <div id="main">
+    <header id="topbar">
+      <button class="btn secondary small" id="menuBtn" aria-label="Menu">Menu</button>
+      <label for="regionSelect" class="caption" style="margin:0">Region</label>
+      <select id="regionSelect" class="inline" aria-label="Region"></select>
+      <span id="simBadge" class="sim-badge" role="status">SIMULATION MODE</span>
+      <span class="spacer"></span>
+      <button class="btn secondary small" id="themeToggle" aria-label="Theme">Theme: System</button>
+    </header>
 
-    <div class="card">
-        <h2>Publish Alert</h2>
-        
-        <label>Template</label>
-        <select id="templateSelect"></select>
-        
-        <label>Severity (0-3)</label>
-        <input type="number" id="severity" min="0" max="3" value="1">
-        
-        <label>Location (Click map to set)</label>
-        <div id="map"></div>
-        
-        <label>Radius (m)</label>
-        <input type="number" id="radius" value="5000" min="100" max="20000">
-        
-        <label>Extra Text</label>
-        <input type="text" id="extraText" placeholder="Optional">
-        
-        <label style="display:flex; align-items:center; gap:8px;">
-            <input type="checkbox" id="simToggle" checked style="width:auto; margin:0;"> 
-            This is a simulation
-        </label>
-        
-        <button id="publishBtn" class="btn" style="margin-top:16px;">Publish Alert</button>
-    </div>
+    <main id="content">
+      <!-- Overview -->
+      <section class="page" id="page-overview">
+        <h2>Overview</h2>
+        <div class="grid stats" id="stats"></div>
+        <div class="card"><div id="overviewMap" class="map"></div>
+          <p class="caption">Circles: alerts · dots: reports · squares: shelters</p></div>
+      </section>
+
+      <!-- Alerts -->
+      <section class="page" id="page-alerts">
+        <h2>Alerts</h2>
+        <div class="card">
+          <div class="row" style="justify-content:space-between"><h3>Alerts in this region</h3>
+            <span class="row"><button class="btn secondary small" id="refreshAlertsBtn">Refresh</button>
+            <button class="btn secondary small" id="endSimBtn2">End simulation</button></span></div>
+          <div id="alertList"></div>
+        </div>
+        <div class="card">
+          <h3>Publish an alert</h3>
+          <div class="field"><label for="templateSelect">Template</label><select id="templateSelect"></select></div>
+          <div class="field"><label for="severity">Severity (0 info – 3 emergency)</label><input type="number" id="severity" min="0" max="3" value="1"></div>
+          <div class="field"><label>Location (click the map)</label><div id="publishMap" class="map" style="height:260px"></div></div>
+          <div class="field"><label for="radius">Radius (m)</label><input type="number" id="radius" value="3000" min="100" max="20000"></div>
+          <div class="field"><label for="extraText">Extra text</label><input type="text" id="extraText" maxlength="200" placeholder="Optional"></div>
+          <label class="row" style="font-weight:600"><input type="checkbox" id="simToggle" checked style="width:auto"> This is a simulation</label>
+          <p><button id="publishBtn" class="btn">Publish alert</button></p>
+        </div>
+      </section>
+
+      <!-- Simulate -->
+      <section class="page" id="page-simulate">
+        <h2>Simulate</h2>
+        <div class="card">
+          <h3>Cyclone scenario</h3>
+          <p class="muted">Creates a cyclone warning and a flood evacuation alert at the centre of the region, valid for 6 hours,
+            and marks one shelter as full. Phones with a trip pack for this region show them within a refresh.</p>
+          <div class="row"><button id="simulateBtn" class="btn danger">Simulate cyclone</button>
+            <button id="endSimBtn" class="btn secondary">End simulation</button></div>
+        </div>
+      </section>
+
+      <!-- Reports -->
+      <section class="page" id="page-reports">
+        <h2>Reports</h2>
+        <div class="card"><div id="reportsMap" class="map"></div></div>
+        <div class="card"><div id="reportsTable"></div></div>
+      </section>
+
+      <!-- Shelters -->
+      <section class="page" id="page-shelters">
+        <h2>Shelters</h2>
+        <div class="card"><div id="sheltersTable"></div></div>
+      </section>
+
+      <!-- People -->
+      <section class="page" id="page-people">
+        <h2>People &amp; groups</h2>
+        <p class="muted">Only groups of the minimum size are shown. Nobody is listed individually.</p>
+        <div class="card"><div id="peopleMap" class="map"></div></div>
+        <div class="card"><div id="peopleList"></div></div>
+      </section>
+
+      <!-- SMS -->
+      <section class="page" id="page-sms">
+        <h2>SMS log</h2>
+        <div class="card"><div id="smsTable"></div></div>
+      </section>
+    </main>
+  </div>
 </div>
 
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "__FIREBASE_API_KEY__", authDomain: "__FIREBASE_AUTH_DOMAIN__",
+  projectId: "__FIREBASE_PROJECT_ID__", appId: "__FIREBASE_APP_ID__"
+};
+const auth = getAuth(initializeApp(firebaseConfig));
+let currentUser = null;
+let regions = [];
+let templates = [];
+let page = "overview";
+let timer = null;
+
+const $ = (id) => document.getElementById(id);
+const esc = (v) => String(v ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
+const region = () => regions.find(r => r.id === $("regionSelect").value) || regions[0];
+const fmtTime = (s) => new Date(s * 1000).toLocaleString();
+
+/* ---------- toasts, API ---------- */
+function toast(message, isError) {
+  const el = document.createElement("div");
+  el.className = "toast" + (isError ? " error" : "");
+  el.textContent = message;
+  $("toasts").appendChild(el);
+  setTimeout(() => el.remove(), 4500);
+}
+
+async function api(path, method = "GET", body = null) {
+  const token = currentUser ? await currentUser.getIdToken() : "";
+  const res = await fetch("/api/v1" + path, {
+    method,
+    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+    body: body ? JSON.stringify(body) : undefined
+  });
+  let data = null;
+  try { data = await res.json(); } catch (e) { /* empty body */ }
+  if (!res.ok) throw new Error(data?.error?.message || `Request failed (${res.status})`);
+  return data;
+}
+
+/** Runs an action with a button disabled, a toast for the result and a refresh afterwards. */
+async function act(button, label, fn) {
+  if (button) button.disabled = true;
+  try { const out = await fn(); toast(label); await refresh(); return out; }
+  catch (e) { toast(e.message, true); }
+  finally { if (button) button.disabled = false; }
+}
+
+const loading = (el) => { el.innerHTML = '<div class="skeleton"></div><div class="skeleton" style="width:70%"></div><div class="skeleton" style="width:85%"></div>'; };
+const empty = (el, text) => { el.innerHTML = `<div class="state">${esc(text)}</div>`; };
+const errorState = (el, e) => { el.innerHTML = `<div class="state">${esc(e.message)}<br><button class="btn secondary small" style="margin-top:8px" onclick="location.reload()">Reload</button></div>`; };
+
+/* ---------- theme ---------- */
+const THEMES = ["system", "light", "dark"];
+function applyTheme(mode) {
+  const root = document.documentElement;
+  if (mode === "system") root.removeAttribute("data-theme"); else root.setAttribute("data-theme", mode);
+  $("themeToggle").textContent = "Theme: " + mode[0].toUpperCase() + mode.slice(1);
+  try { localStorage.setItem("sahay-admin-theme", mode); } catch (e) { /* private mode */ }
+}
+let themeMode = "system";
+try { themeMode = localStorage.getItem("sahay-admin-theme") || "system"; } catch (e) { /* ignore */ }
+applyTheme(THEMES.includes(themeMode) ? themeMode : "system");
+$("themeToggle").onclick = () => { themeMode = THEMES[(THEMES.indexOf(themeMode) + 1) % 3]; applyTheme(themeMode); };
+
+/* ---------- navigation ---------- */
+function show(name) {
+  page = name;
+  document.querySelectorAll("section.page").forEach(s => s.classList.toggle("active", s.id === "page-" + name));
+  document.querySelectorAll(".nav[data-page]").forEach(b => b.setAttribute("aria-current", b.dataset.page === name ? "page" : "false"));
+  document.body.classList.remove("menu-open");
+  if (location.hash !== "#" + name) history.replaceState(null, "", "#" + name);
+  refresh();
+}
+document.querySelectorAll(".nav[data-page]").forEach(b => b.onclick = () => show(b.dataset.page));
+$("menuBtn").onclick = () => document.body.classList.toggle("menu-open");
+$("scrim").onclick = () => document.body.classList.remove("menu-open");
+$("signOutBtn").onclick = () => signOut(auth);
+$("loginBtn").onclick = () => signInWithPopup(auth, new GoogleAuthProvider()).catch(e => { $("authNote").textContent = e.message; });
+
+/* ---------- maps ---------- */
+const maps = {};
+function getMap(id) {
+  const reg = region();
+  if (!reg) return null;
+  if (maps[id] && maps[id].regionId === reg.id) { maps[id].map.resize(); return maps[id]; }
+  if (maps[id]) maps[id].map.remove();
+  const center = [(reg.bbox[0] + reg.bbox[2]) / 2, (reg.bbox[1] + reg.bbox[3]) / 2];
+  const map = new maplibregl.Map({ container: id, style: "https://tiles.openfreemap.org/styles/liberty", center, zoom: 12 });
+  map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
+  const entry = { map, regionId: reg.id, ready: new Promise(res => map.on("load", res)), center };
+  maps[id] = entry;
+  return entry;
+}
+
+function circlePolygon(lon, lat, radiusM) {
+  const pts = [];
+  for (let i = 0; i <= 48; i++) {
+    const a = (i / 48) * 2 * Math.PI;
+    const dLat = (radiusM * Math.sin(a)) / 111320;
+    const dLon = (radiusM * Math.cos(a)) / (111320 * Math.cos(lat * Math.PI / 180));
+    pts.push([lon + dLon, lat + dLat]);
+  }
+  return { type: "Polygon", coordinates: [pts] };
+}
+const css = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+
+async function setLayers(mapId, key, features, paint, type) {
+  const entry = getMap(mapId);
+  if (!entry) return;
+  await entry.ready;
+  const map = entry.map;
+  const data = { type: "FeatureCollection", features };
+  if (map.getSource(key)) { map.getSource(key).setData(data); return; }
+  map.addSource(key, { type: "geojson", data });
+  if (type === "fill") {
+    map.addLayer({ id: key + "-fill", type: "fill", source: key, paint: { "fill-color": ["get", "color"], "fill-opacity": 0.22 } });
+    map.addLayer({ id: key + "-line", type: "line", source: key, paint: { "line-color": ["get", "color"], "line-width": 2 } });
+  } else {
+    map.addLayer({ id: key + "-dot", type: "circle", source: key, paint: paint });
+    map.on("click", key + "-dot", (e) => {
+      const p = e.features[0].properties;
+      new maplibregl.Popup().setLngLat(e.lngLat).setHTML(`<strong>${esc(p.title)}</strong><br>${esc(p.detail)}`).addTo(map);
+    });
+  }
+}
+
+/* ---------- data + rendering ---------- */
+const sevChip = (s) => ({ 0:"info", 1:"watch", 2:"warning", 3:"danger" }[s] || "neutral");
+const trustChip = (l) => ({ VERIFIED:"safe", LIKELY:"warning", UNCONFIRMED:"neutral" }[l] || "neutral");
+const reviewChip = (s) => s === "approved" ? '<span class="chip safe">Approved</span>' : s === "rejected" ? '<span class="chip danger">Rejected</span>' : s === "pending" ? '<span class="chip watch">Pending review</span>' : '<span class="muted">–</span>';
+
+async function loadOverview() {
+  const el = $("stats"); loading(el);
+  try {
+    const o = await api("/admin/overview?regionId=" + encodeURIComponent(region().id));
+    const cards = [["Active alerts", o.activeAlerts], ["Reports today", o.reports], ["Pending reviews", o.pendingReviews], ["People in groups", o.peopleInGroups]];
+    el.innerHTML = cards.map(([t, n]) => `<div class="card stat"><div class="caption">${esc(t)}</div><div class="num">${esc(n)}</div></div>`).join("");
+  } catch (e) { errorState(el, e); }
+  drawOverviewMap();
+}
+
+async function drawOverviewMap() {
+  const reg = region();
+  try {
+    const [alerts, reports, shelters] = await Promise.all([
+      api("/admin/alerts?regionId=" + reg.id), api("/admin/reports?regionId=" + reg.id), api("/admin/shelters?regionId=" + reg.id).catch(() => [])
+    ]);
+    await setLayers("overviewMap", "o-alerts", alerts.filter(a => a.active).map(a => ({
+      type: "Feature", properties: { color: css(a.severity >= 3 ? "--danger" : a.severity === 2 ? "--warning" : "--watch") }, geometry: circlePolygon(a.lon, a.lat, a.radiusM) })), null, "fill");
+    await setLayers("overviewMap", "o-reports", reports.map(reportFeature), reportPaint(), "dot");
+    await setLayers("overviewMap", "o-shelters", shelters.map(shelterFeature), shelterPaint(), "dot");
+  } catch (e) { /* map is a bonus; the cards already show errors */ }
+}
+const reportFeature = (r) => ({ type: "Feature", properties: { title: r.type + " · " + r.label, detail: r.note || "No note", color: css("--" + ({ VERIFIED:"safe", LIKELY:"warning" }[r.label] || "info")) }, geometry: { type: "Point", coordinates: [r.lon, r.lat] } });
+const reportPaint = () => ({ "circle-radius": 7, "circle-color": ["get", "color"], "circle-stroke-width": 2, "circle-stroke-color": "#ffffff" });
+const shelterFeature = (s) => ({ type: "Feature", properties: { title: s.name, detail: s.status, color: css("--" + ({ OPEN:"safe", FULL:"danger", CLOSED:"watch" }[s.status] || "info")) }, geometry: { type: "Point", coordinates: [s.lon, s.lat] } });
+const shelterPaint = () => ({ "circle-radius": 6, "circle-color": ["get", "color"], "circle-stroke-width": 2, "circle-stroke-color": "#ffffff" });
+
+async function loadAlerts() {
+  const el = $("alertList"); loading(el);
+  try {
+    const alerts = await api("/admin/alerts?regionId=" + encodeURIComponent(region().id));
+    $("simBadge").classList.toggle("on", alerts.some(a => a.active && a.isSimulation));
+    if (!alerts.length) return empty(el, "No alerts yet for this region.");
+    el.innerHTML = '<div class="table-wrap"><table><thead><tr><th>Alert</th><th>Status</th><th>Issued</th><th>Expires</th><th></th></tr></thead><tbody>' +
+      alerts.map(a => `<tr><td><strong>${esc(a.templateCode)}</strong> <span class="chip ${sevChip(a.severity)}">sev ${esc(a.severity)}</span>
+        ${a.isSimulation ? '<span class="chip watch">Simulation</span>' : ""}<div class="caption">${esc(a.extraText || "")} id ${esc(a.id)}</div></td>
+        <td>${a.active ? '<span class="chip safe">Active</span>' : '<span class="chip neutral">Expired</span>'}</td>
+        <td>${esc(fmtTime(a.issuedAt))}</td><td>${esc(fmtTime(a.expiresAt))}</td>
+        <td><button class="btn danger small" data-delete="${esc(a.id)}">Delete</button></td></tr>`).join("") + "</tbody></table></div>";
+    el.querySelectorAll("[data-delete]").forEach(b => b.onclick = () => {
+      if (confirm("Delete this alert?")) act(b, "Alert deleted", () => api("/admin/alerts/" + encodeURIComponent(b.dataset.delete), "DELETE"));
+    });
+  } catch (e) { errorState(el, e); }
+}
+
+const photoUrls = {};
+async function photoBlobUrl(path) {
+  if (photoUrls[path]) return photoUrls[path];
+  const token = await currentUser.getIdToken();
+  const res = await fetch(path, { headers: { "Authorization": `Bearer ${token}` } });
+  if (!res.ok) throw new Error("photo");
+  return (photoUrls[path] = URL.createObjectURL(await res.blob()));
+}
+
+async function loadReports() {
+  const el = $("reportsTable"); loading(el);
+  try {
+    const reports = await api("/admin/reports?regionId=" + encodeURIComponent(region().id));
+    setLayers("reportsMap", "r-reports", reports.map(reportFeature), reportPaint(), "dot");
+    if (!reports.length) return empty(el, "No reports in the last 72 hours.");
+    el.innerHTML = '<div class="table-wrap"><table><thead><tr><th>Photo</th><th>Report</th><th>Trust</th><th>Photo review</th><th></th></tr></thead><tbody>' +
+      reports.map(r => `<tr><td>${r.photoUrl ? `<img class="thumb" data-photo="${esc(r.photoUrl)}" alt="Report photo">` : '<span class="muted">–</span>'}</td>
+        <td><strong>${esc(r.type)}</strong> · ${esc(r.channel)}<div class="caption">${esc(fmtTime(r.createdAt))}</div><div>${esc(r.note || "")}</div></td>
+        <td><span class="chip ${trustChip(r.label)}">${esc(r.label)}</span> <span class="bar"><i style="width:${Math.round(r.trustScore * 100)}%"></i></span></td>
+        <td>${reviewChip(r.reviewStatus)}</td>
+        <td>${r.photoUrl ? `<button class="btn small" data-approve="${esc(r.id)}">Approve</button> <button class="btn danger small" data-reject="${esc(r.id)}">Reject</button>` : ""}</td></tr>`).join("") + "</tbody></table></div>";
+    el.querySelectorAll("img[data-photo]").forEach(async img => {
+      try { img.src = await photoBlobUrl(img.dataset.photo); img.onclick = () => { $("lightbox").querySelector("img").src = img.src; $("lightbox").classList.add("open"); }; }
+      catch (e) { img.alt = "Photo unavailable"; }
+    });
+    el.querySelectorAll("[data-approve]").forEach(b => b.onclick = () => act(b, "Photo approved", () => api(`/admin/reports/${encodeURIComponent(b.dataset.approve)}/approve`, "POST")));
+    el.querySelectorAll("[data-reject]").forEach(b => b.onclick = () => act(b, "Photo rejected", () => api(`/admin/reports/${encodeURIComponent(b.dataset.reject)}/reject`, "POST")));
+  } catch (e) { errorState(el, e); }
+}
+$("lightbox").onclick = () => $("lightbox").classList.remove("open");
+
+async function loadShelters() {
+  const el = $("sheltersTable"); loading(el);
+  try {
+    const shelters = await api("/admin/shelters?regionId=" + encodeURIComponent(region().id));
+    if (!shelters.length) return empty(el, "No shelters found. The trip pack of this region could not be read.");
+    el.innerHTML = '<div class="table-wrap"><table><thead><tr><th>Shelter</th><th>Type</th><th>Status</th></tr></thead><tbody>' +
+      shelters.map(s => `<tr><td><strong>${esc(s.name)}</strong><div class="caption">${esc(s.id)}</div></td>
+        <td>${s.type === "SHELTER" ? "Shelter" : "Possible shelter"}</td>
+        <td><select class="inline" data-shelter="${esc(s.id)}" aria-label="Status of ${esc(s.name)}">
+          ${s.status === "UNKNOWN" ? '<option value="" selected disabled>Not set</option>' : ""}
+          ${["OPEN", "FULL", "CLOSED"].map(v => `<option value="${v}" ${s.status === v ? "selected" : ""}>${v}</option>`).join("")}</select></td></tr>`).join("") + "</tbody></table></div>";
+    el.querySelectorAll("select[data-shelter]").forEach(sel => sel.onchange = () =>
+      act(sel, "Shelter set to " + sel.value, () => api(`/admin/shelters/${encodeURIComponent(sel.dataset.shelter)}/status`, "POST", { regionId: region().id, status: sel.value })));
+  } catch (e) { errorState(el, e); }
+}
+
+async function loadPeople() {
+  const el = $("peopleList"); loading(el);
+  try {
+    const reg = region();
+    const c = [(reg.bbox[1] + reg.bbox[3]) / 2, (reg.bbox[0] + reg.bbox[2]) / 2];
+    const data = await api(`/groups?lat=${c[0]}&lon=${c[1]}&radiusM=20000`);
+    const color = (st) => css("--" + ({ AT_SHELTER:"safe", SAFE_AREA:"info", RISK_ZONE:"danger" }[st] || "info"));
+    setLayers("peopleMap", "p-groups", data.groups.map(g => ({ type: "Feature", properties: { title: g.size + " people", detail: g.status, color: color(g.status) }, geometry: { type: "Point", coordinates: [g.lon, g.lat] } })),
+      { "circle-radius": ["+", 6, ["*", 1.5, ["get", "size"]]], "circle-color": ["get", "color"], "circle-opacity": .7 }, "dot");
+    if (!data.groups.length && !data.beacons.length) return empty(el, `No groups of ${data.minSize}+ people right now.`);
+    el.innerHTML = '<div class="table-wrap"><table><thead><tr><th>Group</th><th>Status</th><th>Last seen</th></tr></thead><tbody>' +
+      data.groups.map(g => `<tr><td><strong>${esc(g.size)} people</strong><div class="caption">${esc(g.lat)}, ${esc(g.lon)}</div></td>
+        <td><span class="chip ${({ AT_SHELTER:"safe", SAFE_AREA:"info", RISK_ZONE:"danger" })[g.status] || "neutral"}">${esc(g.status.replace("_", " "))}</span></td>
+        <td>${esc(fmtTime(g.lastSeen))}</td></tr>`).join("") + `</tbody></table></div><p class="caption">Active buddy beacons: ${esc(data.beacons.length)}</p>`;
+  } catch (e) { errorState(el, e); }
+}
+
+async function loadSms() {
+  const el = $("smsTable"); loading(el);
+  try {
+    const rows = await api("/admin/sms-log?limit=100");
+    if (!rows.length) return empty(el, "No SMS sent or received yet.");
+    el.innerHTML = '<div class="table-wrap"><table><thead><tr><th>Time</th><th>Direction</th><th>Phone</th><th>Message</th><th>Status</th></tr></thead><tbody>' +
+      rows.map(r => `<tr><td>${esc(r.createdAt ? fmtTime(r.createdAt) : "")}</td><td>${esc(r.direction)}</td><td>${esc((r.phone || "").replace(/\d(?=\d{3})/g, "•"))}</td><td>${esc(r.body)}</td><td>${esc(r.status)}</td></tr>`).join("") + "</tbody></table></div>";
+  } catch (e) { errorState(el, e); }
+}
+
+async function refreshBadge() {
+  try {
+    const alerts = await api("/admin/alerts?regionId=" + encodeURIComponent(region().id));
+    $("simBadge").classList.toggle("on", alerts.some(a => a.active && a.isSimulation));
+  } catch (e) { /* keep the last state */ }
+}
+
+async function refresh() {
+  if (!currentUser || !region()) return;
+  ({ overview: loadOverview, alerts: () => { loadAlerts(); initPublishMap(); }, simulate: refreshBadge,
+     reports: loadReports, shelters: loadShelters, people: loadPeople, sms: loadSms })[page]?.();
+  if (page !== "alerts") { /* the alerts page already updates the badge */ }
+}
+
+/* ---------- alert actions ---------- */
+let publishMarker = null;
+async function initPublishMap() {
+  const entry = getMap("publishMap");
+  if (!entry) return;
+  await entry.ready;
+  if (!publishMarker || entry.marker !== publishMarker) {
+    publishMarker = new maplibregl.Marker({ draggable: true }).setLngLat(entry.center).addTo(entry.map);
+    entry.marker = publishMarker;
+    entry.map.on("click", (e) => publishMarker.setLngLat(e.lngLat));
+  }
+}
+
+$("publishBtn").onclick = (ev) => {
+  if (!publishMarker) return toast("The map is still loading", true);
+  const pos = publishMarker.getLngLat();
+  const body = {
+    regionId: region().id, templateCode: $("templateSelect").value, severity: parseInt($("severity").value, 10),
+    lat: pos.lat, lon: pos.lng, radiusM: parseInt($("radius").value, 10), extraText: $("extraText").value || null, isSimulation: $("simToggle").checked
+  };
+  act(ev.target, "Alert published", () => api("/alerts", "POST", body));
+};
+const simulate = (ev) => { if (confirm("Run the cyclone simulation for this region?")) act(ev.target, "Simulation started: 2 alerts", () => api("/admin/simulate", "POST", { regionId: region().id, scenario: "cyclone" })); };
+const endSim = (ev) => { if (confirm("End all active simulations in this region?")) act(ev.target, "Simulation ended", () => api("/admin/simulate/end", "POST", { regionId: region().id })); };
+$("simulateBtn").onclick = simulate; $("endSimBtn").onclick = endSim; $("endSimBtn2").onclick = endSim;
+$("refreshAlertsBtn").onclick = () => refresh();
+
+/* ---------- start ---------- */
+async function start() {
+  try {
+    regions = await (await fetch("/api/v1/regions")).json();
+    $("regionSelect").innerHTML = regions.map(r => `<option value="${esc(r.id)}">${esc(r.name)}</option>`).join("");
+    templates = await (await fetch("/api/v1/alert-templates?lang=en")).json();
+    $("templateSelect").innerHTML = templates.map(t => `<option value="${esc(t.code)}">${esc(t.title)}</option>`).join("");
+    $("templateSelect").onchange = () => { const t = templates.find(x => x.code === $("templateSelect").value); if (t) $("severity").value = t.severity; };
+    if (templates[0]) $("severity").value = templates[0].severity;
+  } catch (e) { toast("Could not load regions: " + e.message, true); return; }
+  $("regionSelect").onchange = () => { publishMarker = null; refresh(); refreshBadge(); };
+  const initial = location.hash.slice(1);
+  show(document.getElementById("page-" + initial) ? initial : "overview");
+  refreshBadge();
+  clearInterval(timer);
+  timer = setInterval(() => { if (!document.hidden) refresh(); }, 30000);
+}
+
+onAuthStateChanged(auth, async (user) => {
+  currentUser = user;
+  $("auth-guard").style.display = user ? "none" : "flex";
+  if (user) start();
+});
+</script>
 </body>
 </html>

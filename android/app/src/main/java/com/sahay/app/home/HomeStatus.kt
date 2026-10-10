@@ -47,3 +47,7 @@ private fun SahayAlert.appliesTo(location: GeoPoint?): Boolean {
 /** Today's forecast line from the pack, or null when the pack has none for [today]. */
 fun todaysForecast(pack: PackInfo?, today: LocalDate): ForecastDay? =
     pack?.forecast?.firstOrNull { it.date == today }
+
+/** The next [count] forecast days after [today], in date order. */
+fun upcomingForecast(pack: PackInfo?, today: LocalDate, count: Int = 4): List<ForecastDay> =
+    pack?.forecast.orEmpty().filter { it.date.isAfter(today) }.sortedBy { it.date }.take(count)

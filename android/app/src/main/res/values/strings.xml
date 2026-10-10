@@ -2,6 +2,7 @@
 <resources>
     <!-- Language names are shown in their own language, never translated. -->
     <string name="app_name" translatable="false">Sahay</string>
+    <string name="weather_temp" translatable="false">%1$s°C</string>
     <string name="gallery_title" translatable="false">Design gallery</string>
     <string name="lang_en" translatable="false">English</string>
     <string name="lang_de" translatable="false">Deutsch</string>
@@ -508,4 +509,14 @@
     <string name="update_available">New version available</string>
     <string name="update_action">Update</string>
     <string name="update_dismiss">Dismiss</string>
+    <string name="action_save">Save</string>
+    <string name="me_saved">Saved</string>
+    <string name="report_add_photo">Add photo</string>
+    <string name="report_take_photo">Take photo</string>
+    <string name="report_remove_photo">Remove photo</string>
+    <string name="report_photo_failed">Couldn\'t use that photo. Try another.</string>
+    <string name="report_photo_description">Photo of the hazard</string>
+    <string name="photo_pending_review">Pending review</string>
+    <string name="photo_approved">Approved</string>
+    <string name="photo_rejected">Not approved</string>
 </resources>

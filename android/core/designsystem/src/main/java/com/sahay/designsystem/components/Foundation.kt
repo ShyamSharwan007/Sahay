@@ -77,11 +77,10 @@ fun statusKindForSeverity(severity: Int): StatusKind = when {
     else -> StatusKind.Danger
 }
 
-/** 1 dp outline in light mode; dark mode relies on layered surfaces instead (emergency keeps the outline on pure black). */
+/** The one card outline: 1 dp, in light, dark and emergency themes alike. */
 @Composable
 @ReadOnlyComposable
-internal fun cardBorder(): BorderStroke? =
-    if (!LocalSahayDark.current || LocalEmergency.current) BorderStroke(1.dp, MaterialTheme.colorScheme.outline) else null
+internal fun cardBorder(): BorderStroke? = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
 
 /** Flat card surface shared by all card-like components. Pass [onClick] to make it tappable. */
 @Composable

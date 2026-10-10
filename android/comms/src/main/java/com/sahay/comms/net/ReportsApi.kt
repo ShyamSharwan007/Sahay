@@ -10,6 +10,9 @@ interface ReportsApi {
 
     /** `GET /reports?regionId=&sinceMin=`. The token is optional; with it the server marks the caller's own reports. */
     suspend fun reports(regionId: String?, sinceMin: Int, idToken: String?): List<ReportDto>
+
+    /** `POST /reports/{id}/photo` (multipart JPEG, at most 1 MB). Only the report's owner may upload. */
+    suspend fun uploadPhoto(reportId: String, jpeg: ByteArray, idToken: String?): ReportDto
 }
 
 /** Body of `POST /reports`. `reporterLat/Lon` are 0 when the phone had no fix (the server then scores proximity as 0). */
@@ -40,4 +43,5 @@ data class ReportDto(
     val label: String? = null,
     val mine: Boolean = false,
     val channel: String? = null,
+    val reviewStatus: String? = null,
 )

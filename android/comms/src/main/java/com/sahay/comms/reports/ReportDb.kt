@@ -1,5 +1,6 @@
 package com.sahay.comms.reports
 
+import androidx.room.ColumnInfo
 import androidx.room.Dao
 import androidx.room.Database
 import androidx.room.Entity
@@ -40,6 +41,10 @@ data class ReportEntity(
     val channel: String,              // Channel.name
     val serverTrust: Double?,
     val serverPhotoUrl: String?,
+    /** True once the photo reached the server (or the server refused it for good). The file stays for the thumbnail. */
+    @ColumnInfo(defaultValue = "0") val photoUploaded: Boolean = false,
+    /** Server's photo review: pending | approved | rejected. */
+    val reviewStatus: String? = null,
 )
 
 @Dao
@@ -62,6 +67,16 @@ interface ReportDao {
     @Query("UPDATE reports SET status = 'SENT', serverId = :serverId, serverTrust = :trust, serverPhotoUrl = :photoUrl WHERE localId = :localId")
     suspend fun markSent(localId: String, serverId: String, trust: Double, photoUrl: String?)
 
+    /** Reports the server has, whose photo still has to go up. */
+    @Query("SELECT * FROM reports WHERE status = 'SENT' AND serverId IS NOT NULL AND photoPath IS NOT NULL AND photoUploaded = 0 ORDER BY createdAtEpochSec ASC")
+    suspend fun photosToUpload(): List<ReportEntity>
+
+    @Query("UPDATE reports SET photoUploaded = 1, serverPhotoUrl = COALESCE(:photoUrl, serverPhotoUrl), reviewStatus = :reviewStatus WHERE localId = :localId")
+    suspend fun markPhotoUploaded(localId: String, photoUrl: String?, reviewStatus: String?)
+
+    @Query("SELECT * FROM reports WHERE status != 'PENDING' AND createdAtEpochSec < :olderThanEpochSec")
+    suspend fun finishedBefore(olderThanEpochSec: Long): List<ReportEntity>
+
     @Query("UPDATE reports SET status = 'FAILED' WHERE localId = :localId")
     suspend fun markFailed(localId: String)
 
@@ -74,7 +89,17 @@ interface ReportDao {
  * Own database file, and deliberately no destructive-migration fallback: a queued report is the user's data and
  * must survive an app update (unlike alerts, it cannot be fetched again). Schema changes need a real Migration.
  */
-@Database(entities = [ReportEntity::class], version = 1, exportSchema = false)
+@Database(entities = [ReportEntity::class], version = 2, exportSchema = false)
 abstract class ReportDatabase : RoomDatabase() {
     abstract fun reportDao(): ReportDao
+
+    companion object {
+        /** v2: photo upload state. Existing queued reports keep everything and simply have no photo to upload. */
+        val MIGRATION_1_2 = object : androidx.room.migration.Migration(1, 2) {
+            override fun migrate(db: androidx.sqlite.db.SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE reports ADD COLUMN photoUploaded INTEGER NOT NULL DEFAULT 0")
+                db.execSQL("ALTER TABLE reports ADD COLUMN reviewStatus TEXT")
+            }
+        }
+    }
 }

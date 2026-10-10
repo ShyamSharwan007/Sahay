@@ -76,6 +76,7 @@ junit = { module = "junit:junit", version.ref = "junit" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
+androidx-exifinterface = { module = "androidx.exifinterface:exifinterface", version = "1.4.1" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -516,4 +516,14 @@
     <string name="update_available">يتوفر إصدار جديد</string>
     <string name="update_action">تحديث</string>
     <string name="update_dismiss">إغلاق</string>
+    <string name="action_save">حفظ</string>
+    <string name="me_saved">تم الحفظ</string>
+    <string name="report_add_photo">إضافة صورة</string>
+    <string name="report_take_photo">التقاط صورة</string>
+    <string name="report_remove_photo">إزالة الصورة</string>
+    <string name="report_photo_failed">تعذّر استخدام هذه الصورة. جرّب صورة أخرى.</string>
+    <string name="report_photo_description">صورة الخطر</string>
+    <string name="photo_pending_review">قيد المراجعة</string>
+    <string name="photo_approved">تمت الموافقة</string>
+    <string name="photo_rejected">لم تتم الموافقة</string>
 </resources>

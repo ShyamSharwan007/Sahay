@@ -62,7 +62,6 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Date
 
-@Serializable data class EditProfileRoute(val step: Int = 0)
 @Serializable data object MedicalCardRoute
 @Serializable data object TripPackRoute
 @Serializable data object PrivacyRoute

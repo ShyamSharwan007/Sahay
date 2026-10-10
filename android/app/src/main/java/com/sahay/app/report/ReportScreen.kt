@@ -1,6 +1,31 @@
 package com.sahay.app.report
 
+import android.content.ActivityNotFoundException
+import android.content.Context
+import android.graphics.BitmapFactory
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.rounded.AddPhotoAlternate
+import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.PhotoCamera
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.FileProvider
+import com.sahay.designsystem.components.ButtonSize
+import com.sahay.designsystem.components.ButtonVariant
+import java.io.File
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -92,6 +117,8 @@ private fun FormContent(state: ReportUiState, viewModel: ReportViewModel) {
 
         LocationRow(state, onRetry = viewModel::locate)
 
+        PhotoSection(state, viewModel)
+
         OutlinedTextField(
             value = state.note,
             onValueChange = viewModel::onNoteChange,
@@ -113,6 +140,95 @@ private fun FormContent(state: ReportUiState, viewModel: ReportViewModel) {
             loading = state.submitting,
         )
     }
+}
+
+/**
+ * "Add photo" (system photo picker, no storage permission) and "Take photo" (camera app writes to a cache file we own,
+ * so the app itself never needs the CAMERA permission), with a thumbnail and a remove button once there is a photo.
+ */
+@Composable
+private fun PhotoSection(state: ReportUiState, viewModel: ReportViewModel) {
+    val context = LocalContext.current
+    val picker = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        if (uri != null) viewModel.onPhoto(uri)
+    }
+    var capturePath by rememberSaveable { mutableStateOf<String?>(null) }
+    val camera = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { taken ->
+        val file = capturePath?.let(::File)
+        if (taken && file != null) viewModel.onPhoto(Uri.fromFile(file)) // read right away; deleted afterwards by the cache cleanup
+        capturePath = null
+    }
+    val photo = state.photo
+    if (photo != null) {
+        val thumb = remember(photo) { decodeThumb(photo) }
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(SahaySpacing.sm)) {
+            if (thumb != null) {
+                Image(
+                    bitmap = thumb,
+                    contentDescription = stringResource(R.string.report_photo_description),
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.size(96.dp).clip(RoundedCornerShape(12.dp)),
+                )
+            }
+            SahayButton(
+                text = stringResource(R.string.report_remove_photo),
+                onClick = viewModel::removePhoto,
+                variant = ButtonVariant.Secondary,
+                size = ButtonSize.M,
+                icon = Icons.Rounded.Close,
+                fullWidth = false,
+            )
+        }
+    } else {
+        Row(horizontalArrangement = Arrangement.spacedBy(SahaySpacing.sm)) {
+            SahayButton(
+                text = stringResource(R.string.report_add_photo),
+                onClick = { picker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) },
+                variant = ButtonVariant.Secondary,
+                size = ButtonSize.M,
+                icon = Icons.Rounded.AddPhotoAlternate,
+                loading = state.photoBusy,
+                modifier = Modifier.weight(1f),
+            )
+            SahayButton(
+                text = stringResource(R.string.report_take_photo),
+                onClick = {
+                    val file = newCaptureFile(context)
+                    if (file == null) {
+                        viewModel.onPhotoProblem()
+                    } else {
+                        capturePath = file.path
+                        try {
+                            camera.launch(FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file))
+                        } catch (_: ActivityNotFoundException) {
+                            capturePath = null
+                            viewModel.onPhotoProblem()
+                        }
+                    }
+                },
+                variant = ButtonVariant.Secondary,
+                size = ButtonSize.M,
+                icon = Icons.Rounded.PhotoCamera,
+                enabled = !state.photoBusy,
+                modifier = Modifier.weight(1f),
+            )
+        }
+    }
+    if (state.photoFailed) StatusCard(kind = StatusKind.Warning, title = stringResource(R.string.report_photo_failed))
+}
+
+private fun newCaptureFile(context: Context): File? = try {
+    val dir = File(context.cacheDir, "report_capture").apply { mkdirs() }
+    dir.listFiles()?.forEach { it.delete() } // old captures are of no use any more
+    File(dir, "capture_${System.currentTimeMillis()}.jpg")
+} catch (_: Exception) {
+    null
+}
+
+private fun decodeThumb(jpeg: ByteArray) = try {
+    BitmapFactory.decodeByteArray(jpeg, 0, jpeg.size, BitmapFactory.Options().apply { inSampleSize = 4 })?.asImageBitmap()
+} catch (_: Exception) {
+    null
 }
 
 /** Selectable tile with icon + word; the selection also shows a check, never color alone. */
@@ -179,6 +295,10 @@ private fun ResultContent(report: HazardReport, onDone: () -> Unit) {
             actionLabel = stringResource(R.string.action_done),
             onAction = onDone,
         )
+        if (report.photoPath != null || report.photoUrl != null) {
+            ReportPhotoThumb(report, size = 120.dp)
+            PhotoReviewChip(report.reviewStatus)
+        }
         if (sent) {
             val label = stringResource(report.label.labelRes())
             TrustChip(

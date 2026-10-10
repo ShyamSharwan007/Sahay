@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Camera photos are written here, then shrunk and deleted. -->
+<paths>
+    <cache-path name="report_capture" path="report_capture/" />
+</paths>
