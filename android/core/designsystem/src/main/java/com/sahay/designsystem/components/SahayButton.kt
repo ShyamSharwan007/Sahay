@@ -40,6 +40,8 @@ fun SahayButton(
     loading: Boolean = false,
     enabled: Boolean = true,
     fullWidth: Boolean = true,
+    /** Tighter side padding for crowded places such as the top bar. The touch target stays 48 dp. */
+    compact: Boolean = false,
 ) {
     val scheme = MaterialTheme.colorScheme
     val status = LocalSahayColors.current
@@ -66,11 +68,11 @@ fun SahayButton(
         enabled = enabled,
         shape = SahayShapes.button,
         colors = colors,
-        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp),
+        contentPadding = PaddingValues(horizontal = if (compact) 10.dp else 20.dp, vertical = if (compact) 4.dp else 8.dp),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally),
+            horizontalArrangement = Arrangement.spacedBy(if (compact) 6.dp else 10.dp, Alignment.CenterHorizontally),
         ) {
             when {
                 loading -> CircularProgressIndicator(
@@ -78,7 +80,7 @@ fun SahayButton(
                     strokeWidth = 2.5.dp,
                     color = LocalContentColor.current,
                 )
-                icon != null -> Icon(icon, contentDescription = null, modifier = Modifier.size(if (size == ButtonSize.XL) 28.dp else 22.dp))
+                icon != null -> Icon(icon, contentDescription = null, modifier = Modifier.size(if (size == ButtonSize.XL) 28.dp else if (compact) 18.dp else 22.dp))
             }
             Text(text, style = textStyle, textAlign = TextAlign.Center, modifier = Modifier.weight(1f, fill = false))
         }

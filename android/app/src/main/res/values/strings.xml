@@ -63,9 +63,7 @@
     <string name="essentials_nationality_empty">Choose your country</string>
     <string name="essentials_nationality_search">Search countries</string>
     <string name="essentials_nationality_none">No country matches your search.</string>
-    <string name="essentials_phone">Phone with country code (optional)</string>
-    <string name="essentials_phone_hint">+49 151 2345 6789</string>
-    <string name="essentials_phone_error">Start with + and the country code, for example +49.</string>
+    <string name="essentials_phone">Phone number (optional)</string>
 
     <!-- Step 2: Medical -->
     <string name="medical_title">Medical details</string>
@@ -81,14 +79,23 @@
     <string name="medical_chip_asthma">Asthma</string>
     <string name="medical_chip_diabetes">Diabetes</string>
 
+    <!-- Phone number field -->
+    <string name="phone_country_button">Country code: %1$s %2$s</string>
+    <string name="phone_country_title">Choose a country</string>
+    <string name="phone_country_search">Search by country or code</string>
+    <string name="phone_popular">Popular</string>
+    <string name="phone_all_countries">All countries</string>
+    <string name="phone_no_results">No country matches your search.</string>
+    <string name="phone_invalid_for_country">This number doesn\'t look right for %1$s</string>
+    <string name="phone_required">Enter a phone number.</string>
+
     <!-- Step 3: Contacts -->
     <string name="contacts_title">Emergency contacts</string>
     <string name="contacts_body">We text them if you send an SOS. Add 1 to 3 people.</string>
     <string name="contacts_card_title">Contact %1$d</string>
     <string name="contacts_name">Name</string>
     <string name="contacts_name_error">Enter a name.</string>
-    <string name="contacts_phone">Phone with country code</string>
-    <string name="contacts_phone_error">Start with + and the country code, for example +49.</string>
+    <string name="contacts_phone">Phone number</string>
     <string name="contacts_relation">Relation</string>
     <string name="contacts_relation_error">Choose a relation.</string>
     <string name="contacts_add">Add another contact</string>
@@ -149,13 +156,10 @@
     <string name="works_saved_map">Your saved map and places</string>
     <string name="works_alerts_online">Live alerts from the internet</string>
     <string name="works_sms">Alerts and SOS by text message</string>
-    <string name="works_nearby">Alerts from phones nearby</string>
     <string name="works_yes">Works</string>
     <string name="works_no">Not available</string>
     <string name="offline_banner_since">Offline — using saved data from %1$s</string>
     <string name="offline_banner">Offline — using saved data</string>
-    <string name="soon_body">This screen is coming soon.</string>
-    <string name="soon_back">Go back</string>
 
     <!-- Home -->
     <string name="home_safe_title">You\'re safe</string>
@@ -165,7 +169,7 @@
     <string name="home_warning_generic_body">Stay alert and follow local advice.</string>
     <string name="home_simulation">Simulation</string>
     <string name="home_weather">Today: %1$s mm rain · wind %2$s km/h · %3$s°C</string>
-    <string name="home_weather_none">No forecast for today</string>
+    <string name="home_weather_none">Forecast unavailable — showing past patterns</string>
     <string name="home_no_pack_title">Download your trip pack</string>
     <string name="home_no_pack_body">Get maps, shelters and advice that work without internet.</string>
     <string name="home_no_pack_action">Download trip pack</string>
@@ -308,7 +312,10 @@
     <string name="nav_warn_hospital">No open shelter found. This leads to a hospital.</string>
     <string name="nav_warn_risk_area">This way passes a flood-prone area. Take care.</string>
     <string name="nav_warn_no_pack">No saved roads. Showing a straight line.</string>
-    <string name="nav_straight_line">This is a straight line, not a road route.</string>
+    <string name="nav_straight_line">No path data — showing direction only</string>
+    <string name="nav_full_map">Full map</string>
+    <string name="nav_exit_full_map">Show route</string>
+    <string name="nav_other_places">Other safe places nearby</string>
     <string name="nav_arrived_title">You\'ve arrived</string>
     <string name="nav_arrived_body">Stay here and follow local advice.</string>
     <string name="nav_show_local">Show this to a local</string>
@@ -371,4 +378,111 @@
     <string name="people_refresh_failed">Couldn\'t refresh. Showing the last list.</string>
     <string name="people_stale">These groups may be out of date.</string>
     <string name="people_nearby_phones">Phones nearby: %1$d</string>
+
+    <!-- Common additions -->
+    <string name="action_cancel">Cancel</string>
+    <string name="action_emergency_short">Emergency</string>
+
+    <!-- Emergency Mode -->
+    <string name="emergency_headline">Stay calm. Here\'s what to do.</string>
+    <string name="emergency_battery">Battery %1$d%%</string>
+    <string name="emergency_battery_low">Battery low: %1$d%%</string>
+    <string name="emergency_battery_unknown">Battery unknown</string>
+    <string name="emergency_exit">Exit Emergency Mode</string>
+    <string name="emergency_exit_hint">Press and hold for 2 seconds to exit.</string>
+
+    <!-- SOS -->
+    <string name="sos_sending_in">Sending SOS in</string>
+    <string name="sos_to">To: %1$s</string>
+    <string name="sos_message_preview">This text will be sent</string>
+    <string name="sos_message_sent">What we sent</string>
+    <string name="sos_cancel">Cancel</string>
+    <string name="sos_sending">Sending your SOS…</string>
+    <string name="sos_permission_title">Allow text messages to send your SOS</string>
+    <string name="sos_sent_title">SOS sent</string>
+    <string name="sos_sent_body">Your contacts got your text.</string>
+    <string name="sos_partial_title">Some texts didn\'t send</string>
+    <string name="sos_partial_body">Try again, or call 112.</string>
+    <string name="sos_failed_title">SOS not sent</string>
+    <string name="sos_failed_body">Check that your phone has a SIM and signal. Try again, or call 112.</string>
+    <string name="sos_contact_sent">Sent</string>
+    <string name="sos_contact_failed">Not sent</string>
+    <string name="sos_location_included">Your location was in the text.</string>
+    <string name="sos_location_missing">Your location was not in the text.</string>
+    <string name="sos_retry">Try again</string>
+    <string name="sos_no_contacts_title">No emergency contact</string>
+    <string name="sos_no_contacts_body">Add someone we can text if you need help.</string>
+    <string name="sos_add_contact">Add a contact</string>
+    <string name="sos_sms_app_title">Send it from your messages app</string>
+    <string name="sos_sms_app_body">Sahay can\'t send texts without permission. The text is ready in your messages app.</string>
+    <string name="sos_open_sms">Open messages app</string>
+    <string name="sos_dial_failed">This phone can\'t make calls. Ask someone nearby to call 112.</string>
+
+    <!-- Show to a local -->
+    <string name="local_tab_card">Card</string>
+    <string name="local_tab_phrasebook">Phrasebook</string>
+    <string name="local_no_tamil_title">Tamil text needs your trip pack</string>
+    <string name="local_no_tamil_body">Download it once. After that it works offline.</string>
+    <string name="local_headline_fallback">I am a tourist. I don\'t speak Tamil. Please help me.</string>
+    <string name="local_destination">I want to go to</string>
+    <string name="local_hotel">Where I stay</string>
+    <string name="local_medical">Medical</string>
+    <string name="local_blood_group">Blood group: %1$s</string>
+    <string name="local_allergies">Allergies: %1$s</string>
+    <string name="local_phrasebook_empty_title">No phrases yet</string>
+    <string name="local_phrasebook_empty_body">The phrasebook comes with your trip pack.</string>
+    <string name="phrase_cat_emergency">Emergency</string>
+    <string name="phrase_cat_directions">Directions</string>
+    <string name="phrase_cat_medical">Medical</string>
+    <string name="phrase_cat_basic">Basics</string>
+
+    <!-- Me -->
+    <string name="me_action_failed">Couldn\'t save that. Try again.</string>
+    <string name="me_section_details">Your details</string>
+    <string name="me_edit_profile">Edit profile</string>
+    <string name="me_medical_card">Medical card</string>
+    <string name="me_section_trip">Trip</string>
+    <string name="me_trip_pack">Trip pack</string>
+    <string name="me_trip_pack_none">No trip pack yet</string>
+    <string name="me_section_settings">Settings</string>
+    <string name="me_theme">Theme</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="me_language">Language</string>
+    <string name="me_privacy">Privacy</string>
+    <string name="me_about">About &amp; licenses</string>
+    <string name="me_sign_out">Sign out</string>
+    <string name="me_sign_out_title">Sign out?</string>
+    <string name="me_sign_out_body">Your details on this phone will be removed. You can set up again any time.</string>
+    <string name="me_name_missing">Traveller</string>
+    <string name="me_guest">Guest</string>
+    <string name="medcard_not_added">Not added</string>
+    <string name="medcard_no_contacts">No emergency contacts yet.</string>
+
+    <!-- Trip pack -->
+    <string name="trip_pack_update">Update trip pack</string>
+    <string name="trip_pack_delete">Delete trip pack</string>
+    <string name="trip_pack_delete_title">Delete your trip pack?</string>
+    <string name="trip_pack_delete_body">Maps and shelters won\'t work offline until you download it again.</string>
+    <string name="trip_pack_region">Place</string>
+    <string name="trip_pack_dates">Dates</string>
+    <string name="trip_pack_version">Version</string>
+    <string name="trip_pack_size">Size</string>
+    <string name="trip_pack_downloaded">Downloaded</string>
+
+    <!-- Privacy and About -->
+    <string name="privacy_stays_title">Stays on this phone</string>
+    <string name="privacy_stays_body">Your medical details and emergency contacts. They only leave in the SOS text you choose to send.</string>
+    <string name="privacy_shared_title">Shared with Sahay</string>
+    <string name="privacy_shared_body">A random ID, your language and your region. Hazard reports include where they are.</string>
+    <string name="about_app_line">Sahay %1$s</string>
+    <string name="about_licenses">Open data and licenses</string>
+    <string name="about_osm">Map data © OpenStreetMap contributors (ODbL)</string>
+    <string name="about_openfreemap">Backup map style, free to use</string>
+    <string name="about_protomaps">Offline map tiles</string>
+    <string name="about_maplibre">Map engine (BSD 2-Clause)</string>
+    <string name="about_manrope">Font (SIL Open Font License)</string>
+    <string name="about_openmeteo">Weather forecasts (CC BY 4.0)</string>
+    <string name="about_open_link">Open website</string>
 </resources>

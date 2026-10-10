@@ -38,7 +38,6 @@ import com.sahay.designsystem.components.LoadingState
 import com.sahay.designsystem.components.SahayButton
 import com.sahay.designsystem.components.SahayCard
 import com.sahay.designsystem.components.SectionHeader
-import com.sahay.designsystem.components.SimulationTag
 import com.sahay.designsystem.components.StatusCard
 import com.sahay.designsystem.components.StatusKind
 import java.util.Locale
@@ -123,8 +122,8 @@ private fun StatusSection(status: HomeStatus, onGoToSafety: () -> Unit) {
                 body = status.alert.body,
                 actionLabel = goToSafety,
                 onAction = onGoToSafety,
+                tag = if (status.alert.isSimulation) stringResource(R.string.home_simulation) else null,
             )
-            if (status.alert.isSimulation) SimulationTag(stringResource(R.string.home_simulation))
         }
         is HomeStatus.Warning -> {
             val alert = status.alert
@@ -138,8 +137,8 @@ private fun StatusSection(status: HomeStatus, onGoToSafety: () -> Unit) {
                 },
                 actionLabel = if (status.inFloodZone) goToSafety else null,
                 onAction = if (status.inFloodZone) onGoToSafety else null,
+                tag = if (alert?.isSimulation == true) stringResource(R.string.home_simulation) else null,
             )
-            if (alert?.isSimulation == true) SimulationTag(stringResource(R.string.home_simulation))
         }
         HomeStatus.Safe -> StatusCard(
             kind = StatusKind.Safe,

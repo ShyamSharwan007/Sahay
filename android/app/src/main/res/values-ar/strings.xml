@@ -1,0 +1,498 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Common -->
+    <string name="action_back">رجوع</string>
+    <string name="action_next">التالي</string>
+    <string name="action_skip">تخطّي</string>
+    <string name="action_continue">متابعة</string>
+    <string name="action_finish">إنهاء</string>
+    <string name="action_retry">حاول مرة أخرى</string>
+    <string name="action_remove">إزالة</string>
+    <string name="action_close">إغلاق</string>
+    <string name="loading">جارٍ التحميل</string>
+
+    <!-- Language picker -->
+    <string name="language_title">اختر لغتك</string>
+    <string name="language_subtitle">ستظهر التنبيهات والمساعدة بهذه اللغة.</string>
+    <string name="language_selected">محدَّدة</string>
+
+    <!-- Welcome -->
+    <string name="welcome_get_started">ابدأ</string>
+    <string name="welcome_slide1_title">يعمل بلا إنترنت</string>
+    <string name="welcome_slide1_body">الخرائط والملاجئ والمسارات محفوظة على هاتفك. لا حاجة إلى إشارة.</string>
+    <string name="welcome_slide2_title">تنبيهات بلغتك</string>
+    <string name="welcome_slide2_body">نترجم التحذيرات الرسمية إلى كلمات تفهمها.</string>
+    <string name="welcome_slide3_title">المساعدة بلمسة واحدة</string>
+    <string name="welcome_slide3_body">أرسل رسالة SOS إلى جهات اتصالك، حتى بلا إنترنت.</string>
+    <string name="welcome_page_indicator">الصفحة %1$d من %2$d</string>
+
+    <!-- Sign in -->
+    <string name="signin_title">سجّل الدخول إلى Sahay</string>
+    <string name="signin_body">تحتاج إلى الإنترنت مرة واحدة لتسجيل الدخول. بعد ذلك يعمل Sahay بلا إنترنت.</string>
+    <string name="signin_google">المتابعة باستخدام Google</string>
+    <string name="signin_guest">المتابعة كضيف</string>
+    <string name="signin_error_no_internet_title">تحتاج إلى الإنترنت مرة واحدة لتسجيل الدخول</string>
+    <string name="signin_error_no_internet_body">اتصل بشبكة Wi-Fi أو بيانات الجوال، ثم حاول مرة أخرى.</string>
+    <string name="signin_error_no_account_title">لم نجد حساب Google</string>
+    <string name="signin_error_no_account_body">أضف حساب Google من الإعدادات، أو تابع كضيف.</string>
+    <string name="signin_error_failed_title">تعذّر تسجيل الدخول</string>
+    <string name="signin_error_failed_body">حدث خطأ. حاول مرة أخرى أو تابع كضيف.</string>
+
+    <!-- Wizard shell -->
+    <string name="wizard_step_of">الخطوة %1$d من %2$d</string>
+    <string name="wizard_save_failed_title">تعذّر حفظ بياناتك</string>
+    <string name="wizard_save_failed_body">تأكد من تسجيل الدخول ثم حاول مرة أخرى.</string>
+
+    <!-- Step 1: Essentials -->
+    <string name="essentials_title">عنك</string>
+    <string name="essentials_body">يراها رجال الإنقاذ والسكان المحليون على بطاقة المساعدة الخاصة بك.</string>
+    <string name="essentials_name">اسمك</string>
+    <string name="essentials_name_error">أدخل اسمك.</string>
+    <string name="essentials_nationality">الجنسية</string>
+    <string name="essentials_nationality_empty">اختر بلدك</string>
+    <string name="essentials_nationality_search">ابحث عن بلد</string>
+    <string name="essentials_nationality_none">لا يوجد بلد يطابق بحثك.</string>
+    <string name="essentials_phone">رقم الهاتف (اختياري)</string>
+
+    <!-- Step 2: Medical -->
+    <string name="medical_title">البيانات الطبية</string>
+    <string name="medical_body">اختيارية – تساعد رجال الإنقاذ.</string>
+    <string name="medical_blood_group">فصيلة الدم</string>
+    <string name="medical_blood_unknown">لا أعرف</string>
+    <string name="medical_allergies">الحساسية</string>
+    <string name="medical_medications">الأدوية</string>
+    <string name="medical_conditions">الحالات الصحية</string>
+    <string name="medical_quick_add">إضافة سريعة</string>
+    <string name="medical_chip_penicillin">البنسلين</string>
+    <string name="medical_chip_nuts">المكسرات</string>
+    <string name="medical_chip_asthma">الربو</string>
+    <string name="medical_chip_diabetes">السكري</string>
+
+    <!-- Phone number field -->
+    <string name="phone_country_button">رمز الدولة: %1$s %2$s</string>
+    <string name="phone_country_title">اختر دولة</string>
+    <string name="phone_country_search">ابحث باسم الدولة أو الرمز</string>
+    <string name="phone_popular">الأكثر استخدامًا</string>
+    <string name="phone_all_countries">كل الدول</string>
+    <string name="phone_no_results">لا توجد دولة تطابق بحثك.</string>
+    <string name="phone_invalid_for_country">يبدو أن هذا الرقم غير صحيح لـ %1$s</string>
+    <string name="phone_required">أدخل رقم هاتف.</string>
+
+    <!-- Step 3: Contacts -->
+    <string name="contacts_title">جهات اتصال الطوارئ</string>
+    <string name="contacts_body">سنراسلهم إذا أرسلت SOS. أضف من شخص إلى 3 أشخاص.</string>
+    <string name="contacts_card_title">جهة الاتصال %1$d</string>
+    <string name="contacts_name">الاسم</string>
+    <string name="contacts_name_error">أدخل اسمًا.</string>
+    <string name="contacts_phone">رقم الهاتف</string>
+    <string name="contacts_relation">صلة القرابة</string>
+    <string name="contacts_relation_error">اختر صلة القرابة.</string>
+    <string name="contacts_add">إضافة جهة اتصال أخرى</string>
+    <string name="relation_parent">أحد الوالدين</string>
+    <string name="relation_partner">الشريك</string>
+    <string name="relation_sibling">أخ أو أخت</string>
+    <string name="relation_friend">صديق</string>
+    <string name="relation_other">أخرى</string>
+
+    <!-- Step 4: Where you stay -->
+    <string name="stay_title">أين تقيم</string>
+    <string name="stay_body">اختياري. يظهر للسكان المحليين على بطاقة المساعدة.</string>
+    <string name="stay_hotel_name">اسم الفندق أو المكان</string>
+    <string name="stay_hotel_address">العنوان</string>
+
+    <!-- Step 5: Privacy -->
+    <string name="privacy_title">خصوصيتك</string>
+    <string name="privacy_group_finder">ساعدني في إيجاد مجموعات قريبة</string>
+    <string name="privacy_group_finder_body">تظهر فقط المجموعات التي فيها 5 أشخاص أو أكثر. لا أحد يراك شخصيًا.</string>
+    <string name="privacy_medical_note">تبقى بياناتك الطبية على هذا الهاتف. لا تُرسل إلا في رسالة SOS التي تختار إرسالها.</string>
+
+    <!-- Step 6: Permissions -->
+    <string name="permissions_title">اسمح بما يحتاجه Sahay</string>
+    <string name="permissions_body">يمكنك تغيير ذلك لاحقًا من الإعدادات.</string>
+    <string name="permission_allow">سماح</string>
+    <string name="permission_granted">مسموح</string>
+    <string name="permission_location_title">الموقع</string>
+    <string name="permission_location_why">يجد أقرب ملجأ ويُظهر مكانك.</string>
+    <string name="permission_location_denied">بدونه لن تبدأ المسارات إلى الملاجئ من مكانك.</string>
+    <string name="permission_notifications_title">الإشعارات</string>
+    <string name="permission_notifications_why">ينبّهك عندما يقترب الخطر.</string>
+    <string name="permission_notifications_denied">بدونها لن ترى التنبيهات والتطبيق مغلق.</string>
+    <string name="permission_sms_title">الرسائل النصية</string>
+    <string name="permission_sms_why">يرسل SOS ويقرأ التنبيهات الرسمية بلا إنترنت.</string>
+    <string name="permission_sms_denied">بدونها لن تعمل رسائل SOS والتنبيهات بلا إنترنت.</string>
+    <string name="permission_open_settings">فتح الإعدادات</string>
+
+    <!-- Main scaffold -->
+    <string name="nav_home">الرئيسية</string>
+    <string name="nav_map">الخريطة</string>
+    <string name="nav_alerts">التنبيهات</string>
+    <string name="nav_me">أنا</string>
+    <plurals name="nav_alerts_unread">
+        <item quantity="zero">التنبيهات، %1$d غير مقروء</item>
+        <item quantity="one">التنبيهات، %1$d غير مقروء</item>
+        <item quantity="two">التنبيهات، %1$d غير مقروءين</item>
+        <item quantity="few">التنبيهات، %1$d غير مقروءة</item>
+        <item quantity="many">التنبيهات، %1$d غير مقروء</item>
+        <item quantity="other">التنبيهات، %1$d غير مقروء</item>
+    </plurals>
+    <string name="conn_online">متصل</string>
+    <string name="conn_sms_only">رسائل نصية فقط</string>
+    <string name="conn_offline">غير متصل</string>
+    <plurals name="conn_offline_phones">
+        <item quantity="zero">غير متصل · لا هواتف قريبة</item>
+        <item quantity="one">غير متصل · هاتف قريب واحد</item>
+        <item quantity="two">غير متصل · هاتفان قريبان</item>
+        <item quantity="few">غير متصل · %1$d هواتف قريبة</item>
+        <item quantity="many">غير متصل · %1$d هاتفًا قريبًا</item>
+        <item quantity="other">غير متصل · %1$d هاتف قريب</item>
+    </plurals>
+    <string name="works_title">ما يعمل الآن</string>
+    <string name="works_saved_map">خريطتك وأماكنك المحفوظة</string>
+    <string name="works_alerts_online">تنبيهات مباشرة من الإنترنت</string>
+    <string name="works_sms">التنبيهات وSOS عبر الرسائل النصية</string>
+    <string name="works_yes">يعمل</string>
+    <string name="works_no">غير متاح</string>
+    <string name="offline_banner_since">غير متصل – بيانات محفوظة من %1$s</string>
+    <string name="offline_banner">غير متصل – بيانات محفوظة</string>
+
+    <!-- Home -->
+    <string name="home_safe_title">أنت بأمان</string>
+    <string name="home_safe_body">لا توجد تحذيرات نشطة في منطقتك</string>
+    <string name="home_zone_title">أنت في منطقة معرّضة للفيضان</string>
+    <string name="home_zone_body">اعرف الطريق إلى أقرب ملجأ.</string>
+    <string name="home_warning_generic_body">ابقَ منتبهًا واتبع إرشادات السلطات المحلية.</string>
+    <string name="home_simulation">محاكاة</string>
+    <string name="home_weather">اليوم: مطر %1$s مم · رياح %2$s كم/س · %3$s°م</string>
+    <string name="home_weather_none">التوقعات غير متاحة – نعرض الأنماط السابقة</string>
+    <string name="home_no_pack_title">نزّل حزمة رحلتك</string>
+    <string name="home_no_pack_body">احصل على خرائط وملاجئ ونصائح تعمل بلا إنترنت.</string>
+    <string name="home_no_pack_action">تنزيل حزمة الرحلة</string>
+    <string name="home_precautions">احتياطات</string>
+    <string name="action_go_safety">اذهب إلى مكان آمن</string>
+    <string name="action_sos">SOS</string>
+    <string name="action_show_local">أرِ شخصًا محليًا</string>
+    <string name="action_report_hazard">أبلغ عن خطر</string>
+    <string name="action_find_people">ابحث عن أشخاص</string>
+    <string name="action_emergency_mode">وضع الطوارئ</string>
+
+    <!-- Trip setup -->
+    <string name="trip_region_title">إلى أين تذهب؟</string>
+    <string name="trip_region_body">اختر المكان الذي ستزوره.</string>
+    <string name="trip_regions_empty_title">لا توجد أماكن بعد</string>
+    <string name="trip_regions_empty_body">ستظهر الأماكن هنا قريبًا. حاول بعد قليل.</string>
+    <string name="trip_regions_error_title">تعذّر تحميل الأماكن</string>
+    <string name="trip_regions_error_body">تحقق من اتصالك وحاول مرة أخرى.</string>
+    <string name="trip_skip">تخطَّ الآن</string>
+    <string name="trip_dates_title">متى ستكون هناك؟</string>
+    <string name="trip_dates_hint">اختر أول يوم وآخر يوم. حتى 30 يومًا.</string>
+    <string name="trip_dates_forecast_note">التوقعات متاحة حتى 16 يومًا قادمة.</string>
+    <string name="trip_dates_error_missing">اختر أول يوم وآخر يوم.</string>
+    <string name="trip_dates_error_past">لا يمكن أن تبدأ رحلتك في الماضي.</string>
+    <string name="trip_dates_error_order">اختر أول يوم قبل آخر يوم.</string>
+    <string name="trip_dates_error_long">اختر 30 يومًا أو أقل.</string>
+    <string name="trip_download_action">تنزيل حزمة الرحلة</string>
+    <string name="trip_download_title">جارٍ حفظ حزمة رحلتك</string>
+    <string name="trip_download_wifi">ابقَ على Wi-Fi إن أمكن.</string>
+    <string name="trip_download_percent">%1$d%%</string>
+    <string name="trip_step_manifest">جلب معلومات الرحلة</string>
+    <string name="trip_step_data">حفظ الأماكن والطرق</string>
+    <string name="trip_step_map">حفظ الخريطة</string>
+    <string name="trip_step_assets">حفظ أسماء الخريطة</string>
+    <string name="trip_step_verify">التحقق من كل شيء</string>
+    <string name="trip_step_done">تم</string>
+    <string name="trip_step_active">قيد التنفيذ</string>
+    <string name="trip_step_pending">في الانتظار</string>
+    <string name="trip_failed_title">لم يكتمل التنزيل</string>
+    <string name="trip_failed_body">تحقق من اتصالك وحاول مرة أخرى.</string>
+    <string name="trip_unavailable_body">هذه الحزمة غير متاحة الآن. اختر مكانًا آخر.</string>
+    <string name="trip_ready_title">أنت جاهز للسفر بلا إنترنت</string>
+    <string name="trip_ready_summary">%1$s · %2$s – %3$s</string>
+    <string name="trip_forecast">التوقعات</string>
+    <string name="trip_forecast_empty">لا توجد توقعات بعد. تغطي التوقعات حتى 16 يومًا قادمة.</string>
+    <string name="trip_forecast_rain">%1$s مم</string>
+    <string name="trip_forecast_wind">%1$s كم/س</string>
+    <string name="risk_low">منخفض</string>
+    <string name="risk_moderate">متوسط</string>
+    <string name="risk_high">مرتفع</string>
+    <string name="risk_severe">شديد</string>
+    <string name="risk_unknown">غير معروف</string>
+    <string name="trip_history">السجل</string>
+    <string name="trip_incidents">ما حدث هنا من قبل</string>
+    <string name="trip_incident_source">اقرأ المصدر</string>
+    <string name="trip_precautions">قبل رحلتك وأثناءها</string>
+
+    <!-- Shared -->
+    <string name="distance_m">%1$d م</string>
+    <string name="distance_km">%1$s كم</string>
+    <string name="distance_away">على بُعد %1$s</string>
+    <string name="distance_unknown">المسافة غير معروفة</string>
+    <string name="time_just_now">الآن</string>
+    <plurals name="time_min_ago">
+        <item quantity="zero">منذ %1$d دقيقة</item>
+        <item quantity="one">منذ %1$d دقيقة</item>
+        <item quantity="two">منذ %1$d دقيقة</item>
+        <item quantity="few">منذ %1$d دقائق</item>
+        <item quantity="many">منذ %1$d دقيقة</item>
+        <item quantity="other">منذ %1$d دقيقة</item>
+    </plurals>
+    <plurals name="time_hours_ago">
+        <item quantity="zero">منذ %1$d ساعة</item>
+        <item quantity="one">منذ %1$d ساعة</item>
+        <item quantity="two">منذ %1$d ساعة</item>
+        <item quantity="few">منذ %1$d ساعات</item>
+        <item quantity="many">منذ %1$d ساعة</item>
+        <item quantity="other">منذ %1$d ساعة</item>
+    </plurals>
+    <plurals name="time_days_ago">
+        <item quantity="zero">منذ %1$d يوم</item>
+        <item quantity="one">منذ %1$d يوم</item>
+        <item quantity="two">منذ %1$d يوم</item>
+        <item quantity="few">منذ %1$d أيام</item>
+        <item quantity="many">منذ %1$d يومًا</item>
+        <item quantity="other">منذ %1$d يوم</item>
+    </plurals>
+    <string name="updated_ago">حُدّث %1$s</string>
+    <string name="action_call_number">اتصل بـ %1$s</string>
+    <string name="action_go_here">اذهب إلى هنا</string>
+    <string name="action_go">اذهب</string>
+    <string name="action_recenter">إعادة التمركز</string>
+    <string name="action_refresh">تحديث</string>
+    <string name="action_turn_on">تشغيل</string>
+    <string name="action_done">تم</string>
+    <string name="poi_type_shelter">ملجأ</string>
+    <string name="poi_type_possible_shelter">ملجأ محتمل</string>
+    <string name="poi_type_hospital">مستشفى</string>
+    <string name="poi_type_police">مركز شرطة</string>
+    <string name="shelter_open">مفتوح</string>
+    <string name="shelter_full">ممتلئ</string>
+    <string name="shelter_closed">مغلق</string>
+    <string name="shelter_unknown">الحالة غير معروفة</string>
+    <string name="hazard_flood">فيضان</string>
+    <string name="hazard_road_blocked">طريق مغلق</string>
+    <string name="hazard_shelter_full">الملجأ ممتلئ</string>
+    <string name="hazard_shelter_open">الملجأ مفتوح</string>
+    <string name="hazard_power_line">سقوط خط كهرباء</string>
+    <string name="hazard_landslide">انهيار أرضي</string>
+    <string name="hazard_other">شيء آخر</string>
+    <string name="trust_verified">موثَّق</string>
+    <string name="trust_likely">مرجَّح</string>
+    <string name="trust_unconfirmed">غير مؤكَّد</string>
+    <string name="trust_description">بلاغ %1$s، الدرجة %2$d بالمئة</string>
+    <plurals name="group_people">
+        <item quantity="zero">%1$d شخص</item>
+        <item quantity="one">شخص واحد</item>
+        <item quantity="two">شخصان</item>
+        <item quantity="few">%1$d أشخاص</item>
+        <item quantity="many">%1$d شخصًا</item>
+        <item quantity="other">%1$d شخص</item>
+    </plurals>
+    <string name="group_at_shelter">في ملجأ</string>
+    <string name="group_safe_area">في منطقة آمنة</string>
+    <string name="group_risk">خطر فيضان</string>
+    <string name="group_dont_go">لا تذهب – خطر فيضان</string>
+    <string name="group_summary">%1$s · %2$s · %3$s</string>
+
+    <!-- Map -->
+    <string name="map_filter_shelters">الملاجئ</string>
+    <string name="map_filter_hospitals">المستشفيات</string>
+    <string name="map_filter_police">الشرطة</string>
+    <string name="map_filter_reports">البلاغات</string>
+    <string name="map_filter_groups">المجموعات</string>
+    <string name="map_filter_risk">مناطق الخطر</string>
+    <string name="map_no_pack_title">لا توجد حزمة رحلة بعد</string>
+    <string name="map_no_pack_body">نزّل حزمة رحلة لترى الملاجئ والمسارات الآمنة على الخريطة.</string>
+    <string name="map_error_title">تعذّر فتح الخريطة</string>
+    <string name="map_error_body">تعذّرت قراءة حزمة رحلتك المحفوظة. حاول مرة أخرى.</string>
+    <string name="report_age">أُبلغ عنه %1$s</string>
+    <string name="report_no_note">بلا ملاحظة</string>
+    <string name="report_pending_send">تم الحفظ. سيُرسل عند الاتصال</string>
+
+    <!-- Navigate -->
+    <string name="nav_header">%1$s · %2$s</string>
+    <string name="nav_eta_walk">%1$d دقيقة سيرًا</string>
+    <string name="nav_finding">جارٍ البحث عن أأمن طريق…</string>
+    <string name="nav_no_fix_title">تعذّر تحديد موقعك</string>
+    <string name="nav_no_fix_body">اقترب من نافذة وحاول مرة أخرى.</string>
+    <string name="nav_no_permission_body">اسمح بالموقع من الإعدادات ليبدأ Sahay من مكانك.</string>
+    <string name="nav_no_route_title">تعذّر إيجاد طريق</string>
+    <string name="nav_no_route_body">حاول مرة أخرى، أو ابحث عن ملاجئ على الخريطة.</string>
+    <string name="nav_destination_point">المكان الذي اخترته</string>
+    <string name="nav_avoids_risk">يتجنب الطرق المعرّضة للفيضان</string>
+    <string name="nav_warn_far_from_road">أنت بعيد عن الطريق. امشِ أولًا إلى أقرب طريق.</string>
+    <string name="nav_warn_hospital">لا يوجد ملجأ مفتوح. هذا الطريق يؤدي إلى مستشفى.</string>
+    <string name="nav_warn_risk_area">هذا الطريق يمر بمنطقة معرّضة للفيضان. كن حذرًا.</string>
+    <string name="nav_warn_no_pack">لا توجد طرق محفوظة. نعرض خطًا مستقيمًا.</string>
+    <string name="nav_straight_line">لا توجد بيانات للطريق – نعرض الاتجاه فقط</string>
+    <string name="nav_full_map">الخريطة كاملة</string>
+    <string name="nav_exit_full_map">عرض المسار</string>
+    <string name="nav_other_places">أماكن آمنة أخرى قريبة</string>
+    <string name="nav_arrived_title">لقد وصلت</string>
+    <string name="nav_arrived_body">ابقَ هنا واتبع إرشادات السلطات المحلية.</string>
+    <string name="nav_show_local">أرِ هذا لشخص محلي</string>
+
+    <!-- Alerts -->
+    <string name="alerts_paste">الصق تنبيهًا</string>
+    <string name="alerts_empty_title">لا توجد تنبيهات</string>
+    <string name="alerts_empty_body">ستظهر التحذيرات الرسمية هنا بلغتك.</string>
+    <string name="alerts_refresh_failed_title">تعذّر البحث عن تنبيهات جديدة</string>
+    <string name="alerts_refresh_failed_body">نعرض التنبيهات المحفوظة. اسحب للأسفل للمحاولة مرة أخرى.</string>
+    <string name="severity_emergency">طوارئ</string>
+    <string name="severity_warning">تحذير</string>
+    <string name="severity_watch">ترقّب</string>
+    <string name="severity_info">معلومة</string>
+    <string name="verif_official">رسمي موثَّق</string>
+    <string name="verif_looks_official">يبدو رسميًا – غير موثَّق</string>
+    <string name="verif_unverified">غير موثَّق</string>
+    <string name="source_internet">الإنترنت</string>
+    <string name="source_sms_server">رسالة من Sahay</string>
+    <string name="source_sms_official">رسالة رسمية</string>
+    <string name="source_mesh">هاتف قريب</string>
+    <string name="source_pasted">ملصوق</string>
+    <string name="alert_unread">غير مقروء</string>
+    <string name="alert_received">وصل %1$s</string>
+    <string name="alert_in_english">بالإنجليزية</string>
+    <string name="alert_show_original">عرض الأصل</string>
+    <string name="alert_hide_original">إخفاء الأصل</string>
+    <string name="alert_not_found_title">التنبيه غير موجود</string>
+    <string name="alert_not_found_body">ربما تمت إزالته.</string>
+    <string name="paste_body">الصق رسالة نصية وصلتك. سنحوّلها إلى كلمات بسيطة.</string>
+    <string name="paste_hint">الصق الرسالة هنا</string>
+    <string name="paste_action">ترجمة</string>
+    <string name="paste_empty_error">الصق رسالة أولًا.</string>
+
+    <!-- Report a hazard -->
+    <string name="report_what">ماذا ترى؟</string>
+    <string name="report_location_label">موقعك</string>
+    <string name="report_locating">جارٍ تحديد موقعك…</string>
+    <string name="report_no_fix_title">نحتاج إلى موقعك</string>
+    <string name="report_no_fix_body">اقترب من نافذة وحاول مرة أخرى.</string>
+    <string name="report_note_label">ملاحظة (اختياري)</string>
+    <string name="report_note_counter">%1$d/%2$d</string>
+    <string name="report_submit">إرسال البلاغ</string>
+    <string name="report_failed">تعذّر حفظ بلاغك. حاول مرة أخرى.</string>
+    <string name="report_sent_title">تم الإرسال</string>
+    <string name="report_sent_body">شكرًا. يستطيع القريبون منك رؤيته الآن.</string>
+    <string name="report_saved_title">تم الحفظ – سيُرسل عند الاتصال</string>
+    <string name="report_saved_body">سنرسله حالما تتوفر إشارة.</string>
+    <string name="report_selected">محدَّد</string>
+
+    <!-- Find people -->
+    <string name="people_privacy">تظهر فقط المجموعات التي فيها %1$d أشخاص أو أكثر. لا أحد يراك شخصيًا.</string>
+    <string name="people_optin_title">ميزة «ابحث عن أشخاص» متوقفة</string>
+    <string name="people_optin_body">شغّلها لترى مجموعات المسافرين القريبة منك. يشارك هاتفك منطقة تقريبية فقط.</string>
+    <string name="people_optin_failed">تعذّر التشغيل. حاول مرة أخرى.</string>
+    <string name="people_empty_title">لا توجد مجموعات قريبة</string>
+    <string name="people_empty_body">سنبحث مرة أخرى بعد دقيقتين.</string>
+    <string name="people_no_fix_title">نحتاج إلى موقعك</string>
+    <string name="people_no_fix_body">اقترب من نافذة وحاول مرة أخرى.</string>
+    <string name="people_refresh_failed">تعذّر التحديث. نعرض آخر قائمة.</string>
+    <string name="people_stale">قد تكون هذه المجموعات قديمة.</string>
+    <string name="people_nearby_phones">هواتف قريبة: %1$d</string>
+
+    <!-- Common additions -->
+    <string name="action_cancel">إلغاء</string>
+    <string name="action_emergency_short">طوارئ</string>
+
+    <!-- Emergency Mode -->
+    <string name="emergency_headline">ابقَ هادئًا. إليك ما يجب فعله.</string>
+    <string name="emergency_battery">البطارية %1$d%%</string>
+    <string name="emergency_battery_low">البطارية منخفضة: %1$d%%</string>
+    <string name="emergency_battery_unknown">مستوى البطارية غير معروف</string>
+    <string name="emergency_exit">الخروج من وضع الطوارئ</string>
+    <string name="emergency_exit_hint">اضغط مطوّلًا لمدة ثانيتين للخروج.</string>
+
+    <!-- SOS -->
+    <string name="sos_sending_in">إرسال SOS خلال</string>
+    <string name="sos_to">إلى: %1$s</string>
+    <string name="sos_message_preview">ستُرسل هذه الرسالة</string>
+    <string name="sos_message_sent">ما أرسلناه</string>
+    <string name="sos_cancel">إلغاء</string>
+    <string name="sos_sending">جارٍ إرسال SOS…</string>
+    <string name="sos_permission_title">اسمح بالرسائل النصية لإرسال SOS</string>
+    <string name="sos_sent_title">تم إرسال SOS</string>
+    <string name="sos_sent_body">وصلت رسالتك إلى جهات اتصالك.</string>
+    <string name="sos_partial_title">لم تُرسل بعض الرسائل</string>
+    <string name="sos_partial_body">حاول مرة أخرى أو اتصل بـ 112.</string>
+    <string name="sos_failed_title">لم يُرسل SOS</string>
+    <string name="sos_failed_body">تأكد من وجود شريحة SIM وإشارة في هاتفك. حاول مرة أخرى أو اتصل بـ 112.</string>
+    <string name="sos_contact_sent">أُرسلت</string>
+    <string name="sos_contact_failed">لم تُرسل</string>
+    <string name="sos_location_included">كان موقعك في الرسالة.</string>
+    <string name="sos_location_missing">لم يكن موقعك في الرسالة.</string>
+    <string name="sos_retry">حاول مرة أخرى</string>
+    <string name="sos_no_contacts_title">لا توجد جهة اتصال للطوارئ</string>
+    <string name="sos_no_contacts_body">أضف شخصًا نراسله إذا احتجت إلى مساعدة.</string>
+    <string name="sos_add_contact">إضافة جهة اتصال</string>
+    <string name="sos_sms_app_title">أرسلها من تطبيق الرسائل</string>
+    <string name="sos_sms_app_body">لا يستطيع Sahay إرسال رسائل بدون إذن. النص جاهز في تطبيق الرسائل.</string>
+    <string name="sos_open_sms">فتح تطبيق الرسائل</string>
+    <string name="sos_dial_failed">لا يستطيع هذا الهاتف إجراء مكالمات. اطلب من شخص قريب الاتصال بـ 112.</string>
+
+    <!-- Show to a local -->
+    <string name="local_tab_card">البطاقة</string>
+    <string name="local_tab_phrasebook">دليل العبارات</string>
+    <string name="local_no_tamil_title">النص التاميلي يحتاج إلى حزمة رحلتك</string>
+    <string name="local_no_tamil_body">نزّلها مرة واحدة. بعد ذلك تعمل بلا إنترنت.</string>
+    <string name="local_headline_fallback">أنا سائح ولا أتكلم التاميلية. من فضلك ساعدني.</string>
+    <string name="local_destination">أريد الذهاب إلى</string>
+    <string name="local_hotel">مكان إقامتي</string>
+    <string name="local_medical">طبي</string>
+    <string name="local_blood_group">فصيلة الدم: %1$s</string>
+    <string name="local_allergies">الحساسية: %1$s</string>
+    <string name="local_phrasebook_empty_title">لا توجد عبارات بعد</string>
+    <string name="local_phrasebook_empty_body">يأتي دليل العبارات مع حزمة رحلتك.</string>
+    <string name="phrase_cat_emergency">طوارئ</string>
+    <string name="phrase_cat_directions">الاتجاهات</string>
+    <string name="phrase_cat_medical">طبي</string>
+    <string name="phrase_cat_basic">أساسيات</string>
+
+    <!-- Me -->
+    <string name="me_action_failed">تعذّر الحفظ. حاول مرة أخرى.</string>
+    <string name="me_section_details">بياناتك</string>
+    <string name="me_edit_profile">تعديل الملف الشخصي</string>
+    <string name="me_medical_card">البطاقة الطبية</string>
+    <string name="me_section_trip">الرحلة</string>
+    <string name="me_trip_pack">حزمة الرحلة</string>
+    <string name="me_trip_pack_none">لا توجد حزمة رحلة بعد</string>
+    <string name="me_section_settings">الإعدادات</string>
+    <string name="me_theme">المظهر</string>
+    <string name="theme_system">النظام</string>
+    <string name="theme_light">فاتح</string>
+    <string name="theme_dark">داكن</string>
+    <string name="me_language">اللغة</string>
+    <string name="me_privacy">الخصوصية</string>
+    <string name="me_about">حول التطبيق والتراخيص</string>
+    <string name="me_sign_out">تسجيل الخروج</string>
+    <string name="me_sign_out_title">تسجيل الخروج؟</string>
+    <string name="me_sign_out_body">ستُحذف بياناتك من هذا الهاتف. يمكنك الإعداد من جديد في أي وقت.</string>
+    <string name="me_name_missing">مسافر</string>
+    <string name="me_guest">ضيف</string>
+    <string name="medcard_not_added">غير مضاف</string>
+    <string name="medcard_no_contacts">لا توجد جهات اتصال للطوارئ بعد.</string>
+
+    <!-- Trip pack -->
+    <string name="trip_pack_update">تحديث حزمة الرحلة</string>
+    <string name="trip_pack_delete">حذف حزمة الرحلة</string>
+    <string name="trip_pack_delete_title">حذف حزمة رحلتك؟</string>
+    <string name="trip_pack_delete_body">لن تعمل الخرائط والملاجئ بلا إنترنت حتى تنزّلها مرة أخرى.</string>
+    <string name="trip_pack_region">المكان</string>
+    <string name="trip_pack_dates">التواريخ</string>
+    <string name="trip_pack_version">الإصدار</string>
+    <string name="trip_pack_size">الحجم</string>
+    <string name="trip_pack_downloaded">تاريخ التنزيل</string>
+
+    <!-- Privacy and About -->
+    <string name="privacy_stays_title">يبقى على هذا الهاتف</string>
+    <string name="privacy_stays_body">بياناتك الطبية وجهات اتصال الطوارئ. لا تغادر إلا في رسالة SOS التي تختار إرسالها.</string>
+    <string name="privacy_shared_title">يُشارَك مع Sahay</string>
+    <string name="privacy_shared_body">معرّف عشوائي ولغتك ومنطقتك. تتضمن بلاغات الخطر مكانها.</string>
+    <string name="about_app_line">Sahay %1$s</string>
+    <string name="about_licenses">البيانات المفتوحة والتراخيص</string>
+    <string name="about_osm">بيانات الخريطة © مساهمو OpenStreetMap (ODbL)</string>
+    <string name="about_openfreemap">نمط خريطة احتياطي، مجاني الاستخدام</string>
+    <string name="about_protomaps">مربعات الخريطة بلا إنترنت</string>
+    <string name="about_maplibre">محرك الخريطة (BSD 2-Clause)</string>
+    <string name="about_manrope">الخط (SIL Open Font License)</string>
+    <string name="about_openmeteo">توقعات الطقس (CC BY 4.0)</string>
+    <string name="about_open_link">فتح الموقع</string>
+</resources>

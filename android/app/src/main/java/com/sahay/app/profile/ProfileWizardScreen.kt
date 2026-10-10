@@ -13,8 +13,8 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowBack
-import androidx.compose.material.icons.rounded.ArrowForward
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.ArrowForward
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -84,7 +84,7 @@ fun ProfileWizardScreen(
 @Composable
 private fun StepContent(step: WizardStep, state: WizardState, vm: ProfileWizardViewModel) {
     when (step) {
-        WizardStep.ESSENTIALS -> EssentialsStep(state, vm::setName, vm::setNationality, vm::setPhone)
+        WizardStep.ESSENTIALS -> EssentialsStep(state, vm::setName, vm::setNationality, vm::setPhoneValue)
         WizardStep.MEDICAL -> MedicalStep(
             state, vm::setBloodGroup, vm::setAllergies, vm::setMedications, vm::setConditions, vm::addAllergy, vm::addCondition,
         )
@@ -133,15 +133,16 @@ private fun WizardButtons(state: WizardState, onBack: () -> Unit, onNext: () -> 
                 text = stringResource(R.string.action_back),
                 onClick = onBack,
                 variant = ButtonVariant.Secondary,
-                icon = Icons.Rounded.ArrowBack,
+                icon = Icons.AutoMirrored.Rounded.ArrowBack,
                 enabled = !state.saving,
                 modifier = Modifier.weight(1f),
             )
             SahayButton(
                 text = stringResource(if (last) R.string.action_finish else R.string.action_next),
                 onClick = onNext,
-                icon = if (last) Icons.Rounded.Check else Icons.Rounded.ArrowForward,
+                icon = if (last) Icons.Rounded.Check else Icons.AutoMirrored.Rounded.ArrowForward,
                 loading = state.saving,
+                enabled = state.canProceed,
                 modifier = Modifier.weight(1f),
             )
         }
