@@ -1,0 +1,16 @@
+# expectedCode<TAB>sender<TAB>body   (NONE = must be ignored)
+CYC_WARN	VM-NDMAEW	Cyclone warning for Chengalpattu coast. Stay indoors and keep away from windows.
+FLD_WARN	AD-TNSDMA	Flood warning: avoid low-lying areas near the Palar river.
+CYC_WARN	+919876543210	CYCLONE ALERT! Warning issued for Mahabalipuram.
+RAIN_HVY	+919876543210	Heavy rain expected tomorrow. Rainfall of 12 cm likely.
+FLD_WARN	XX-NDMAEW	Avoid low-lying areas today.
+NONE	+919812345678	Avoid low-lying areas today.
+NONE	AX-HDFCBK	Warning: your account will be blocked. Call now.
+NONE	AX-HDFCBK	Your OTP is 482913. Do not share it with anyone.
+NONE	+919800000000	Cyclone-proof homes loan, apply today
+CYC_WARN	VM-NDMAEW	चक्रवात चेतावनी: चेन्नई तट पर तेज हवाएं चलेंगी। कृपया घर के अंदर रहें।
+FLD_WARN	+911234567890	बाढ़ की चेतावनी: निचले इलाकों से दूर रहें।
+NONE	+911234567890	आपका ओटीपी 4829 है।
+CYC_WARN	TN-NDMAEW	புயல் எச்சரிக்கை: கடலோரப் பகுதிகளில் பலத்த காற்று வீசும்.
+RAIN_HVY	AX-TNSDMA	கனமழை பெய்யும். மக்கள் கவனமாக இருங்கள்.
+NONE	+919812345678	உங்கள் ஆர்டர் வந்துவிட்டது.

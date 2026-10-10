@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="comms_channel_alerts">Safety alerts</string>
+    <string name="comms_channel_alerts_info">Safety updates</string>
+    <string name="comms_notification_simulation">Simulation: %1$s</string>
+    <string name="comms_alert_fallback_title">Safety alert</string>
+    <string name="comms_alert_fallback_body">Follow the instructions of local officials.</string>
+    <string name="comms_pasted_title">Pasted message</string>
+    <string name="comms_translate_offline_failed">Couldn\'t translate offline. Try again when connected.</string>
+</resources>
