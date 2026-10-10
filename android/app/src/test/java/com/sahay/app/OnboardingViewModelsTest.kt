@@ -11,12 +11,15 @@ import com.sahay.app.onboarding.StartViewModel
 import com.sahay.app.onboarding.supportedLanguageOrEnglish
 import com.sahay.core.contracts.EmergencyContact
 import com.sahay.core.contracts.UserProfile
+import io.mockk.every
 import io.mockk.mockk
+import com.sahay.app.auth.SignInNext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -37,6 +40,18 @@ class OnboardingViewModelsTest {
         hotelAddress = null, contacts = listOf(EmergencyContact("Mum", "+4915112345678", "Parent")),
         smsAlertsOptIn = false, groupFinderOptIn = true, onboardingComplete = complete,
     )
+
+    private fun signIn(
+        auth: FakeAuth,
+        store: FakeProfileStore = FakeProfileStore(),
+        hasPack: Boolean = false,
+    ): SignInViewModel {
+        val packs = mockk<com.sahay.core.contracts.PackRepository>(relaxed = true)
+        every { packs.activePack } returns kotlinx.coroutines.flow.MutableStateFlow(
+            if (hasPack) mockk<com.sahay.core.contracts.PackInfo>(relaxed = true) else null,
+        )
+        return SignInViewModel(auth, store, packs)
+    }
 
     // ---- Start
 
@@ -76,21 +91,21 @@ class OnboardingViewModelsTest {
     // ---- Sign in
 
     @Test fun `already signed in skips ahead`() {
-        assertTrue(SignInViewModel(FakeAuth(currentUser = googleUser)).state.value.signedIn)
+        assertTrue(signIn(FakeAuth(currentUser = googleUser)).state.value.next != null)
     }
 
     @Test fun `google success signs in`() {
-        val vm = SignInViewModel(FakeAuth(googleResult = SignInResult.Success(googleUser)))
+        val vm = signIn(FakeAuth(googleResult = SignInResult.Success(googleUser)))
         vm.signInWithGoogle(mockk(relaxed = true))
-        assertTrue(vm.state.value.signedIn)
+        assertTrue(vm.state.value.next != null)
         assertFalse(vm.state.value.loading)
     }
 
     @Test fun `cancelling google shows no error`() {
-        val vm = SignInViewModel(FakeAuth(googleResult = SignInResult.Cancelled))
+        val vm = signIn(FakeAuth(googleResult = SignInResult.Cancelled))
         vm.signInWithGoogle(mockk(relaxed = true))
         assertNull(vm.state.value.problem)
-        assertFalse(vm.state.value.signedIn)
+        assertFalse(vm.state.value.next != null)
         assertFalse(vm.state.value.loading)
     }
 
@@ -101,15 +116,15 @@ class OnboardingViewModelsTest {
             SignInResult.Failed to SignInProblem.FAILED,
         )
         cases.forEach { (result, problem) ->
-            val vm = SignInViewModel(FakeAuth(googleResult = result))
+            val vm = signIn(FakeAuth(googleResult = result))
             vm.signInWithGoogle(mockk(relaxed = true))
             assertEquals(problem, vm.state.value.problem)
-            assertFalse(vm.state.value.signedIn)
+            assertFalse(vm.state.value.next != null)
         }
     }
 
     @Test fun `guest offline shows the internet message, then clears it`() {
-        val vm = SignInViewModel(FakeAuth(guestResult = SignInResult.NoInternet))
+        val vm = signIn(FakeAuth(guestResult = SignInResult.NoInternet))
         vm.continueAsGuest()
         assertEquals(SignInProblem.NO_INTERNET, vm.state.value.problem)
         vm.dismissProblem()
@@ -117,9 +132,53 @@ class OnboardingViewModelsTest {
     }
 
     @Test fun `guest success signs in`() {
-        val vm = SignInViewModel(FakeAuth())
+        val vm = signIn(FakeAuth())
         vm.continueAsGuest()
-        assertTrue(vm.state.value.signedIn)
+        assertTrue(vm.state.value.next != null)
+    }
+
+    @Test fun `new user goes to profile setup`() {
+        val vm = signIn(FakeAuth(googleResult = SignInResult.Success(googleUser)))
+        vm.signInWithGoogle(mockk(relaxed = true))
+        assertEquals(SignInNext.PROFILE_SETUP, vm.state.value.next)
+    }
+
+    @Test fun `returning user skips profile setup and goes home when a pack exists`() = runBlocking {
+        val store = FakeProfileStore().also { it.save(profile(true).copy(uid = googleUser.uid)) }
+        store.clear() // signed out earlier: only the per-user copy remains
+        val vm = signIn(FakeAuth(googleResult = SignInResult.Success(googleUser)), store, hasPack = true)
+        vm.signInWithGoogle(mockk(relaxed = true))
+        assertEquals(SignInNext.HOME, vm.state.value.next)
+        assertEquals(googleUser.uid, store.profile.value?.uid)
+    }
+
+    @Test fun `returning user without a pack goes to trip setup`() = runBlocking {
+        val store = FakeProfileStore().also { it.save(profile(true).copy(uid = googleUser.uid)) }
+        val vm = signIn(FakeAuth(googleResult = SignInResult.Success(googleUser)), store)
+        vm.signInWithGoogle(mockk(relaxed = true))
+        assertEquals(SignInNext.TRIP_SETUP, vm.state.value.next)
+    }
+
+    @Test fun `a returning guest gets the saved guest profile under the new uid`() = runBlocking {
+        val store = FakeProfileStore().also { it.save(profile(true).copy(uid = "old-guest", isGuest = true)) }
+        store.clear()
+        val vm = signIn(FakeAuth(), store, hasPack = true)
+        vm.continueAsGuest()
+        assertEquals(SignInNext.HOME, vm.state.value.next)
+        assertEquals(guestUser.uid, store.profile.value?.uid)
+    }
+
+    @Test fun `an unfinished saved profile does not skip setup`() = runBlocking {
+        val store = FakeProfileStore().also { it.save(profile(false).copy(uid = googleUser.uid)) }
+        val vm = signIn(FakeAuth(googleResult = SignInResult.Success(googleUser)), store)
+        vm.signInWithGoogle(mockk(relaxed = true))
+        assertEquals(SignInNext.PROFILE_SETUP, vm.state.value.next)
+    }
+
+    @Test fun `consuming the target stops it from firing again`() {
+        val vm = signIn(FakeAuth(currentUser = googleUser))
+        vm.consumeNext()
+        assertNull(vm.state.value.next)
     }
 
     // ---- Stored profile shape

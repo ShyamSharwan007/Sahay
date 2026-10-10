@@ -33,8 +33,14 @@ class FakeProfileStore(initial: UserProfile? = null, var failSave: Boolean = fal
     override suspend fun save(profile: UserProfile) {
         if (failSave) throw java.io.IOException("disk full")
         saved = profile
+        byKey[com.sahay.app.data.profileKey(profile.uid, profile.isGuest)] = profile
         state.value = profile
     }
+
+    /** Per-user copies; like the real store, they survive [clear]. */
+    val byKey = mutableMapOf<String, UserProfile>()
+
+    override suspend fun savedFor(profileKey: String): UserProfile? = byKey[profileKey]
 
     override suspend fun clear() {
         state.value = null

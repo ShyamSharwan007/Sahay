@@ -23,7 +23,15 @@ import javax.inject.Singleton
 interface LoadableProfileStore : ProfileStore {
     /** Reads the stored profile from disk. Use at start-up, because [profile] is null until the first read ends. */
     suspend fun awaitLoaded(): UserProfile?
+
+    /** The profile saved earlier for [profileKey] (Firebase uid, or "guest"), kept even after sign-out. */
+    suspend fun savedFor(profileKey: String): UserProfile?
 }
+
+/** Profiles are stored per user: the Firebase uid, or one shared slot for guests (their uid changes every time). */
+fun profileKey(uid: String, isGuest: Boolean): String = if (isGuest) GUEST_KEY else uid
+
+private const val GUEST_KEY = "guest"
 
 /**
  * Stores the profile as one JSON string in DataStore. Medical details never leave the phone
@@ -44,9 +52,15 @@ class DataStoreProfileStore @Inject constructor(
 
     override suspend fun save(profile: UserProfile) {
         val json = JSON.encodeToString(ProfileDto.serializer(), profile.toDto())
-        dataStore.edit { it[KEY] = json }
+        dataStore.edit {
+            it[KEY] = json
+            it[keyFor(profileKey(profile.uid, profile.isGuest))] = json // survives sign-out, so the user returns to it
+        }
     }
 
+    override suspend fun savedFor(profileKey: String): UserProfile? = decode(dataStore.data.first()[keyFor(profileKey)])
+
+    /** Signing out forgets only the active profile; the per-user copies stay on the phone. */
     override suspend fun clear() {
         dataStore.edit { it.remove(KEY) }
     }
@@ -65,6 +79,7 @@ class DataStoreProfileStore @Inject constructor(
 
     private companion object {
         val KEY = stringPreferencesKey("profile_json")
+        fun keyFor(profileKey: String) = stringPreferencesKey("profile_json_$profileKey")
         val JSON = Json { ignoreUnknownKeys = true; encodeDefaults = true }
     }
 }

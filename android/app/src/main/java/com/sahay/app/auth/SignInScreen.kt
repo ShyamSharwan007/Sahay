@@ -31,12 +31,17 @@ import com.sahay.designsystem.components.StatusCard
 import com.sahay.designsystem.components.StatusKind
 
 @Composable
-fun SignInScreen(onSignedIn: () -> Unit, viewModel: SignInViewModel = hiltViewModel()) {
+fun SignInScreen(onSignedIn: (SignInNext) -> Unit, viewModel: SignInViewModel = hiltViewModel()) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
-    // Already signed in (earlier run, or just now): skip ahead.
-    LaunchedEffect(state.signedIn) { if (state.signedIn) onSignedIn() }
+    // Signed in (earlier run, or just now): move on once.
+    LaunchedEffect(state.next) {
+        state.next?.let { next ->
+            onSignedIn(next)
+            viewModel.consumeNext()
+        }
+    }
 
     Column(
         Modifier.fillMaxSize().systemBarsPadding().verticalScroll(rememberScrollState())

@@ -63,7 +63,7 @@
     <string name="essentials_nationality_empty">Choose your country</string>
     <string name="essentials_nationality_search">Search countries</string>
     <string name="essentials_nationality_none">No country matches your search.</string>
-    <string name="essentials_phone">Phone number (optional)</string>
+    <string name="essentials_phone">Phone number</string>
 
     <!-- Step 2: Medical -->
     <string name="medical_title">Medical details</string>
@@ -487,4 +487,5 @@
     <string name="about_open_link">Open website</string>
     <string name="forecast_line">%1$s · %2$s mm rain · %3$s°C · wind %4$s km/h</string>
     <string name="forecast_source">Forecast: MET Norway</string>
+    <string name="wizard_required_note">Fields marked * are required</string>
 </resources>

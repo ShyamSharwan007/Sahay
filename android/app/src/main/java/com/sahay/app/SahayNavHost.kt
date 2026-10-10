@@ -17,6 +17,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.sahay.R
+import com.sahay.app.auth.SignInNext
 import com.sahay.app.auth.SignInScreen
 import com.sahay.app.main.MainScaffold
 import com.sahay.app.onboarding.LanguageScreen
@@ -67,8 +68,15 @@ private fun OnboardingGraph(start: Any, navController: NavHostController = remem
         }
         composable<SignInRoute> {
             SignInScreen(
-                // Pop sign-in so Back from the wizard returns to Welcome instead of bouncing forward again.
-                onSignedIn = { navController.navigate(WizardRoute) { popUpTo<SignInRoute> { inclusive = true } } },
+                // Sign-in stays on the stack: Back from the first wizard step returns here (and signs out).
+                onSignedIn = { next ->
+                    when (next) {
+                        SignInNext.PROFILE_SETUP -> navController.navigate(WizardRoute)
+                        SignInNext.HOME -> navController.navigate(MainRoute) { popUpTo<LanguageRoute> { inclusive = true } }
+                        SignInNext.TRIP_SETUP ->
+                            navController.navigate(TripSetupRoute(fromOnboarding = true)) { popUpTo<LanguageRoute> { inclusive = true } }
+                    }
+                },
             )
         }
         composable<WizardRoute> {

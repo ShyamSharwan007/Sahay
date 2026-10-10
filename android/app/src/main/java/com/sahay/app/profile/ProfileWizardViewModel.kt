@@ -62,7 +62,8 @@ data class WizardState(
     /** Country code order: nationality, SIM, device region, India. */
     val autoPhoneRegion get() = PhoneNumbers.defaultRegion(nationality, deviceSim, deviceLocale)
     val phoneValue get() = phoneFieldValue(phone, phoneRegion, autoPhoneRegion)
-    val phoneError get() = phone.isNotBlank() && !PhoneNumbers.isValid(phone, phoneValue.region)
+    /** The phone number is required and must be valid for its country (E.164). */
+    val phoneError get() = phone.isBlank() || !PhoneNumbers.isValid(phone, phoneValue.region)
     /** A contact's number starts in the same country as the user's own. */
     fun contactPhoneValue(contact: ContactDraft) = phoneFieldValue(contact.phone, contact.phoneRegion, phoneValue.region)
     /** False while the current step has something invalid; Next stays disabled. */
@@ -92,6 +93,9 @@ class ProfileWizardViewModel @Inject constructor(
             .copy(deviceSim = deviceCountry.simCountry(), deviceLocale = deviceCountry.localeCountry()),
     )
     val state: StateFlow<WizardState> = _state.asStateFlow()
+
+    /** True when changing a finished profile (from Me); false during first-run setup. */
+    private val editing = profiles.profile.value?.onboardingComplete == true
 
     // ---- field editing
 
@@ -153,6 +157,11 @@ class ProfileWizardViewModel @Inject constructor(
     }
 
     fun retrySave() = save()
+
+    /** Leaving the first step. During first-run setup this also drops the half-created session, so Sign in starts clean. */
+    fun leave() {
+        if (!editing) auth.signOut()
+    }
 
     // ---- internals
 

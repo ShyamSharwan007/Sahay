@@ -46,7 +46,7 @@ fun ProfileWizardScreen(
 
     LaunchedEffect(state.finished) { if (state.finished) onFinished() }
     // System back goes one step back; on the first step it leaves the wizard.
-    BackHandler { if (!viewModel.back()) onExit() }
+    BackHandler { if (!viewModel.back()) leave(viewModel, onExit) }
 
     Column(Modifier.fillMaxSize().systemBarsPadding().imePadding()) {
         WizardHeader(state.stepIndex, state.stepCount)
@@ -74,11 +74,16 @@ fun ProfileWizardScreen(
         }
         WizardButtons(
             state = state,
-            onBack = { if (!viewModel.back()) onExit() },
+            onBack = { if (!viewModel.back()) leave(viewModel, onExit) },
             onNext = viewModel::next,
             onSkip = viewModel::skipMedical,
         )
     }
+}
+
+private fun leave(viewModel: ProfileWizardViewModel, onExit: () -> Unit) {
+    viewModel.leave()
+    onExit()
 }
 
 @Composable
@@ -149,11 +154,19 @@ private fun WizardButtons(state: WizardState, onBack: () -> Unit, onNext: () -> 
     }
 }
 
-/** Screen title + one explanatory line, shared by every step. */
+/** Marks a required field's label. */
+internal fun requiredLabel(label: String) = "$label *"
+
+/** Screen title + one explanatory line + the "* = required" note, shared by every step. */
 @Composable
 internal fun StepHeader(title: String, body: String) {
     Column(verticalArrangement = Arrangement.spacedBy(SahaySpacing.xxs)) {
         Text(title, style = MaterialTheme.typography.headlineMedium, modifier = Modifier.semantics { heading() })
         Text(body, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(
+            stringResource(R.string.wizard_required_note),
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
     }
 }

@@ -25,6 +25,7 @@ class ProfileWizardViewModelTest {
     @Before fun setUp() = Dispatchers.setMain(UnconfinedTestDispatcher())
     @After fun tearDown() = Dispatchers.resetMain()
 
+    private val VALID_PHONE = "+49 151 2345 6789"
     private val validContact = ContactDraft("Mum", "+49 151 1234 5678", Relation.PARENT)
 
     private fun vm(
@@ -33,9 +34,16 @@ class ProfileWizardViewModelTest {
         locales: FakeLocales = FakeLocales("de"),
     ) = ProfileWizardViewModel(auth, store, locales)
 
+    private fun completeProfile() = com.sahay.core.contracts.UserProfile(
+        uid = "u", isGuest = false, displayName = "A", email = null, photoUrl = null, language = "en", nationality = "DE",
+        phone = "+4915112345678", bloodGroup = null, allergies = null, medications = null, conditions = null, hotelName = null,
+        hotelAddress = null, contacts = emptyList(), smsAlertsOptIn = false, groupFinderOptIn = false, onboardingComplete = true,
+    )
+
     private fun ProfileWizardViewModel.step() = state.value.step
 
     private fun ProfileWizardViewModel.goToContacts() {
+        setPhone(VALID_PHONE)
         next() // essentials -> medical
         next() // medical -> contacts
     }
@@ -69,6 +77,7 @@ class ProfileWizardViewModelTest {
         assertEquals(WizardStep.ESSENTIALS, vm.step())
         assertTrue(vm.state.value.showErrors)
         vm.setName("Ben")
+        vm.setPhone(VALID_PHONE)
         vm.next()
         assertEquals(WizardStep.MEDICAL, vm.step())
         assertFalse(vm.state.value.showErrors)
@@ -84,24 +93,40 @@ class ProfileWizardViewModelTest {
         assertEquals("JP", vm.state.value.phoneValue.region)
     }
 
-    @Test fun `next stays disabled while the phone is invalid`() {
+    @Test fun `next stays disabled while the phone is missing or invalid`() {
         val vm = vm()
         vm.setName("Anna")
-        assertTrue(vm.state.value.canProceed)
+        assertFalse(vm.state.value.canProceed) // required
         vm.setPhone("0151 123")
         assertFalse(vm.state.value.canProceed)
-        vm.setPhone("")
+        vm.setPhone("+49 151 2345 6789")
         assertTrue(vm.state.value.canProceed)
     }
 
-    @Test fun `phone is optional but must be valid when given`() {
+    @Test fun `phone is required to leave the first step`() {
         val vm = vm()
-        vm.setPhone("0151 123")
+        vm.setName("Anna")
         vm.next()
         assertEquals(WizardStep.ESSENTIALS, vm.step())
-        vm.setPhone("")
+        assertTrue(vm.state.value.showErrors)
+        vm.setPhone("+49 151 2345 6789")
         vm.next()
         assertEquals(WizardStep.MEDICAL, vm.step())
+    }
+
+    @Test fun `leaving the first step in setup signs out the half-created session`() {
+        val auth = FakeAuth(currentUser = googleUser)
+        val vm = vm(auth = auth)
+        assertFalse(vm.back())
+        vm.leave()
+        assertNull(auth.currentUser)
+    }
+
+    @Test fun `leaving the first step while editing keeps the session`() {
+        val auth = FakeAuth(currentUser = googleUser)
+        val vm = vm(auth = auth, store = FakeProfileStore(initial = completeProfile()))
+        vm.leave()
+        assertEquals(googleUser, auth.currentUser)
     }
 
     @Test fun `quick add appends without duplicates`() {
@@ -170,6 +195,7 @@ class ProfileWizardViewModelTest {
     @Test fun `back walks to the previous step and reports the first step`() {
         val vm = vm()
         assertFalse(vm.back())
+        vm.setPhone(VALID_PHONE)
         vm.next()
         assertTrue(vm.back())
         assertEquals(WizardStep.ESSENTIALS, vm.step())
@@ -218,6 +244,7 @@ class ProfileWizardViewModelTest {
         val store = FakeProfileStore()
         val vm = vm(auth = FakeAuth(currentUser = guestUser), store = store)
         vm.setName("Ben")
+        vm.setPhone(VALID_PHONE)
         vm.next()
         vm.setBloodGroup(BLOOD_GROUP_UNKNOWN)
         vm.next()

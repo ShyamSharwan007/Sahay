@@ -62,10 +62,12 @@ class FirebaseAuthRepository @Inject constructor(
 
     override suspend fun signInWithGoogle(activityContext: Context): SignInResult {
         if (!isOnline()) return SignInResult.NoInternet
+        var signedIn = false
         return try {
             val idToken = requestGoogleIdToken(activityContext)
             val credential = GoogleAuthProvider.getCredential(idToken, null)
             val user = withTimeout(SahayConfig.NETWORK_TIMEOUT_MS) { auth.signInWithCredential(credential).await().user }
+            signedIn = user != null
             user?.let { SignInResult.Success(it.toAuthUser()) } ?: SignInResult.Failed
         } catch (_: GetCredentialCancellationException) {
             SignInResult.Cancelled
@@ -81,13 +83,17 @@ class FirebaseAuthRepository @Inject constructor(
             SignInResult.Failed
         } catch (_: Exception) {
             SignInResult.Failed
+        } finally {
+            if (!signedIn) auth.signOut() // a half-finished flow must not leave a session behind
         }
     }
 
     override suspend fun signInAsGuest(): SignInResult {
         if (!isOnline()) return SignInResult.NoInternet
+        var signedIn = false
         return try {
             val user = withTimeout(SahayConfig.NETWORK_TIMEOUT_MS) { auth.signInAnonymously().await().user }
+            signedIn = user != null
             user?.let { SignInResult.Success(it.toAuthUser()) } ?: SignInResult.Failed
         } catch (e: CancellationException) {
             if (e is kotlinx.coroutines.TimeoutCancellationException) SignInResult.NoInternet else throw e
@@ -95,6 +101,8 @@ class FirebaseAuthRepository @Inject constructor(
             SignInResult.NoInternet
         } catch (_: Exception) {
             SignInResult.Failed
+        } finally {
+            if (!signedIn) auth.signOut()
         }
     }
 

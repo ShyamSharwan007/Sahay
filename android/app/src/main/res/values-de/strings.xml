@@ -52,7 +52,7 @@
     <string name="essentials_nationality_empty">Land wählen</string>
     <string name="essentials_nationality_search">Länder suchen</string>
     <string name="essentials_nationality_none">Kein Land passt zu Ihrer Suche.</string>
-    <string name="essentials_phone">Telefonnummer (optional)</string>
+    <string name="essentials_phone">Telefonnummer</string>
 
     <!-- Step 2: Medical -->
     <string name="medical_title">Medizinische Angaben</string>
@@ -473,4 +473,5 @@
     <string name="about_open_link">Website öffnen</string>
     <string name="forecast_line">%1$s · %2$s mm Regen · %3$s °C · Wind %4$s km/h</string>
     <string name="forecast_source">Vorhersage: MET Norway</string>
+    <string name="wizard_required_note">Mit * markierte Felder sind Pflichtfelder</string>
 </resources>

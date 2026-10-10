@@ -71,7 +71,7 @@ internal fun EssentialsStep(
     OutlinedTextField(
         value = state.name,
         onValueChange = { nameTouched = true; onName(it) },
-        label = { Text(stringResource(R.string.essentials_name)) },
+        label = { Text(requiredLabel(stringResource(R.string.essentials_name))) },
         isError = nameError,
         supportingText = { if (nameError) Text(stringResource(R.string.essentials_name_error)) },
         singleLine = true,
@@ -82,8 +82,9 @@ internal fun EssentialsStep(
     PhoneNumberField(
         value = state.phoneValue,
         onValueChange = onPhone,
-        label = stringResource(R.string.essentials_phone),
+        label = requiredLabel(stringResource(R.string.essentials_phone)),
         texts = phoneFieldTexts(),
+        required = true,
         showErrors = state.showErrors,
         modifier = Modifier.fillMaxWidth(),
     )
@@ -288,7 +289,7 @@ private fun ContactCard(
             OutlinedTextField(
                 value = contact.name,
                 onValueChange = { nameTouched = true; onChange(contact.copy(name = it)) },
-                label = { Text(stringResource(R.string.contacts_name)) },
+                label = { Text(requiredLabel(stringResource(R.string.contacts_name))) },
                 isError = nameError,
                 supportingText = { if (nameError) Text(stringResource(R.string.contacts_name_error)) },
                 singleLine = true,
@@ -298,13 +299,13 @@ private fun ContactCard(
             PhoneNumberField(
                 value = phoneValue,
                 onValueChange = { onChange(contact.copy(phone = it.rawPhone(), phoneRegion = it.manualRegion())) },
-                label = stringResource(R.string.contacts_phone),
+                label = requiredLabel(stringResource(R.string.contacts_phone)),
                 texts = phoneFieldTexts(),
                 required = true,
                 showErrors = showErrors,
                 modifier = Modifier.fillMaxWidth(),
             )
-            Text(stringResource(R.string.contacts_relation), style = MaterialTheme.typography.labelLarge)
+            Text(requiredLabel(stringResource(R.string.contacts_relation)), style = MaterialTheme.typography.labelLarge)
             FlowRow(horizontalArrangement = Arrangement.spacedBy(SahaySpacing.xs), verticalArrangement = Arrangement.spacedBy(SahaySpacing.xs)) {
                 Relation.entries.forEach { relation ->
                     FilterChip(

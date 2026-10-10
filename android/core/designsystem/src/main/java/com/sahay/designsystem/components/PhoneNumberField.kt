@@ -99,7 +99,7 @@ fun PhoneNumberField(
     val raw = PhoneNumbers.toRawPhone(value.region, value.national)
     val problem = when {
         pending != null -> null // still typing a full number
-        value.national.isEmpty() -> if (required && showErrors) texts.required else null
+        value.national.isEmpty() -> if (required && (showErrors || touched)) texts.required else null
         !PhoneNumbers.isValid(raw, value.region) && (touched || showErrors) -> texts.invalid(country.name)
         else -> null
     }
