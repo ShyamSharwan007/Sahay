@@ -498,4 +498,9 @@
     <string name="sms_open_app_settings">Open app settings</string>
     <string name="sos_send_with_messages">Send with Messages app</string>
     <string name="sos_no_messages_app">No Messages app found. Call 112 instead.</string>
+    <string name="precaution_more">More</string>
+    <string name="precaution_less">Less</string>
+    <string name="home_see_all">See all</string>
+    <string name="precautions_empty_title">No precautions yet</string>
+    <string name="precautions_empty_body">Download your trip pack to see what to prepare.</string>
 </resources>

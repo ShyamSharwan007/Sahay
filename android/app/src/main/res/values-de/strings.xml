@@ -484,4 +484,9 @@
     <string name="sms_open_app_settings">App-Einstellungen öffnen</string>
     <string name="sos_send_with_messages">Mit Nachrichten-App senden</string>
     <string name="sos_no_messages_app">Keine Nachrichten-App gefunden. Rufen Sie stattdessen 112 an.</string>
+    <string name="precaution_more">Mehr</string>
+    <string name="precaution_less">Weniger</string>
+    <string name="home_see_all">Alle anzeigen</string>
+    <string name="precautions_empty_title">Noch keine Vorsichtsmaßnahmen</string>
+    <string name="precautions_empty_body">Laden Sie Ihr Reisepaket herunter, um zu sehen, was Sie vorbereiten sollten.</string>
 </resources>

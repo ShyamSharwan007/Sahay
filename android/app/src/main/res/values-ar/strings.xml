@@ -508,4 +508,9 @@
     <string name="sms_open_app_settings">فتح إعدادات التطبيق</string>
     <string name="sos_send_with_messages">إرسال عبر تطبيق الرسائل</string>
     <string name="sos_no_messages_app">لم يُعثر على تطبيق رسائل. اتصل بـ 112.</string>
+    <string name="precaution_more">المزيد</string>
+    <string name="precaution_less">أقل</string>
+    <string name="home_see_all">عرض الكل</string>
+    <string name="precautions_empty_title">لا توجد احتياطات بعد</string>
+    <string name="precautions_empty_body">نزّل حزمة رحلتك لترى ما يجب أن تستعد له.</string>
 </resources>

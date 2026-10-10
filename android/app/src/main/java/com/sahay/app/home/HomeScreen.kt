@@ -62,10 +62,14 @@ private val homeActions = listOf(
     HomeAction(R.string.action_emergency_mode, Icons.Rounded.Emergency, StatusKind.Danger),
 )
 
+/** Home shows this many precautions; the rest are behind "See all". */
+private const val HOME_PRECAUTION_LIMIT = 3
+
 @Composable
 fun HomeScreen(
     onOpenAction: (titleRes: Int) -> Unit,
     onDownloadPack: () -> Unit,
+    onSeeAllPrecautions: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
@@ -74,7 +78,7 @@ fun HomeScreen(
         LoadingState(stringResource(R.string.loading), modifier.padding(SahaySpacing.screenPadding))
         return
     }
-    HomeContent(state, onOpenAction, onDownloadPack, modifier)
+    HomeContent(state, onOpenAction, onDownloadPack, onSeeAllPrecautions, modifier)
 }
 
 @Composable
@@ -82,6 +86,7 @@ private fun HomeContent(
     state: HomeUiState,
     onOpenAction: (Int) -> Unit,
     onDownloadPack: () -> Unit,
+    onSeeAllPrecautions: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -112,8 +117,12 @@ private fun HomeContent(
         }
 
         if (state.precautions.isNotEmpty()) {
-            SectionHeader(stringResource(R.string.home_precautions))
-            PrecautionCards(state.precautions, state.language)
+            SectionHeader(
+                stringResource(R.string.home_precautions),
+                actionLabel = if (state.precautions.size > HOME_PRECAUTION_LIMIT) stringResource(R.string.home_see_all) else null,
+                onAction = onSeeAllPrecautions,
+            )
+            PrecautionCards(state.precautions, state.language, limit = HOME_PRECAUTION_LIMIT)
         }
     }
 }

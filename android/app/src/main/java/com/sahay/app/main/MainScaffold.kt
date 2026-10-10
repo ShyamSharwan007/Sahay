@@ -47,6 +47,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.sahay.R
 import com.sahay.app.alerts.AlertDetailRoute
+import com.sahay.app.home.PrecautionsRoute
+import com.sahay.app.home.PrecautionsScreen
 import com.sahay.app.alerts.AlertDetailScreen
 import com.sahay.app.alerts.AlertsScreen
 import com.sahay.app.alerts.PasteAlertRoute
@@ -194,8 +196,10 @@ fun MainScaffold(
                         else navController.openHomeAction(titleRes)
                     },
                     onDownloadPack = onOpenTripSetup,
+                    onSeeAllPrecautions = { navController.navigate(PrecautionsRoute) },
                 )
             }
+            composable<PrecautionsRoute> { PrecautionsScreen(onBack = { navController.popBackStack() }) }
             composable<EmergencyRoute> {
                 EmergencyScreen(
                     connectivity = state.connectivity,
