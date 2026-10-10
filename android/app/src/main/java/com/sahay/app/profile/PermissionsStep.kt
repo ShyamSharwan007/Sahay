@@ -2,11 +2,8 @@ package com.sahay.app.profile
 
 import android.Manifest
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
-import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
@@ -43,6 +40,8 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.sahay.R
+import com.sahay.app.common.SmsRestrictedSteps
+import com.sahay.app.common.openAppSettings
 import com.sahay.designsystem.LocalSahayColors
 import com.sahay.designsystem.SahayShapes
 import com.sahay.designsystem.SahaySpacing
@@ -59,6 +58,8 @@ private class PermissionSpec(
     val permissions: List<String>,
     /** Granted when this permission (one of [permissions]) is granted. Location: only the precise one counts. */
     val required: List<String> = permissions,
+    /** Show the "restricted settings" steps when denied (sideloaded apps on Android 13+). */
+    val restrictedSteps: Boolean = false,
 )
 
 private fun permissionSpecs(): List<PermissionSpec> = buildList {
@@ -84,6 +85,7 @@ private fun permissionSpecs(): List<PermissionSpec> = buildList {
             Icons.Rounded.Sms, R.string.permission_sms_title, R.string.permission_sms_why,
             R.string.permission_sms_denied,
             permissions = listOf(Manifest.permission.SEND_SMS),
+            restrictedSteps = true,
         ),
     )
 }
@@ -130,9 +132,10 @@ private fun PermissionCard(spec: PermissionSpec) {
                 granted -> Unit
                 denied -> {
                     Text(stringResource(spec.deniedHint), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    if (spec.restrictedSteps) SmsRestrictedSteps()
                     SahayButton(
                         text = stringResource(R.string.permission_open_settings),
-                        onClick = { openAppSettings(context) },
+                        onClick = { context.openAppSettings() },
                         variant = ButtonVariant.Secondary,
                         size = ButtonSize.M,
                         icon = Icons.Rounded.Settings,
@@ -151,9 +154,3 @@ private fun PermissionCard(spec: PermissionSpec) {
 
 private fun PermissionSpec.isGranted(context: Context) =
     required.all { ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED }
-
-private fun openAppSettings(context: Context) {
-    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", context.packageName, null))
-        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-    runCatching { context.startActivity(intent) } // no settings app: nothing more we can do
-}

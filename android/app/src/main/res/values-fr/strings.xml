@@ -118,8 +118,8 @@
     <string name="permission_notifications_why">Vous prévient quand le danger approche.</string>
     <string name="permission_notifications_denied">Sans elles, vous ne verrez pas les alertes quand l\'appli est fermée.</string>
     <string name="permission_sms_title">SMS</string>
-    <string name="permission_sms_why">Envoie votre SMS SOS sans internet.</string>
-    <string name="permission_sms_denied">Sans elle, le SMS SOS s\'envoie depuis votre appli de messages.</string>
+    <string name="permission_sms_why">Sert uniquement à envoyer votre SMS SOS à vos contacts d\'urgence. Vos messages ne sont jamais lus.</string>
+    <string name="permission_sms_denied">Sans elle, envoyez le SOS depuis votre appli de messages. Pour autoriser les SMS :</string>
     <string name="permission_open_settings">Ouvrir les réglages</string>
 
     <!-- Main scaffold -->
@@ -474,4 +474,14 @@
     <string name="forecast_line">%1$s · %2$s mm de pluie · %3$s °C · vent %4$s km/h</string>
     <string name="forecast_source">Prévisions : MET Norway</string>
     <string name="wizard_required_note">Les champs marqués d\'un * sont obligatoires</string>
+    <string name="sms_allow_title">Autoriser les SMS pour le SOS</string>
+    <string name="sms_allow_body">Sahay envoie votre SMS SOS sans internet. Android peut le bloquer pour les applis installées hors du Play Store.</string>
+    <string name="sms_blocked_body">Les SMS ne sont pas encore autorisés. Autorisez-les ou envoyez le SOS depuis votre appli de messages.</string>
+    <string name="sms_steps_intro">À faire une seule fois :</string>
+    <string name="sms_step_1">Ouvrez Réglages → Applications → Sahay.</string>
+    <string name="sms_step_2">Touchez ⋮ (en haut à droite), puis Autoriser les paramètres restreints.</string>
+    <string name="sms_step_3">Touchez Autorisations → SMS → Autoriser.</string>
+    <string name="sms_open_app_settings">Ouvrir les réglages de l\'appli</string>
+    <string name="sos_send_with_messages">Envoyer avec l\'appli Messages</string>
+    <string name="sos_no_messages_app">Aucune appli de messages trouvée. Appelez plutôt le 112.</string>
 </resources>

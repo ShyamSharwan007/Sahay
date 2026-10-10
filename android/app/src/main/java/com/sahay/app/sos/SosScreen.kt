@@ -1,10 +1,6 @@
 package com.sahay.app.sos
 
 import android.Manifest
-import android.content.ActivityNotFoundException
-import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -21,11 +17,13 @@ import androidx.compose.material.icons.rounded.Cancel
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.ContactPhone
 import androidx.compose.material.icons.rounded.Refresh
+import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Sms
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
@@ -43,10 +42,15 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sahay.R
+import com.sahay.app.common.AllowSmsSheet
 import com.sahay.app.common.SubScreenHeader
 import com.sahay.app.common.dial
+import com.sahay.app.common.openAppSettings
+import com.sahay.app.common.openMessagesApp
 import com.sahay.core.contracts.EmergencyContact
 import com.sahay.core.contracts.SahayConfig
 import com.sahay.core.contracts.SosResult
@@ -92,12 +96,27 @@ fun SosScreen(
     LaunchedEffect(secondsLeft) { if (secondsLeft != null) haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove) }
     val done = state is SosUiState.Done
     LaunchedEffect(done) { if (done) haptic.performHapticFeedback(HapticFeedbackType.LongPress) }
-    val smsApp = state as? SosUiState.SmsApp
-    LaunchedEffect(smsApp?.autoOpen) {
-        if (smsApp != null && smsApp.autoOpen) {
-            context.openSmsApp(smsApp.phones, smsApp.message)
-            viewModel.smsAppOpened()
-        }
+    // Back from Settings: pick up a newly allowed SMS permission.
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    DisposableEffect(lifecycle) {
+        val observer = LifecycleEventObserver { _, event -> if (event == Lifecycle.Event.ON_RESUME) viewModel.onResume() }
+        lifecycle.addObserver(observer)
+        onDispose { lifecycle.removeObserver(observer) }
+    }
+    var sheetOpen by rememberSaveable { mutableStateOf(false) }
+    val blocked = state === SosUiState.SmsBlocked
+    LaunchedEffect(blocked) { sheetOpen = blocked }
+    var noMessagesApp by rememberSaveable { mutableStateOf(false) }
+    // The same text the countdown screen shows, or what was actually sent when the result is in.
+    val fallbackText = (state as? SosUiState.Done)?.result?.message?.takeIf { it.isNotBlank() } ?: preview.orEmpty()
+    val openMessages = { noMessagesApp = !context.openMessagesApp(viewModel.fallbackPhones(), fallbackText) }
+
+    if (sheetOpen) {
+        AllowSmsSheet(
+            onDismiss = { sheetOpen = false },
+            onOpenSettings = { context.openAppSettings() },
+            onMessagesApp = { sheetOpen = false; openMessages() },
+        )
     }
 
     Column(modifier.fillMaxSize()) {
@@ -116,12 +135,16 @@ fun SosScreen(
                     actionLabel = stringResource(R.string.sos_add_contact),
                     onAction = onEditContacts,
                 )
-                is SosUiState.Countdown -> CountdownContent(s.secondsLeft, contacts, preview)
+                is SosUiState.Countdown -> CountdownContent(s.secondsLeft, contacts, preview, openMessages)
                 SosUiState.NeedsSmsPermission -> SendingContent(stringResource(R.string.sos_permission_title))
                 SosUiState.Sending -> SendingContent(stringResource(R.string.sos_sending))
-                is SosUiState.Done -> DoneContent(s.result, contacts, onRetry = viewModel::send)
-                is SosUiState.SmsApp -> SmsAppContent(s) { context.openSmsApp(s.phones, s.message) }
+                is SosUiState.Done -> DoneContent(
+                    s.result, contacts, smsAllowed = viewModel.smsGranted(),
+                    onRetry = viewModel::send, onAllowSms = { sheetOpen = true }, onMessagesApp = openMessages,
+                )
+                SosUiState.SmsBlocked -> SmsBlockedContent(onHelp = { sheetOpen = true }, onMessagesApp = openMessages)
             }
+            if (noMessagesApp) StatusCard(StatusKind.Warning, stringResource(R.string.sos_no_messages_app))
         }
         BottomActions(
             countdown = state is SosUiState.Countdown,
@@ -133,7 +156,7 @@ fun SosScreen(
 // ---------------------------------------------------------------- countdown
 
 @Composable
-private fun CountdownContent(secondsLeft: Int, contacts: List<EmergencyContact>, preview: String?) {
+private fun CountdownContent(secondsLeft: Int, contacts: List<EmergencyContact>, preview: String?, onMessagesApp: () -> Unit) {
     Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
         Text(stringResource(R.string.sos_sending_in), style = MaterialTheme.typography.titleLarge)
         Text(
@@ -149,6 +172,18 @@ private fun CountdownContent(secondsLeft: Int, contacts: List<EmergencyContact>,
         style = MaterialTheme.typography.bodyLarge,
     )
     if (!preview.isNullOrBlank()) MessageCard(stringResource(R.string.sos_message_preview), preview)
+    MessagesAppButton(onMessagesApp)
+}
+
+/** Always available: the messages app needs no permission. */
+@Composable
+private fun MessagesAppButton(onClick: () -> Unit) {
+    SahayButton(
+        text = stringResource(R.string.sos_send_with_messages),
+        onClick = onClick,
+        variant = ButtonVariant.Secondary,
+        icon = Icons.Rounded.Sms,
+    )
 }
 
 @Composable
@@ -166,7 +201,14 @@ private fun SendingContent(label: String) {
 // ---------------------------------------------------------------- result
 
 @Composable
-private fun DoneContent(result: SosResult, contacts: List<EmergencyContact>, onRetry: () -> Unit) {
+private fun DoneContent(
+    result: SosResult,
+    contacts: List<EmergencyContact>,
+    smsAllowed: Boolean,
+    onRetry: () -> Unit,
+    onAllowSms: () -> Unit,
+    onMessagesApp: () -> Unit,
+) {
     val statuses = contacts.map { it to contactStatus(it, result) }
     val failedCount = statuses.count { it.second == ContactSendStatus.FAILED }
     // StatusCard announces the outcome (polite live region) when this state appears.
@@ -183,6 +225,15 @@ private fun DoneContent(result: SosResult, contacts: List<EmergencyContact>, onR
             variant = ButtonVariant.Secondary,
             icon = Icons.Rounded.Refresh,
         )
+        if (!smsAllowed) {
+            SahayButton(
+                text = stringResource(R.string.sms_allow_title),
+                onClick = onAllowSms,
+                variant = ButtonVariant.Secondary,
+                icon = Icons.Rounded.Settings,
+            )
+        }
+        MessagesAppButton(onMessagesApp)
     }
     Text(
         stringResource(if (result.includedLocation != null) R.string.sos_location_included else R.string.sos_location_missing),
@@ -214,15 +265,10 @@ private fun ContactResultRow(contact: EmergencyContact, status: ContactSendStatu
 }
 
 @Composable
-private fun SmsAppContent(state: SosUiState.SmsApp, onOpen: () -> Unit) {
-    StatusCard(StatusKind.Warning, stringResource(R.string.sos_sms_app_title), stringResource(R.string.sos_sms_app_body))
-    SahayButton(
-        text = stringResource(R.string.sos_open_sms),
-        onClick = onOpen,
-        icon = Icons.Rounded.Sms,
-        enabled = state.phones.isNotEmpty(),
-    )
-    if (state.message.isNotBlank()) MessageCard(stringResource(R.string.sos_message_preview), state.message)
+private fun SmsBlockedContent(onHelp: () -> Unit, onMessagesApp: () -> Unit) {
+    StatusCard(StatusKind.Warning, stringResource(R.string.sms_allow_title), stringResource(R.string.sms_blocked_body))
+    SahayButton(text = stringResource(R.string.sms_allow_title), onClick = onHelp, icon = Icons.Rounded.Settings)
+    MessagesAppButton(onMessagesApp)
 }
 
 /** Shows the SMS text word for word, so nothing is sent in secret. */
@@ -267,14 +313,4 @@ private fun BottomActions(countdown: Boolean, onCancel: () -> Unit) {
             )
         }
     }
-}
-
-/** Opens the messages app with the SOS text ready to send. False when there is no messages app. */
-private fun Context.openSmsApp(phones: List<String>, message: String): Boolean = try {
-    val intent = Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:" + phones.joinToString(";")))
-        .putExtra("sms_body", message)
-    startActivity(intent)
-    true
-} catch (_: ActivityNotFoundException) {
-    false
 }

@@ -129,8 +129,8 @@
     <string name="permission_notifications_why">Warns you when danger is close.</string>
     <string name="permission_notifications_denied">Without it, you won\'t see alerts while the app is closed.</string>
     <string name="permission_sms_title">Text messages</string>
-    <string name="permission_sms_why">Sends your SOS text with no internet.</string>
-    <string name="permission_sms_denied">Without it, SOS texts are sent from your messages app instead.</string>
+    <string name="permission_sms_why">Only used to send your SOS text to your emergency contacts. Never to read your messages.</string>
+    <string name="permission_sms_denied">Without it, send your SOS from your Messages app. To allow SMS:</string>
     <string name="permission_open_settings">Open settings</string>
 
     <!-- Placeholders -->
@@ -488,4 +488,14 @@
     <string name="forecast_line">%1$s · %2$s mm rain · %3$s°C · wind %4$s km/h</string>
     <string name="forecast_source">Forecast: MET Norway</string>
     <string name="wizard_required_note">Fields marked * are required</string>
+    <string name="sms_allow_title">Allow SMS for SOS</string>
+    <string name="sms_allow_body">Sahay sends your SOS text with no internet. Android can block this for apps installed outside the Play Store.</string>
+    <string name="sms_blocked_body">SMS is not allowed yet. Allow it, or send the SOS from your Messages app.</string>
+    <string name="sms_steps_intro">Do this once:</string>
+    <string name="sms_step_1">Open Settings → Apps → Sahay.</string>
+    <string name="sms_step_2">Tap ⋮ (top right), then Allow restricted settings.</string>
+    <string name="sms_step_3">Tap Permissions → SMS → Allow.</string>
+    <string name="sms_open_app_settings">Open app settings</string>
+    <string name="sos_send_with_messages">Send with Messages app</string>
+    <string name="sos_no_messages_app">No Messages app found. Call 112 instead.</string>
 </resources>

@@ -35,12 +35,12 @@ sealed interface SosUiState {
     /** There is nobody to text; the screen offers to add a contact. */
     data object NoContacts : SosUiState
     data class Countdown(val secondsLeft: Int) : SosUiState
-    /** Countdown is over but Android has not yet allowed us to send texts. */
+    /** Android has not yet allowed us to send texts; asked before the countdown starts. */
     data object NeedsSmsPermission : SosUiState
+    /** Permission refused or blocked ("restricted settings"): the screen explains how to allow it, or uses the messages app. */
+    data object SmsBlocked : SosUiState
     data object Sending : SosUiState
     data class Done(val result: SosResult) : SosUiState
-    /** Permission refused: the user sends the same text from their messages app. */
-    data class SmsApp(val message: String, val phones: List<String>, val autoOpen: Boolean) : SosUiState
 }
 
 enum class ContactSendStatus { SENT, FAILED }
@@ -92,9 +92,14 @@ class SosViewModel @Inject constructor(
         _contacts.value = list
         when (_state.value) {
             SosUiState.Loading, SosUiState.NoContacts ->
-                if (list.isEmpty()) _state.value = SosUiState.NoContacts else startCountdown()
+                if (list.isEmpty()) _state.value = SosUiState.NoContacts else begin()
             else -> Unit
         }
+    }
+
+    /** Checks the SMS permission first, so a refusal is dealt with before the clock runs. */
+    private fun begin() {
+        if (hasSmsPermission()) startCountdown() else _state.value = SosUiState.NeedsSmsPermission
     }
 
     private fun startCountdown() {
@@ -104,7 +109,7 @@ class SosViewModel @Inject constructor(
                 _state.value = SosUiState.Countdown(second)
                 delay(TICK_MS)
             }
-            if (hasSmsPermission()) send() else _state.value = SosUiState.NeedsSmsPermission
+            if (hasSmsPermission()) send() else _state.value = SosUiState.SmsBlocked
         }
     }
 
@@ -130,20 +135,20 @@ class SosViewModel @Inject constructor(
         }
     }
 
-    /** The user said no to the SMS permission: fall back to their messages app with the text prefilled. */
+    /** The user said no to the SMS permission, or Android blocked the question. */
     fun smsPermissionDenied() {
-        viewModelScope.launch {
-            _state.value = SosUiState.SmsApp(
-                message = _preview.value ?: safePreview(),
-                phones = _contacts.value.map { normalizePhone(it.phone) },
-                autoOpen = true,
-            )
-        }
+        _state.value = SosUiState.SmsBlocked
     }
 
-    fun smsAppOpened() {
-        (_state.value as? SosUiState.SmsApp)?.let { _state.value = it.copy(autoOpen = false) }
+    /** Back from Settings: if SMS was allowed meanwhile, start the countdown. */
+    fun onResume() {
+        if (_state.value == SosUiState.SmsBlocked && hasSmsPermission()) startCountdown()
     }
+
+    /** Phone numbers for the messages-app fallback. */
+    fun fallbackPhones(): List<String> = _contacts.value.map { normalizePhone(it.phone) }
+
+    fun smsGranted() = hasSmsPermission()
 
     private suspend fun safePreview(): String = try {
         sos.previewMessage()

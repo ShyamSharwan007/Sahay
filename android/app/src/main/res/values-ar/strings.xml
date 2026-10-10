@@ -118,8 +118,8 @@
     <string name="permission_notifications_why">ينبّهك عندما يقترب الخطر.</string>
     <string name="permission_notifications_denied">بدونها لن ترى التنبيهات والتطبيق مغلق.</string>
     <string name="permission_sms_title">الرسائل النصية</string>
-    <string name="permission_sms_why">يرسل رسالة SOS بلا إنترنت.</string>
-    <string name="permission_sms_denied">بدونها تُرسل رسالة SOS من تطبيق الرسائل.</string>
+    <string name="permission_sms_why">تُستخدم فقط لإرسال رسالة SOS إلى جهات اتصال الطوارئ. لا تُقرأ رسائلك أبداً.</string>
+    <string name="permission_sms_denied">بدونها أرسل SOS من تطبيق الرسائل. للسماح بالـ SMS:</string>
     <string name="permission_open_settings">فتح الإعدادات</string>
 
     <!-- Main scaffold -->
@@ -498,4 +498,14 @@
     <string name="forecast_line">%1$s · مطر %2$s مم · %3$s°م · رياح %4$s كم/س</string>
     <string name="forecast_source">التوقعات: MET Norway</string>
     <string name="wizard_required_note">الحقول المميزة بعلامة * مطلوبة</string>
+    <string name="sms_allow_title">اسمح بـ SMS لـ SOS</string>
+    <string name="sms_allow_body">يرسل Sahay رسالة SOS بلا إنترنت. قد يحظر أندرويد ذلك للتطبيقات من خارج متجر Play.</string>
+    <string name="sms_blocked_body">لم يُسمح بـ SMS بعد. اسمح به أو أرسل SOS من تطبيق الرسائل.</string>
+    <string name="sms_steps_intro">افعل هذا مرة واحدة:</string>
+    <string name="sms_step_1">افتح الإعدادات ← التطبيقات ← Sahay.</string>
+    <string name="sms_step_2">اضغط ⋮ (أعلى اليمين) ثم السماح بالإعدادات المقيدة.</string>
+    <string name="sms_step_3">اضغط الأذونات ← SMS ← سماح.</string>
+    <string name="sms_open_app_settings">فتح إعدادات التطبيق</string>
+    <string name="sos_send_with_messages">إرسال عبر تطبيق الرسائل</string>
+    <string name="sos_no_messages_app">لم يُعثر على تطبيق رسائل. اتصل بـ 112.</string>
 </resources>

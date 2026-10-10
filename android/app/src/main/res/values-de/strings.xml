@@ -118,8 +118,8 @@
     <string name="permission_notifications_why">Warnt Sie, wenn Gefahr naht.</string>
     <string name="permission_notifications_denied">Ohne sie sehen Sie keine Warnungen, solange die App geschlossen ist.</string>
     <string name="permission_sms_title">SMS</string>
-    <string name="permission_sms_why">Sendet Ihre SOS-SMS ohne Internet.</string>
-    <string name="permission_sms_denied">Ohne sie senden Sie die SOS-SMS über Ihre Nachrichten-App.</string>
+    <string name="permission_sms_why">Nur zum Senden Ihrer SOS-SMS an Ihre Notfallkontakte. Ihre Nachrichten werden nie gelesen.</string>
+    <string name="permission_sms_denied">Ohne sie senden Sie das SOS über Ihre Nachrichten-App. So erlauben Sie SMS:</string>
     <string name="permission_open_settings">Einstellungen öffnen</string>
 
     <!-- Main scaffold -->
@@ -474,4 +474,14 @@
     <string name="forecast_line">%1$s · %2$s mm Regen · %3$s °C · Wind %4$s km/h</string>
     <string name="forecast_source">Vorhersage: MET Norway</string>
     <string name="wizard_required_note">Mit * markierte Felder sind Pflichtfelder</string>
+    <string name="sms_allow_title">SMS für SOS erlauben</string>
+    <string name="sms_allow_body">Sahay sendet Ihre SOS-SMS ohne Internet. Android kann das für Apps blockieren, die nicht aus dem Play Store stammen.</string>
+    <string name="sms_blocked_body">SMS ist noch nicht erlaubt. Erlauben Sie es oder senden Sie das SOS über Ihre Nachrichten-App.</string>
+    <string name="sms_steps_intro">Einmalig erledigen:</string>
+    <string name="sms_step_1">Öffnen Sie Einstellungen → Apps → Sahay.</string>
+    <string name="sms_step_2">Tippen Sie auf ⋮ (oben rechts), dann auf Eingeschränkte Einstellungen zulassen.</string>
+    <string name="sms_step_3">Tippen Sie auf Berechtigungen → SMS → Zulassen.</string>
+    <string name="sms_open_app_settings">App-Einstellungen öffnen</string>
+    <string name="sos_send_with_messages">Mit Nachrichten-App senden</string>
+    <string name="sos_no_messages_app">Keine Nachrichten-App gefunden. Rufen Sie stattdessen 112 an.</string>
 </resources>
