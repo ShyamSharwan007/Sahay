@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <string name="comms_sos_unknown_name">ein Tourist</string>
+    <string name="comms_sos_intro">SOS von %1$s über Sahay. Ich brauche Hilfe.</string>
+    <string name="comms_sos_location">Standort: %1$s (±%2$s m, %3$s).</string>
+    <string name="comms_sos_location_no_accuracy">Standort: %1$s (%2$s).</string>
+    <string name="comms_sos_location_unavailable">Standort nicht verfügbar.</string>
+    <string name="comms_sos_blood">Blutgruppe: %1$s.</string>
+    <string name="comms_sos_allergies">Allergien: %1$s.</string>
+    <string name="comms_sos_staying">Unterkunft: %1$s.</string>
+
+    <string name="comms_sos_fail_no_contacts">Keine Notfallkontakte gespeichert.</string>
+    <string name="comms_sos_fail_no_permission">SMS-Berechtigung ist aus.</string>
+    <string name="comms_sos_fail_airplane">Flugmodus ist an.</string>
+    <string name="comms_sos_fail_no_sim">Keine SIM-Karte gefunden.</string>
+    <string name="comms_sos_fail_no_service">Kein Mobilfunknetz.</string>
+    <string name="comms_sos_fail_invalid_number">Ungültige Telefonnummer.</string>
+    <string name="comms_sos_fail_timeout">Keine Bestätigung nach 20 Sekunden.</string>
+    <string name="comms_sos_fail_generic">Das Handy konnte die Nachricht nicht senden.</string>
+    <string name="comms_sos_failed_entry">%1$s: %2$s</string>
+</resources>

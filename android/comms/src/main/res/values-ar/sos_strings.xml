@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <string name="comms_sos_unknown_name">سائح</string>
+    <string name="comms_sos_intro">نداء استغاثة من %1$s عبر Sahay. أحتاج إلى مساعدة.</string>
+    <string name="comms_sos_location">الموقع: %1$s (±%2$s م، %3$s).</string>
+    <string name="comms_sos_location_no_accuracy">الموقع: %1$s (%2$s).</string>
+    <string name="comms_sos_location_unavailable">الموقع غير متاح.</string>
+    <string name="comms_sos_blood">فصيلة الدم: %1$s.</string>
+    <string name="comms_sos_allergies">الحساسية: %1$s.</string>
+    <string name="comms_sos_staying">مكان الإقامة: %1$s.</string>
+
+    <string name="comms_sos_fail_no_contacts">لا توجد جهات اتصال طوارئ محفوظة.</string>
+    <string name="comms_sos_fail_no_permission">إذن الرسائل القصيرة متوقف.</string>
+    <string name="comms_sos_fail_airplane">وضع الطيران قيد التشغيل.</string>
+    <string name="comms_sos_fail_no_sim">لم يتم العثور على شريحة SIM.</string>
+    <string name="comms_sos_fail_no_service">لا توجد إشارة شبكة.</string>
+    <string name="comms_sos_fail_invalid_number">رقم الهاتف غير صالح.</string>
+    <string name="comms_sos_fail_timeout">لا يوجد تأكيد بعد 20 ثانية.</string>
+    <string name="comms_sos_fail_generic">تعذّر على الهاتف إرسال الرسالة.</string>
+    <string name="comms_sos_failed_entry">%1$s: %2$s</string>
+</resources>
