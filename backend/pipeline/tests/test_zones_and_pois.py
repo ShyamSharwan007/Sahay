@@ -5,10 +5,28 @@ import pytest
 from shapely.geometry import LineString, Point, box
 
 from pipeline.geo import haversine_m
-from pipeline.pois import (CANDIDATE_SHELTER, HOSPITAL, SHELTER, Poi, classify_poi, dedupe_nearby, drop_unsafe_candidates,
-                           load_official_shelters, merge_official, poi_from_osm, poi_id)
-from pipeline.zones import (OTHER_WATER, RIVER_OR_COAST, build_medium_zone, build_near_river_coast, classify_water,
-                            contains_points, load_high_zones)
+from pipeline.pois import (
+    CANDIDATE_SHELTER,
+    HOSPITAL,
+    SHELTER,
+    Poi,
+    classify_poi,
+    dedupe_nearby,
+    drop_unsafe_candidates,
+    load_official_shelters,
+    merge_official,
+    poi_from_osm,
+    poi_id,
+)
+from pipeline.zones import (
+    OTHER_WATER,
+    RIVER_OR_COAST,
+    build_medium_zone,
+    build_near_river_coast,
+    classify_water,
+    contains_points,
+    load_high_zones,
+)
 
 BBOX = (80.16, 12.59, 80.21, 12.65)
 

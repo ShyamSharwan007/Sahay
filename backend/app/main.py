@@ -106,10 +106,17 @@ def create_app() -> FastAPI:
     application.include_router(admin.router, prefix="/api/v1")
     application.include_router(packs.router, prefix="/api/v1")
 
+    from app.routers import groups, presence, reports, translate
+    application.include_router(reports.router, prefix="/api/v1")
+    application.include_router(presence.router, prefix="/api/v1")
+    application.include_router(groups.router, prefix="/api/v1")
+    application.include_router(translate.router, prefix="/api/v1")
+
     # UI router directly at root or /admin
     application.include_router(admin_ui.router)
 
     return application
+
 
 
 # The ASGI app Uvicorn imports
