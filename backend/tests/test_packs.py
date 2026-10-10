@@ -186,3 +186,71 @@ def test_manifest_2_days_forecast(packs_with_valid_entry):
         assert data["forecast"][0]["date"] == start_str
         assert data["forecast"][0]["rainMm"] == 10.5
         assert data["forecast"][1]["riskLevel"] == "HIGH"  # 75.0 mm -> HIGH
+
+def test_manifest_met_norway_fallback(packs_with_valid_entry):
+    """Test MET Norway provider works and Open-Meteo 429 doesn't break it."""
+    import datetime
+    today = datetime.datetime.now()
+    d1 = today + datetime.timedelta(days=3)
+    d2 = today + datetime.timedelta(days=4)
+    
+    start_str = d1.strftime("%Y-%m-%d")
+    end_str = d2.strftime("%Y-%m-%d")
+
+    # Time strings for MET JSON, in UTC so it maps to d1 and d2 in IST
+    # Example: today at 12:00 UTC = 17:30 IST. Let's just use d1 00:00 UTC.
+    d1_utc = f"{start_str}T00:00:00Z"
+    d2_utc = f"{end_str}T00:00:00Z"
+    
+    with respx.mock(assert_all_called=False) as respx_mock:
+        # MET Norway mock
+        respx_mock.get(url__regex=r"https://api\.met\.no/weatherapi/locationforecast.*").respond(
+            status_code=200,
+            json={
+                "properties": {
+                    "timeseries": [
+                        {
+                            "time": d1_utc,
+                            "data": {
+                                "instant": {"details": {"air_temperature": 32.5, "wind_speed": 4.0}},
+                                "next_1_hours": {"details": {"precipitation_amount": 12.0}}
+                            }
+                        },
+                        {
+                            "time": d2_utc,
+                            "data": {
+                                "instant": {"details": {"air_temperature": 29.0, "wind_speed": 10.0}},
+                                "next_6_hours": {"details": {"precipitation_amount": 70.0}}
+                            }
+                        }
+                    ]
+                }
+            }
+        )
+        # Open-Meteo mock (429)
+        respx_mock.get(url__regex=r"https://api\.open-meteo\.com/v1/forecast.*").respond(
+            status_code=429, text="Rate limit exceeded"
+        )
+        respx_mock.get(url__regex=r"https://archive-api\.open-meteo\.com/v1/archive.*").respond(
+            status_code=200, json={"daily": {"time": [], "precipitation_sum": []}}
+        )
+        
+        resp = client.get(
+            f"/api/v1/packs/mahabalipuram/manifest?start={start_str}&end={end_str}"
+        )
+        
+        assert resp.status_code == 200
+        data = resp.json()
+        
+        assert len(data["forecast"]) == 2
+        assert data["forecast"][0]["date"] == start_str
+        assert data["forecast"][0]["rainMm"] == 12.0
+        assert data["forecast"][0]["windKmh"] == 14.4  # 4.0 * 3.6
+        assert data["forecast"][0]["maxTempC"] == 32.5
+        assert data["forecast"][0]["riskLevel"] == "LOW"
+        
+        assert data["forecast"][1]["date"] == end_str
+        assert data["forecast"][1]["rainMm"] == 70.0
+        assert data["forecast"][1]["windKmh"] == 36.0  # 10.0 * 3.6
+        assert data["forecast"][1]["maxTempC"] == 29.0
+        assert data["forecast"][1]["riskLevel"] == "HIGH"

@@ -21,19 +21,82 @@ def get_risk_level(rain_mm: float, wind_kmh: float) -> str:
         return "MEDIUM"
     return "LOW"
 
-async def fetch_forecast(lat: float, lon: float, start_date: str, end_date: str) -> list[dict]:
-    cache_key = f"{lat},{lon},{start_date},{end_date}"
-    now = datetime.datetime.now(datetime.timezone.utc).timestamp()
+from zoneinfo import ZoneInfo
 
-    if cache_key in _FORECAST_CACHE:
-        cached_time, data = _FORECAST_CACHE[cache_key]
-        if now - cached_time < 3600:  # 1 hour cache
-            return data
+async def fetch_forecast_met(lat: float, lon: float, start_dt, end_dt) -> list[dict] | None:
+    url = f"https://api.met.no/weatherapi/locationforecast/2.0/compact?lat={lat}&lon={lon}"
+    headers = {"User-Agent": "Sahay/1.0 github.com/ShyamSharwan007/Sahay"}
+    try:
+        async with httpx.AsyncClient() as client:
+            logger.info(f"MET Norway request URL: {url}")
+            resp = await client.get(url, headers=headers, timeout=10.0)
+            logger.info(f"MET Norway status: {resp.status_code}")
+            if resp.status_code != 200:
+                logger.warning(f"MET Norway returned {resp.status_code}: {resp.text}")
+                return None
+            data = resp.json()
 
-    start_dt = datetime.datetime.strptime(start_date, "%Y-%m-%d")
-    end_dt = datetime.datetime.strptime(end_date, "%Y-%m-%d")
+            timeseries = data.get("properties", {}).get("timeseries", [])
+            tz = ZoneInfo("Asia/Kolkata")
+            daily_data = {}
+            for ts in timeseries:
+                time_str = ts.get("time", "")
+                if not time_str:
+                    continue
+                dt_utc = datetime.datetime.fromisoformat(time_str.replace("Z", "+00:00"))
+                dt_ist = dt_utc.astimezone(tz)
+                date_str = dt_ist.strftime("%Y-%m-%d")
+                d_dt = dt_ist.date()
+
+                if not (start_dt.date() <= d_dt <= end_dt.date()):
+                    continue
+
+                if date_str not in daily_data:
+                    daily_data[date_str] = {
+                        "rain_sum": 0.0,
+                        "max_temp": -999.0,
+                        "max_wind": -1.0,
+                    }
+
+                details = ts.get("data", {}).get("instant", {}).get("details", {})
+                temp = details.get("air_temperature")
+                if temp is not None:
+                    daily_data[date_str]["max_temp"] = max(daily_data[date_str]["max_temp"], temp)
+                wind = details.get("wind_speed")
+                if wind is not None:
+                    daily_data[date_str]["max_wind"] = max(daily_data[date_str]["max_wind"], wind)
+
+                next_1 = ts.get("data", {}).get("next_1_hours", {}).get("details", {}).get("precipitation_amount")
+                if next_1 is not None:
+                    daily_data[date_str]["rain_sum"] += next_1
+                else:
+                    next_6 = ts.get("data", {}).get("next_6_hours", {}).get("details", {}).get("precipitation_amount")
+                    if next_6 is not None:
+                        daily_data[date_str]["rain_sum"] += next_6
+
+            result = []
+            for date_str in sorted(daily_data.keys()):
+                d_data = daily_data[date_str]
+                r = d_data["rain_sum"]
+                w = round(max(0.0, d_data["max_wind"]) * 3.6, 1) if d_data["max_wind"] >= 0 else 0.0
+                t = d_data["max_temp"] if d_data["max_temp"] > -999 else 0.0
+
+                result.append({
+                    "date": date_str,
+                    "rainMm": round(r, 1),
+                    "windKmh": w,
+                    "maxTempC": t,
+                    "riskLevel": get_risk_level(r, w)
+                })
+            logger.info("Successfully fetched forecast from MET Norway")
+            return result
+    except Exception as e:
+        logger.error(f"MET Norway API failed: {e}", exc_info=True)
+        return None
+
+
+async def fetch_forecast_openmeteo(lat: float, lon: float, start_dt, end_dt) -> list[dict] | None:
     today = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-
     clipped_start = max(start_dt, today)
     clipped_end = min(end_dt, today + datetime.timedelta(days=15))
 
@@ -53,8 +116,9 @@ async def fetch_forecast(lat: float, lon: float, start_date: str, end_date: str)
             logger.info(f"Open-Meteo request URL: {url}")
             resp = await client.get(url, timeout=5.0)
             logger.info(f"Open-Meteo status: {resp.status_code}")
-            logger.info(f"Open-Meteo response: {resp.text}")
-            resp.raise_for_status()
+            if resp.status_code != 200:
+                logger.warning(f"Open-Meteo returned {resp.status_code}: {resp.text}")
+                return None
             data = resp.json()
 
             daily = data.get("daily", {})
@@ -79,15 +143,37 @@ async def fetch_forecast(lat: float, lon: float, start_date: str, end_date: str)
                     "maxTempC": t,
                     "riskLevel": get_risk_level(r, w)
                 })
-
-            if result:
-                _FORECAST_CACHE[cache_key] = (now, result)
-            else:
-                _FORECAST_CACHE.pop(cache_key, None)
+            logger.info("Successfully fetched forecast from Open-Meteo")
             return result
     except Exception as e:
-        logger.error(f"Forecast API failed: {e}", exc_info=True)
-        return []
+        logger.error(f"Open-Meteo API failed: {e}", exc_info=True)
+        return None
+
+async def fetch_forecast(lat: float, lon: float, start_date: str, end_date: str) -> list[dict]:
+    cache_key = f"{lat},{lon},{start_date},{end_date}"
+    now = datetime.datetime.now(datetime.timezone.utc).timestamp()
+
+    if cache_key in _FORECAST_CACHE:
+        cached_time, data = _FORECAST_CACHE[cache_key]
+        if now - cached_time < 3600:  # 1 hour cache
+            return data
+
+    start_dt = datetime.datetime.strptime(start_date, "%Y-%m-%d")
+    end_dt = datetime.datetime.strptime(end_date, "%Y-%m-%d")
+
+    result = await fetch_forecast_met(lat, lon, start_dt, end_dt)
+    if result is None:
+        logger.warning("MET Norway failed, falling back to Open-Meteo")
+        result = await fetch_forecast_openmeteo(lat, lon, start_dt, end_dt)
+    
+    if result is None:
+        result = []
+
+    if result:
+        _FORECAST_CACHE[cache_key] = (now, result)
+    else:
+        _FORECAST_CACHE.pop(cache_key, None)
+    return result
 
 async def fetch_history(lat: float, lon: float, start_date: str, end_date: str) -> dict:
     cache_key = f"{lat},{lon},{start_date},{end_date}"
