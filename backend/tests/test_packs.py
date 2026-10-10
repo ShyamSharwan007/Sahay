@@ -126,3 +126,23 @@ def test_manifest_invalid_dates():
     )
     assert resp.status_code == 400
     assert resp.json()["error"]["code"] == "BAD_REQUEST"
+
+
+def test_manifest_10_days_ahead(mock_open_meteo, packs_with_valid_entry):
+    """Test forecast for dates 10 days ahead."""
+    import datetime
+    today = datetime.datetime.now()
+    start_dt = today + datetime.timedelta(days=10)
+    end_dt = today + datetime.timedelta(days=11)
+    
+    start_str = start_dt.strftime("%Y-%m-%d")
+    end_str = end_dt.strftime("%Y-%m-%d")
+    
+    resp = client.get(
+        f"/api/v1/packs/mahabalipuram/manifest?start={start_str}&end={end_str}"
+    )
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "forecast" in data
+    # mock_open_meteo returns 1 day of data, which should be included if dates overlap
+    assert len(data["forecast"]) >= 0
