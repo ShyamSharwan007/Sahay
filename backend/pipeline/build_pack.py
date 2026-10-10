@@ -17,8 +17,8 @@ from shapely.ops import unary_union
 
 from . import osm_source
 from .content import load_content
-from .elevation import ElevationCache, ElevationClient
-from .graph import build_edges, remap_node_ids
+from .elevation import ElevationCache, ElevationClient, fill_from_neighbours
+from .graph import build_edges, pois_far_from_graph, remap_node_ids
 from .pack_writer import PackData, ZoneRow, next_pack_version, read_meta, write_pack
 from .paths import CACHE_DIR, CONTENT_DIR, CURATED_DIR, PACKS_DIR, SAMPLES_DIR
 from .pois import (
@@ -46,6 +46,7 @@ from .zones import (
 
 SAMPLE_REGION = "mahabalipuram"
 SAMPLE_SIZE_M = 1000.0
+POI_SNAP_MAX_M = 50.0  # a POI farther than this from every graph node cannot be routed to properly
 
 
 def step(number: int, title: str) -> None:
@@ -93,6 +94,9 @@ def build(region: Region, args: argparse.Namespace) -> Path:
             elevations = ElevationClient(cache).lookup(list(node_points.values()) + [(p.lat, p.lon) for p in pois])
         finally:
             cache.close()
+        elevations, filled = fill_from_neighbours(elevations)
+        if filled:
+            print(f"  {filled} points without an API answer took the elevation of a known point within 90 m")
     node_elevation = [elevations.get(node_points[i]) for i in range(len(node_points))]
     pois = with_elevations(pois, elevations)
     unknown = sum(1 for v in node_elevation if v is None)
@@ -117,6 +121,11 @@ def build(region: Region, args: argparse.Namespace) -> Path:
           f"{stats['unknown_elevation_kept']} kept with unknown elevation")
     for kind in ("SHELTER", "CANDIDATE_SHELTER", "HOSPITAL", "POLICE"):
         print(f"  {kind}: {sum(1 for p in pois if p.type == kind)}")
+    unreachable = pois_far_from_graph(
+        [(p.id, p.name, p.lat, p.lon) for p in pois], node_points.values(), POI_SNAP_MAX_M)
+    print(f"  POIs farther than {POI_SNAP_MAX_M:.0f} m from a graph node: {len(unreachable)}/{len(pois)}")
+    for poi_id, name, dist in unreachable:
+        print(f"    WARNING: {poi_id} '{name}' is {'?' if dist is None else f'{dist:.0f}'} m from the nearest graph node")
 
     step(7, "Writing the pack")
     content = load_content(CONTENT_DIR)

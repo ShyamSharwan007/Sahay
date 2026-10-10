@@ -122,3 +122,22 @@ def test_gives_up_after_consecutive_failed_batches(tmp_path):
 
     assert len(session.calls) == 3
     assert set(result.values()) == {None}
+
+
+def test_fill_from_neighbours_uses_nearest_known_point_within_range():
+    from pipeline.elevation import fill_from_neighbours
+
+    known_a, known_b = (12.8400, 80.1500), (12.8420, 80.1500)   # b is ~220 m from the gap
+    gap_near = (12.84030, 80.1500)                                # ~33 m from a
+    gap_far = (12.8450, 80.1600)                                  # nothing within 90 m
+    filled, count = fill_from_neighbours({known_a: 7.0, known_b: 9.0, gap_near: None, gap_far: None})
+    assert count == 1
+    assert filled[gap_near] == 7.0
+    assert filled[gap_far] is None
+    assert filled[known_a] == 7.0 and filled[known_b] == 9.0
+
+
+def test_fill_from_neighbours_with_nothing_known_changes_nothing():
+    from pipeline.elevation import fill_from_neighbours
+
+    assert fill_from_neighbours({(1.0, 1.0): None}) == ({(1.0, 1.0): None}, 0)

@@ -16,6 +16,15 @@ WATER_TAGS = {
 }
 POI_TAGS = {"amenity": OSM_AMENITIES, "building": ["school"]}
 
+# Overpass filter for walkable ways. Deliberately has NO access=private / service=private exclusion
+# (campus roads, gated estates). foot=no and area=yes are still excluded; cycleways, motorways and
+# platforms are not in the highway list.
+WALK_HIGHWAYS = (
+    "footway|path|pedestrian|steps|track|living_street|service|residential|unclassified|road"
+    "|tertiary|tertiary_link|secondary|secondary_link|primary|primary_link|trunk|trunk_link"
+)
+WALK_FILTER = f'["highway"~"^({WALK_HIGHWAYS})$"]["area"!~"yes"]["foot"!~"no"]'
+
 
 @dataclass(frozen=True)
 class OsmElement:
@@ -39,8 +48,15 @@ def fetch_walk_graph(ox, bbox: BBox) -> tuple[dict[int, tuple[float, float]], li
 
     Not simplified on purpose: simplification drops the nodes between junctions, so the app would draw
     straight lines through buildings instead of following the road shape.
+
+    Uses WALK_FILTER instead of osmnx's network_type="walk": that one drops access=private ways, which
+    removes campus roads and gated-estate streets a tourist can actually walk. The download keeps every
+    component (retain_all) and the largest one is kept afterwards, so we control and can log what is dropped.
     """
-    graph = ox.graph.graph_from_bbox(bbox, network_type="walk", simplify=False, retain_all=False)
+    full = ox.graph.graph_from_bbox(bbox, custom_filter=WALK_FILTER, simplify=False, retain_all=True)
+    graph = ox.truncate.largest_component(full, strongly=False)
+    print(f"  OSM walkable graph: {full.number_of_nodes()} nodes / {full.number_of_edges()} edges; "
+          f"largest connected component: {graph.number_of_nodes()} / {graph.number_of_edges()}")
     nodes = {int(n): (float(d["y"]), float(d["x"])) for n, d in graph.nodes(data=True)}
 
     edges: list[RawEdge] = []

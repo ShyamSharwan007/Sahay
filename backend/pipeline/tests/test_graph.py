@@ -67,3 +67,20 @@ def test_normalize_highway():
     assert normalize_highway([]) is None
     assert normalize_highway(None) is None
     assert normalize_highway("  ") is None
+
+
+def test_pois_far_from_graph_flags_only_pois_beyond_the_limit():
+    from pipeline.graph import pois_far_from_graph
+
+    nodes = [(12.8400, 80.1500), (12.8410, 80.1500)]
+    near = ("near", "Near", 12.84003, 80.1500)    # ~3 m from a node
+    far = ("far", "Far", 12.8500, 80.1600)        # >1 km away
+    result = pois_far_from_graph([near, far], nodes, 50.0)
+    assert [r[0] for r in result] == ["far"]
+    assert result[0][2] > 1000
+
+
+def test_pois_far_from_graph_with_empty_graph_flags_everything():
+    from pipeline.graph import pois_far_from_graph
+
+    assert pois_far_from_graph([("a", "A", 1.0, 1.0)], [], 50.0) == [("a", "A", None)]
