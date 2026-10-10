@@ -5,7 +5,6 @@ bbox or regionName (those come from regions.json).
 """
 
 import json
-from pathlib import Path
 from unittest.mock import patch
 
 import pytest
@@ -13,7 +12,6 @@ import respx
 from fastapi.testclient import TestClient
 
 from app.main import app
-from app.routers.packs import PACKS_JSON
 
 client = TestClient(app, raise_server_exceptions=False)
 

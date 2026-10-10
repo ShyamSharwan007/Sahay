@@ -3,7 +3,14 @@ import pytest
 from shapely.geometry import box
 
 from pipeline.graph import Edge
-from pipeline.risk import compute_edge_risks, edge_elevation, elevation_term, format_histogram, risk_cost, risk_histogram
+from pipeline.risk import (
+    compute_edge_risks,
+    edge_elevation,
+    elevation_term,
+    format_histogram,
+    risk_cost,
+    risk_histogram,
+)
 
 
 @pytest.mark.parametrize("elevation, expected", [
