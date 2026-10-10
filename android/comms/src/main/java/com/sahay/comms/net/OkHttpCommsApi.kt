@@ -7,7 +7,11 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.intOrNull
 import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.MediaType.Companion.toMediaType
@@ -20,7 +24,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * OkHttp client for [CommsApi] and [ReportsApi]. Deliberately not exposed to Hilt, so it cannot clash with a client another
+ * OkHttp client for [CommsApi], [ReportsApi] and [GroupsApi]. Deliberately not exposed to Hilt, so it cannot clash with a client another
  * module provides. Every call is capped at [SahayConfig.NETWORK_TIMEOUT_MS].
  */
 @Singleton
@@ -28,7 +32,7 @@ class OkHttpCommsApi internal constructor(
     private val client: OkHttpClient,
     private val baseUrl: HttpUrl,
     private val retryBackoffMs: Long,
-) : CommsApi, ReportsApi {
+) : CommsApi, ReportsApi, GroupsApi {
 
     @Inject constructor() : this(defaultClient(), SahayConfig.BASE_URL.toHttpUrl(), RETRY_BACKOFF_MS)
 
@@ -87,6 +91,46 @@ class OkHttpCommsApi internal constructor(
         }
         // One malformed report must not hide all the others.
         return array.mapNotNull { runCatching { json.decodeFromJsonElement(ReportDto.serializer(), it) }.getOrNull() }
+    }
+
+    override suspend fun shelterStatuses(regionId: String): List<ShelterStatusDto> {
+        val url = baseUrl.newBuilder()
+            .addPathSegment("shelters")
+            .addPathSegment("status")
+            .addQueryParameter("regionId", regionId)
+            .build()
+        return decode(ListSerializer(ShelterStatusDto.serializer()), getWithRetry(url))
+    }
+
+    override suspend fun postPresence(request: PresenceRequest, idToken: String) {
+        val body = json.encodeToString(PresenceRequest.serializer(), request).toRequestBody(JSON_MEDIA_TYPE)
+        val httpRequest = Request.Builder()
+            .url(baseUrl.newBuilder().addPathSegment("presence").build())
+            .authorized(idToken)
+            .post(body)
+            .build()
+        execute(httpRequest)   // 204, empty body
+    }
+
+    override suspend fun groups(lat: Double, lon: Double, radiusM: Int, idToken: String?): GroupsDto {
+        val url = baseUrl.newBuilder()
+            .addPathSegment("groups")
+            .addQueryParameter("lat", lat.toString())
+            .addQueryParameter("lon", lon.toString())
+            .addQueryParameter("radiusM", radiusM.toString())
+            .build()
+        val root = try {
+            json.parseToJsonElement(getWithRetry(url, idToken)).jsonObject
+        } catch (e: SerializationException) {
+            throw ApiException("Unreadable server answer")
+        } catch (e: IllegalArgumentException) {
+            throw ApiException("Unreadable server answer")
+        }
+        // One malformed group must not hide all the others.
+        val groups = (root["groups"] as? JsonArray).orEmpty()
+            .mapNotNull { runCatching { json.decodeFromJsonElement(GroupDto.serializer(), it) }.getOrNull() }
+        val minSize = (root["minSize"] as? JsonPrimitive)?.intOrNull
+        return GroupsDto(groups, minSize)
     }
 
     /** One retry with backoff for network errors and 5xx (docs/CONTRACTS.md §9). 4xx is not retried. */

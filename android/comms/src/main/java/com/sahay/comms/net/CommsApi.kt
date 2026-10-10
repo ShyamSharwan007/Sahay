@@ -13,6 +13,9 @@ interface CommsApi {
 
     /** `POST /translate` */
     suspend fun translate(text: String, targetLang: String): TranslateDto
+
+    /** `GET /shelters/status?regionId=` */
+    suspend fun shelterStatuses(regionId: String): List<ShelterStatusDto>
 }
 
 /** Non-2xx answer, or a body we cannot read. */
@@ -21,6 +24,10 @@ class ApiException(message: String, val httpCode: Int? = null) : IOException(mes
 /** Only [wire] is trusted (docs/CONTRACTS.md §3.1); the other JSON fields are ignored. */
 @Serializable
 data class AlertDto(val id: String? = null, val wire: String? = null)
+
+/** Only [wire] is trusted, like [AlertDto]. */
+@Serializable
+data class ShelterStatusDto(val shelterId: String? = null, val wire: String? = null)
 
 @Serializable
 data class TemplateDto(val code: String, val severity: Int = 1, val title: String = "", val body: String = "")

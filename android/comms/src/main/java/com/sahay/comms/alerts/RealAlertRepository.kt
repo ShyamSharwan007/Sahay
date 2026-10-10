@@ -81,6 +81,7 @@ class RealAlertRepository internal constructor(
     override val unreadCount: StateFlow<Int> = dao.observeUnreadCount()
         .stateIn(scope, SharingStarted.Eagerly, 0)
 
+    private val shelterSync = ShelterStatusSync(api, reader, packRepository)
     private val refreshLock = Mutex()
     @Volatile private var lastRefreshSec: Long? = null
 
@@ -92,10 +93,18 @@ class RealAlertRepository internal constructor(
 
     // ------------------------------------------------------------------ AlertRepository
 
-    /** `GET /alerts?regionId&since`, each wire verified before it is stored. Nothing to do without a trip pack. */
+    /**
+     * `GET /alerts?regionId&since`, each wire verified before it is stored. Then the signed shelter statuses are
+     * refreshed in the same cycle (only if the alerts call worked, so an offline phone waits for one timeout, not two).
+     * Nothing to do without a trip pack.
+     */
     override suspend fun refresh(): Result<Unit> = refreshLock.withLock {
         val regionId = packRepository.activePack.value?.regionId ?: return Result.success(Unit)
-        try {
+        refreshAlerts(regionId).also { if (it.isSuccess) shelterSync.sync(regionId) }
+    }
+
+    private suspend fun refreshAlerts(regionId: String): Result<Unit> {
+        return try {
             val startedAt = nowSec()
             val oldest = startedAt - WireCodec.MAX_AGE_SEC
             val since = maxOf(oldest, (lastRefreshSec ?: oldest) - REFRESH_OVERLAP_SEC)

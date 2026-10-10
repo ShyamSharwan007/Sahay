@@ -9,8 +9,9 @@ import com.sahay.comms.alerts.RealAlertRepository
 import com.sahay.comms.alerts.SystemAlertNotifier
 import com.sahay.comms.alerts.TemplateCacheDao
 import com.sahay.comms.connectivity.RealConnectivityMonitor
-import com.sahay.comms.fake.FakeGroupService
+import com.sahay.comms.groups.RealGroupService
 import com.sahay.comms.net.CommsApi
+import com.sahay.comms.net.GroupsApi
 import com.sahay.comms.net.OkHttpCommsApi
 import com.sahay.comms.net.ReportsApi
 import com.sahay.comms.reports.RealReportRepository
@@ -33,8 +34,7 @@ import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 /**
- * Alerts, connectivity, SOS and reports are real; groups still point at a fake until their turn.
- * (The Fake* classes stay in the module for tests and previews.)
+ * Everything is real now. (The Fake* classes stay in the module for tests and previews.)
  */
 @Module
 @InstallIn(SingletonComponent::class)
@@ -49,7 +49,7 @@ abstract class CommsModule {
     abstract fun reportRepository(impl: RealReportRepository): ReportRepository
 
     @Binds @Singleton
-    abstract fun groupService(impl: FakeGroupService): GroupService
+    abstract fun groupService(impl: RealGroupService): GroupService
 
     @Binds @Singleton
     abstract fun connectivityMonitor(impl: RealConnectivityMonitor): ConnectivityMonitor
@@ -59,6 +59,9 @@ abstract class CommsModule {
 
     @Binds @Singleton
     abstract fun reportsApi(impl: OkHttpCommsApi): ReportsApi
+
+    @Binds @Singleton
+    abstract fun groupsApi(impl: OkHttpCommsApi): GroupsApi
 
     @Binds @Singleton
     abstract fun smsDispatcher(impl: AndroidSmsDispatcher): SmsDispatcher

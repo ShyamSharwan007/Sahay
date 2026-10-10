@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.sahay.comms.net.AlertDto
 import com.sahay.comms.net.ApiException
 import com.sahay.comms.net.CommsApi
+import com.sahay.comms.net.ShelterStatusDto
 import com.sahay.comms.net.TemplateDto
 import com.sahay.comms.net.TranslateDto
 import com.sahay.comms.sms.GroupWireCache
@@ -43,6 +44,9 @@ class FakeCommsApi : CommsApi {
     var alertWires: List<String?> = emptyList()
     var failAlerts = false
     var translateResult: TranslateDto? = null          // null = the call fails
+    var shelterWires: List<String?> = emptyList()
+    var failShelters = false
+    val shelterRequests = mutableListOf<String>()
     val alertRequests = mutableListOf<Pair<String, Long>>()
     val translateRequests = mutableListOf<Pair<String, String>>()
 
@@ -53,6 +57,12 @@ class FakeCommsApi : CommsApi {
     }
 
     override suspend fun alertTemplates(lang: String): List<TemplateDto> = throw ApiException("not used")
+
+    override suspend fun shelterStatuses(regionId: String): List<ShelterStatusDto> {
+        shelterRequests += regionId
+        if (failShelters) throw ApiException("HTTP 503", 503)
+        return shelterWires.map { ShelterStatusDto(shelterId = "x", wire = it) }
+    }
 
     override suspend fun translate(text: String, targetLang: String): TranslateDto {
         translateRequests += text to targetLang
