@@ -21,14 +21,28 @@ from .elevation import ElevationCache, ElevationClient
 from .graph import build_edges, remap_node_ids
 from .pack_writer import PackData, ZoneRow, next_pack_version, read_meta, write_pack
 from .paths import CACHE_DIR, CONTENT_DIR, CURATED_DIR, PACKS_DIR, SAMPLES_DIR
-from .pois import (Poi, dedupe_nearby, drop_unsafe_candidates, load_official_shelters, merge_official, poi_from_osm,
-                   with_elevations)
+from .pois import (
+    Poi,
+    dedupe_nearby,
+    drop_unsafe_candidates,
+    load_official_shelters,
+    merge_official,
+    poi_from_osm,
+    with_elevations,
+)
 from .projection import centroid_latlon
-from .regions import Region, get_region, geojson_io_url, load_regions
+from .regions import Region, geojson_io_url, get_region, load_regions
 from .risk import compute_edge_risks, format_histogram, risk_histogram
 from .trim import bbox_centre, square_around, trim_pack
-from .zones import (OTHER_WATER, RIVER_OR_COAST, build_medium_zone, build_near_river_coast, classify_water,
-                    geometry_to_geojson, load_high_zones)
+from .zones import (
+    OTHER_WATER,
+    RIVER_OR_COAST,
+    build_medium_zone,
+    build_near_river_coast,
+    classify_water,
+    geometry_to_geojson,
+    load_high_zones,
+)
 
 SAMPLE_REGION = "mahabalipuram"
 SAMPLE_SIZE_M = 1000.0

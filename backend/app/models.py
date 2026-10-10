@@ -113,3 +113,70 @@ class ManifestResponse(CamelModel):
     history: HistorySummary | dict
     incidents: list[Incident]
     precautions: list[Precaution]
+
+
+class ReportCreate(CamelModel):
+    type: str
+    lat: float
+    lon: float
+    reporter_lat: float
+    reporter_lon: float
+    note: str | None = None
+    photo_base64: str | None = None
+    created_at: int
+    channel: str
+
+
+class Report(CamelModel):
+    id: str
+    type: str
+    lat: float
+    lon: float
+    note: str | None
+    photo_url: str | None
+    created_at: int
+    trust_score: float
+    label: str
+    mine: bool
+    channel: str
+
+
+class PresenceCreate(CamelModel):
+    lat: float
+    lon: float
+
+
+class Group(CamelModel):
+    id: str
+    lat: float
+    lon: float
+    size: int
+    status: str
+    last_seen: int
+
+
+class Beacon(CamelModel):
+    id: str
+    lat: float
+    lon: float
+    created_at: int
+    mine: bool
+
+
+class GroupsResponse(CamelModel):
+    groups: list[Group]
+    beacons: list[Beacon]
+    min_size: int
+
+
+class TranslateRequest(CamelModel):
+    text: str
+    target_lang: str
+
+
+class TranslateResponse(CamelModel):
+    detected_lang: str
+    simplified_en: str
+    translated: str
+    matched_template_code: str | None
+
