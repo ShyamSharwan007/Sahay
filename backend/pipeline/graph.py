@@ -3,6 +3,8 @@ import math
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 
+from .geo import haversine_m
+
 
 @dataclass(frozen=True)
 class RawEdge:
@@ -39,6 +41,20 @@ def normalize_highway(value) -> str | None:
         return None
     text = str(value).strip()
     return text or None
+
+
+def pois_far_from_graph(
+    pois: Iterable[tuple[str, str, float, float]], node_points: Iterable[tuple[float, float]], max_m: float
+) -> list[tuple[str, str, float | None]]:
+    """POIs given as (id, name, lat, lon) whose nearest graph node is more than max_m away.
+    Returns (id, name, distance in m) for each; distance is None when the graph has no nodes."""
+    points = list(node_points)
+    far = []
+    for poi_id, name, lat, lon in pois:
+        nearest = min((haversine_m(lat, lon, n_lat, n_lon) for n_lat, n_lon in points), default=None)
+        if nearest is None or nearest > max_m:
+            far.append((poi_id, name, nearest))
+    return far
 
 
 def build_edges(raw_edges: Iterable[RawEdge], id_map: Mapping[int, int]) -> list[Edge]:

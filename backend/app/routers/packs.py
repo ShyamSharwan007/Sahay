@@ -90,8 +90,8 @@ async def get_pack_manifest(
     # Analyze forecast to find triggers for precautions
     triggers = {"always"}
     for day in forecast_data:
-        r = day["rain_mm"]
-        w = day["wind_kmh"]
+        r = day.get("rainMm", 0.0)
+        w = day.get("windKmh", 0.0)
         if r >= 204.5:
             triggers.add("extreme_rain")
         elif r >= 115.6:

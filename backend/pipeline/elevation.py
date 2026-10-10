@@ -12,10 +12,15 @@ from pathlib import Path
 
 import requests
 
+from .geo import haversine_m
+
 API_URL = "https://api.open-meteo.com/v1/elevation"
 BATCH_SIZE = 100
 KEY_DECIMALS = 4  # ~11 m; the DEM is 90 m resolution, so finer keys only cost extra requests
 _SCALE = 10 ** KEY_DECIMALS
+
+DEM_RESOLUTION_M = 90.0  # source DEM cell size: points closer than this usually share one elevation value
+_GRID_DEG = 0.001  # ~110 m buckets for the neighbour search
 
 Point = tuple[float, float]  # (lat, lon)
 Key = tuple[int, int]
@@ -153,3 +158,32 @@ def _retry_after_seconds(response: requests.Response) -> float | None:
         return float(response.headers.get("Retry-After", ""))
     except ValueError:
         return None
+
+
+def fill_from_neighbours(
+    elevations: dict[Point, float | None], max_m: float = DEM_RESOLUTION_M
+) -> tuple[dict[Point, float | None], int]:
+    """Give each unresolved point the elevation of the nearest resolved point within max_m.
+
+    Used when the API quota ran out: the DEM is max_m coarse, so a close neighbour is the same DEM cell.
+    Points with no neighbour stay None. Returns (new mapping, number of points filled)."""
+    def cell(point: Point) -> tuple[int, int]:
+        return math.floor(point[0] / _GRID_DEG), math.floor(point[1] / _GRID_DEG)
+
+    known: dict[tuple[int, int], list[Point]] = {}
+    for point, value in elevations.items():
+        if value is not None:
+            known.setdefault(cell(point), []).append(point)
+
+    filled = dict(elevations)
+    count = 0
+    for point, value in elevations.items():
+        if value is not None:
+            continue
+        row, col = cell(point)
+        candidates = [q for dr in (-1, 0, 1) for dc in (-1, 0, 1) for q in known.get((row + dr, col + dc), [])]
+        best = min(candidates, key=lambda q: haversine_m(point[0], point[1], q[0], q[1]), default=None)
+        if best is not None and haversine_m(point[0], point[1], best[0], best[1]) <= max_m:
+            filled[point] = elevations[best]
+            count += 1
+    return filled, count
