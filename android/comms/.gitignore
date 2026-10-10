@@ -1,0 +1,2 @@
+# Copied from docs/ by the copyWireVectors Gradle task
+/src/test/resources/wire_test_vectors.json

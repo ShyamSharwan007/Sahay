@@ -12,13 +12,16 @@ import kotlin.math.sqrt
 internal data class LatLonBox(val minLat: Double, val maxLat: Double, val minLon: Double?, val maxLon: Double?)
 
 internal object GeoMath {
-    private const val EARTH_RADIUS_M = 6_371_000.0
+    const val EARTH_RADIUS_M = 6_371_000.0
 
-    fun haversineM(a: GeoPoint, b: GeoPoint): Double {
-        val lat1 = Math.toRadians(a.lat)
-        val lat2 = Math.toRadians(b.lat)
+    fun haversineM(a: GeoPoint, b: GeoPoint): Double = haversineM(a.lat, a.lon, b.lat, b.lon)
+
+    /** Primitive overload for hot loops (no [GeoPoint] allocation). */
+    fun haversineM(lat1Deg: Double, lon1Deg: Double, lat2Deg: Double, lon2Deg: Double): Double {
+        val lat1 = Math.toRadians(lat1Deg)
+        val lat2 = Math.toRadians(lat2Deg)
         val dLat = lat2 - lat1
-        val dLon = Math.toRadians(b.lon - a.lon)
+        val dLon = Math.toRadians(lon2Deg - lon1Deg)
         val h = sin(dLat / 2) * sin(dLat / 2) + cos(lat1) * cos(lat2) * sin(dLon / 2) * sin(dLon / 2)
         return 2 * EARTH_RADIUS_M * atan2(sqrt(h), sqrt(1 - h))
     }
