@@ -1,9 +1,0 @@
-# Pipeline-only dependencies (kept out of backend/pyproject.toml on purpose).
-# Run from backend/:
-#   uv run --with-requirements pipeline/requirements.txt python -m pipeline.build_pack --region mahabalipuram
-osmnx>=2.0,<3
-geopandas>=1.0
-shapely>=2.0
-pyproj>=3.6
-requests>=2.31
-numpy>=1.26
